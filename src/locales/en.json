@@ -108,7 +108,7 @@
     "my-sale":"My Selling",
     "max":"Max",
     
-    "none":"The number of mintable NFTs is 0 currently, no NFTs can be minted, please wait.",
+    "none":"Currently no NFTs can be minted , please wait.",
     "no-waddr":"Unbound withdrawal address",
     "no-redeem":"There is no such exchange",
     "no-desc":"No Description",
