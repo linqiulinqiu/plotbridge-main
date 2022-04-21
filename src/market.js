@@ -51,7 +51,7 @@ async function ListenToWCoin(commit) {
 
 
 async function connect(commit) {
-    bsc = await pbwallet.connect(true)
+    bsc = await pbwallet.connect(false)
     if (bsc) {
         console.log(bsc)
         store.commit("setBsc", bsc)
