@@ -171,17 +171,9 @@ export default {
     },
     open_lplink: async function () {
       const stake_addr = this.stakeAddr;
-      console.log("stake_addr", this.stakeAddr, typeof false, typeof "false");
       if (this.isLp) {
         const token = await tokens.lptokens(stake_addr);
-        console.log("toekn[0]", token[0]);
-        // if (token[0] == this.bsc.ctrs.wbnb.address) {
-        //   token[0] = "BNB";
-        // } else if (token[1] == this.bsc.ctrs.wbnb.address) {
-        //   token[1] = "BNB";
-        // }
         this.lplink = this.lp_prelink + token[0] + "/" + token[1];
-        console.log("lpLink", this.lplink);
       }
     },
     refresh: async function () {

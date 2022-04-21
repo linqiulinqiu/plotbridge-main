@@ -53,14 +53,11 @@ async function price(bsc, token){   // price in PBP
     if(name=='Pancake LPs'){
         const pbpamount = await tokens.balance(bsc.ctrs.pbp.address, token)
         const pbpval = await tokens.format(bsc.ctrs.pbp.address, pbpamount)
-        console.log('pbp in lp', pbpval)
         const supply = await tokens.format(token, await tokens.supply(token))
-        console.log('lp supply', supply)
         return parseFloat(pbpval)*2/parseFloat(supply)
     }else{
         const paths = await path_for_pair(bsc, token, bsc.ctrs.pbp.address)
         const aouts = await bsc.ctrs.router.getAmountsOut(await tokens.parse(token,'1'), paths)
-        console.log('aouts', aouts)
         return ethers.utils.formatUnits(aouts[aouts.length - 1],'gwei')
     }
 }

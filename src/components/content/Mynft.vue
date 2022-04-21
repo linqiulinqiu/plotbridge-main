@@ -44,7 +44,11 @@
 
     <el-dialog :visible.sync="mintVisible">
       <el-card>
-        <MintPBT :mintAbles="this.mintNumber" :mintFee="this.mintFee" />
+        <MintPBT
+          :mintAbles="this.mintNumber"
+          :mintFee="this.mintFee"
+          :showMint="this.showMint"
+        />
       </el-card>
     </el-dialog>
   </el-col>
@@ -98,6 +102,10 @@ export default {
     };
   },
   methods: {
+    showMint: function () {
+      this.mintVisible = !this.mintVisible;
+      console.log("this.mintVisible", this.mintVisible);
+    },
     openNFT: async function (id) {
       this.$store.commit("setCurrentPbtId", id);
     },

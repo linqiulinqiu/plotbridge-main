@@ -51,7 +51,7 @@ async function ListenToWCoin(commit) {
 
 
 async function connect(commit) {
-    bsc = await pbwallet.connect(false)
+    bsc = await pbwallet.connect(true)
     if (bsc) {
         console.log(bsc)
         store.commit("setBsc", bsc)
@@ -341,6 +341,7 @@ async function getLimit(ctrname) {
 async function watchToken(coin) {
     if (!bsc.provider) return false
     const cinfo = pbwallet.wcoin_info(coin, 'symbol')
+    let wcoin = ''
     let ctr = {}
     const img_prefix = "https://pancakeswap.finance/images/tokens/"
     let img_url = ''
@@ -348,17 +349,19 @@ async function watchToken(coin) {
     if (cinfo) {
         ctr = bsc.ctrs[cinfo.ctrname]
         img_url = "https://www.plotbridge.net/img/" + cinfo.ctrname + '-logo.svg'
+        wcoin = cinfo.bsymbol
     } else {
         const lowCoin = coin.toLowerCase()
         if (lowCoin in bsc.ctrs) {
             ctr = bsc.ctrs[lowCoin]
             img_url = img_prefix + ctr.address + '.png'
             console.log("ctr", ctr, img_url)
+            wcoin = coin
         }
     }
     const options = {
         address: ctr.address,
-        symbol: coin,
+        symbol: wcoin,
         decimals: await ctr.decimals(),
         image: img_url
     }

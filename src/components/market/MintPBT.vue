@@ -40,7 +40,7 @@ import { mapState } from "vuex";
 import tokens from "../../tokens";
 export default {
   name: "MintPBT",
-  props: ["mintAbles", "mintFee"],
+  props: ["mintAbles", "mintFee", "showMint"],
   components: {
     ApproveButton,
   },
@@ -59,8 +59,6 @@ export default {
   methods: {
     getBalance: async function () {
       this.balance = await tokens.balance(this.mintFee.tokenAddr);
-      // console.log(bl);
-      // this.balance = await tokens.format(this.mintFee.tokenAddr, bl);
     },
     mintNFT: async function () {
       this.mint_loading = true;
@@ -69,10 +67,11 @@ export default {
         const res = await market.mintPBT();
         await market.waitEventDone(res, async function (evt) {
           obj.mint_loading = false;
+          obj.showMint();
         });
       } catch (e) {
         this.mint_loading = false;
-        this.$message(e.data.message);
+        // this.$message(e.data.message);
         console.log("mint err", e.message);
       }
     },
