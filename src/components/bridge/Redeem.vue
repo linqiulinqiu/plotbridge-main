@@ -37,7 +37,7 @@
       </p>
     </el-col>
     <el-col v-else>
-      <p>You don't have old token to upgrade</p>
+      <p>{{$t('redeem-notice')}}</p>
     </el-col>
   </el-col>
 </template>

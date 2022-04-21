@@ -5,7 +5,7 @@
       <p v-html="$t('intoduction1')"></p>
       <p>
         <li v-for="winfo in winfos" :key='winfo.symbol'>
-            {{ winfo.name }} ({{winfo.symbol}}) <a :href="winfo.url"  target='_blank'>{{winfo.bsymbol}}</a>
+            {{ winfo.name }} ({{winfo.symbol}}) <a v-if="winfo.url" :href="winfo.url"  target='_blank'>{{winfo.bsymbol}}</a>
         </li>
       </p>
     </el-col>
@@ -39,8 +39,10 @@ export default {
         const s = symbols[i]
         winfos[s] = pbw.wcoin_info(s, 'symbol')
         //TODO: URL should be different for "testnet" and "mainnet"
-        winfos[s].url = 'https://testnet.bscscan.com/token/'+winfos[s].ctraddr
-    }
+       if('address' in winfos[s]){
+          winfos[s].url = 'https://mainnet.bscscan.com/token/'+winfos[s].address
+        }
+      }
     return {
         winfos: winfos
     }
