@@ -40,7 +40,7 @@ export default {
         winfos[s] = pbw.wcoin_info(s, 'symbol')
         //TODO: URL should be different for "testnet" and "mainnet"
        if('address' in winfos[s]){
-          winfos[s].url = 'https://mainnet.bscscan.com/token/'+winfos[s].address
+          winfos[s].url = 'https://bscscan.com/token/'+winfos[s].address
         }
       }
     return {
