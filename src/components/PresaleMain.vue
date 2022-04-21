@@ -1,8 +1,8 @@
 <template>
   <el-col id="presaleMain">
     <el-col v-if="pstat == 's'">
-      <p>{{ time_msg }}</p>
       <el-col v-if="working">
+        <p>{{ time_msg }}</p>
         <p>{{ $t("stage") }}：{{ stage }}</p>
         <p>
           {{ $t("remainder") }}：<span class="font">{{ remain }}</span>
