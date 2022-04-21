@@ -1,5 +1,5 @@
 <template>
-  <el-col>
+  <el-col v-if="working">
     <p v-if="time_msg">{{ $t("stake-start") }}：{{ time_msg }}</p>
     <ul v-if="stakeTokens.length">
       <li v-for="item in this.stakeTokens" :key="item.pid">
@@ -22,6 +22,9 @@
       </li>
     </ul>
     <p v-else>{{ $t("data") }}</p>
+  </el-col>
+  <el-col v-else class="not-work" :span="10" :offset="7">
+    <h2>{{ $t("not-start") }}</h2>
   </el-col>
 </template>
 <script>
@@ -46,6 +49,7 @@ export default {
       stakeTokens: [],
       time_msg: "",
       total_alloc: 1,
+      working: false,
     };
   },
   methods: {
@@ -88,5 +92,12 @@ export default {
 .stakeitem {
   margin: 0 2%;
   font-size: 16px;
+}
+.not-work {
+  background: #373943;
+  border-radius: 20px;
+  text-align: center;
+  margin-top: 100px;
+  padding: 50px;
 }
 </style>

@@ -1,16 +1,17 @@
 <template>
-  <el-row type="flex" justify="center">
-    <el-col :sapn="10">
+  <el-row type="flex" justify="space-bewteen">
+    <el-col :sapn="8">
       <el-empty :description="this.$t('img')"></el-empty>
     </el-col>
-    <el-col :span="12">
+    <el-col :span="13">
       <p>
-        {{ $t("price") }}
+        {{ $t("price") }} :&nbsp;
         <span>{{ this.mintFee.price }}</span>
+        &nbsp;
         <span>{{ this.mintFee.token }}</span>
       </p>
       <p>
-        <span>{{ $t("mintable") }}{{ mintAbles }}</span>
+        <span>{{ $t("mintable") }} &nbsp;{{ mintAbles }}</span>
       </p>
       <p>
         <ApproveButton

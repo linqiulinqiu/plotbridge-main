@@ -2,35 +2,42 @@
   <el-col id="presaleMain">
     <el-col v-if="pstat == 's'">
       <p>{{ time_msg }}</p>
-      <p>{{ $t("stage") }}：{{ stage }}</p>
-      <p>
-        {{ $t("remainder") }}：<span class="font">{{ remain }}</span>
-        {{ coinName }}
-      </p>
-      <p>
-        {{ $t("purchase") }}：<span class="font">{{ buyable }}</span>
-        {{ coinName }}
-      </p>
-      <p>
-        {{ $t("price") }}：<span class="font">{{ price_str }}</span> BNB
-      </p>
-      <p>
-        {{ $t("prepay") }}：<span class="font">{{ payment }} </span>BNB
-      </p>
-      <p>
-        {{ $t("balance") }}：
-        <span class="font"> {{ balance }} {{ coinName }} </span>
-      </p>
-      <el-input
-        v-model="amount"
-        class="preinput"
-        clearable
-        suffix-icon="el-icon-edit"
-      ></el-input>
-      <el-button @click="max_amount" type="primary">{{ $t("max") }}</el-button>
-      <el-button @click="buy" :loading="buy_loading" type="primary">
-        {{ $t("buy") }}
-      </el-button>
+      <el-col v-if="working">
+        <p>{{ $t("stage") }}：{{ stage }}</p>
+        <p>
+          {{ $t("remainder") }}：<span class="font">{{ remain }}</span>
+          {{ coinName }}
+        </p>
+        <p>
+          {{ $t("purchase") }}：<span class="font">{{ buyable }}</span>
+          {{ coinName }}
+        </p>
+        <p>
+          {{ $t("price") }}：<span class="font">{{ price_str }}</span> BNB
+        </p>
+        <p>
+          {{ $t("prepay") }}：<span class="font">{{ payment }} </span>BNB
+        </p>
+        <p>
+          {{ $t("balance") }}：
+          <span class="font"> {{ balance }} {{ coinName }} </span>
+        </p>
+        <el-input
+          v-model="amount"
+          class="preinput"
+          clearable
+          suffix-icon="el-icon-edit"
+        ></el-input>
+        <el-button @click="max_amount" type="primary">{{
+          $t("max")
+        }}</el-button>
+        <el-button @click="buy" :loading="buy_loading" type="primary">
+          {{ $t("buy") }}
+        </el-button>
+      </el-col>
+      <el-col v-else>
+        <h2>{{ $t("not-start") }}</h2>
+      </el-col>
     </el-col>
     <el-col v-else-if="pstat == 'e'">
       <p>Presale ended</p>
@@ -55,6 +62,7 @@ export default {
     this.loadtime_msg();
   },
   beforeUpdate() {
+    console.log("111");
     this.loadtime_msg();
   },
   data() {
@@ -72,6 +80,7 @@ export default {
       payment: "--",
       buy_loading: false,
       balance: "",
+      working: false,
     };
   },
   watch: {
@@ -89,6 +98,7 @@ export default {
   methods: {
     loadtime_msg: async function () {
       const toend = (await this.bsc.ctrs.presale.timeRemains()).toNumber();
+      console.log("load", toend);
       if (toend == 0) {
         this.pstat = "e";
       } else {
@@ -97,14 +107,12 @@ export default {
         );
         this.pstat = "s";
       }
-      this.time_msg = times.formatRelTS(
-        Math.floor(Date.now() / 1000) + this.toend
-      );
       return this.time_msg;
     },
     refresh: async function () {
       const token = this.bsc.ctrs.pbp.address;
       const pkgs = await this.bsc.ctrs.presale.pkgs();
+      if (pkgs[0].length > 0) this.working = true;
       for (let i in pkgs[0]) {
         const remain = pkgs[0][i].sub(pkgs[1][i]);
         if (remain.gt(0)) {

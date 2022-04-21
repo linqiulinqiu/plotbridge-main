@@ -115,6 +115,7 @@
     "no-nft":"No NFT in your wallet,please go to the market，or mint one",
     "no-selling":"Selling NFT not found yet... How about mint one?",
     "no-mysale":"You don't selling any NFT",
+    "not-start":"Not started",
 
     "old-balance":"Old Token Balance",
     "or":"OR",
@@ -146,7 +147,7 @@
     "staking":"Staking：",
     "set-s-amount":"Set Stake Amount",
     "stage":"Stage",
-    "stake-start":"Pledge bonus start time",
+    "stake-start":"Staking start time",
 
 
     "to-market":"Go to the market",    

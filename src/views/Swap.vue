@@ -9,13 +9,14 @@
           :sm="{ span: 16, offset: 4 }"
           :xs="{ span: 22, offset: 1 }"
         >
-          <SwapMain />
+          <SwapMain v-if="working" />
+          <h2 v-else style="text-align: center">{{ $t("not-start") }}</h2>
         </el-col>
       </el-main>
     </el-container>
     <el-col class="info" v-else>
       <h2>{{ $t("look-info") }}</h2>
-       </el-col>
+    </el-col>
   </el-col>
 </template>
 <script>
@@ -29,6 +30,11 @@ export default {
   computed: mapState({
     bsc: "bsc",
   }),
+  data() {
+    return {
+      working: false,
+    };
+  },
 };
 </script>
 <style scoped>

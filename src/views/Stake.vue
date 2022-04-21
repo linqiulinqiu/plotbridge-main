@@ -22,8 +22,7 @@ export default {
     bsc: "bsc",
   }),
   data() {
-    return {
-    };
+    return {};
   },
 };
 </script>

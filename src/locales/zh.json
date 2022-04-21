@@ -114,6 +114,7 @@
     "no-nft":"您未拥有NFT，请去市场购买，或者铸造NFT",
     "no-selling":"目前没有发现正在售卖的NFT，或者自己铸造一个？",
     "no-mysale":"您没有售卖NFT",
+    "not-start":"未开始",
 
     "onSale":"正在售卖",
     "old-balance":"旧代币余额",
