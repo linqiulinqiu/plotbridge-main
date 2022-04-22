@@ -148,13 +148,17 @@ export default {
     connect_wallet: async function () {
       this.connect_loading = true;
       const commit = this.$store.commit;
-      const bsc = await data.connect(commit);
-      if (bsc) {
-        commit("setBaddr", bsc.addr);
-        await data.loadAlllists_brief(store);
-        await data.loadAlllists_detail(store);
-        this.connect_loading = false;
-      } else {
+      try {
+        const bsc = await data.connect(commit);
+        if (bsc) {
+          commit("setBaddr", bsc.addr);
+          await data.loadAlllists_brief(store);
+          await data.loadAlllists_detail(store);
+          this.connect_loading = false;
+        } else {
+          this.connect_loading = false;
+        }
+      } catch (e) {
         this.connect_loading = false;
       }
     },
