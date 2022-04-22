@@ -42,7 +42,7 @@ export default {
        if('address' in winfos[s]){
           winfos[s].url = 'https://bscscan.com/token/'+winfos[s].address
         }
-        console.log('bsc1',$store.state.bsc);
+        
       }
     return {
         winfos: winfos
