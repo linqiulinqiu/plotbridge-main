@@ -36,7 +36,7 @@
         </el-button>
       </el-col>
       <el-col v-else>
-        <h2>{{ $t("not-start") }}</h2>
+        <h2>&nbsp;&nbsp;{{ $t("not-start-pre") }}</h2>
       </el-col>
     </el-col>
     <el-col v-else-if="pstat == 'e'">

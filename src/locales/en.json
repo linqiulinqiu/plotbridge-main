@@ -115,7 +115,8 @@
     "no-nft":"No NFT in your wallet,please go to the market，or mint one",
     "no-selling":"Selling NFT not found yet... How about mint one?",
     "no-mysale":"You don't selling any NFT",
-    "not-start":"Not started",
+    "not-start":"This feature will online after pre-sale ended,stay tuned for more details",
+    "not-start-pre":"The pre-sale is expected to start on April 24th, and all the BNB from pre-sale amount will be used to provide PBP-BNB Liquidity on pancakes. The liquidity pool will be locked up for three months and the  price of PBP will be higher than the pre-sale  price,place stay tuned.",
 
     "old-balance":"Old Token Balance",
     "or":"OR",

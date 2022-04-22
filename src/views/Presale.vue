@@ -11,8 +11,9 @@
         <PresaleMain />
       </el-col>
     </el-main>
-    <el-col v-else>
-      {{ $t("look-info") }}
+    <el-col class="info" v-else>
+      <h2>{{ $t("look-info") }}</h2>
+      
     </el-col>
   </el-container>
 </template>
