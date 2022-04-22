@@ -24,7 +24,7 @@ export default {
   color: #fff;
   height: 85vh;
   width: 100%;
-  background: url("../assets/image/banner.jpg") center ;
+  background: url("../assets/image/banner.jpg") center no-repeat;
  position: relative;
 }
 .notice{
