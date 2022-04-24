@@ -44,7 +44,6 @@ export default {
        if('address' in winfos[s]){
           winfos[s].url = 'https://bscscan.com/token/'+winfos[s].address
         }
-        console.log(this.bsc);
       }
     return {
         winfos: winfos

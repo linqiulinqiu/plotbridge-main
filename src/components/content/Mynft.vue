@@ -110,7 +110,6 @@ export default {
   methods: {
     showMint: function () {
       this.mintVisible = !this.mintVisible;
-      console.log("this.mintVisible", this.mintVisible);
     },
     openNFT: async function (id) {
       this.$store.commit("setCurrentPbtId", id);
@@ -118,12 +117,10 @@ export default {
     getMintfee: async function () {
       this.open_loading = true;
       const fee = await market.getmintfee();
-      console.log("mintfee", fee);
       this.mintFee.price = fee.price;
       this.mintFee.token = fee.ptName;
       this.mintFee.tokenAddr = fee.tokenAddr;
       const number = await market.getMintAbles();
-      console.log("mint number", number);
       this.mintNumber = number;
       this.mintVisible = true;
       this.open_loading = false;

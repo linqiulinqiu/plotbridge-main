@@ -169,7 +169,6 @@ export default {
     bindables: async function () {
       this.bables = await market.getBindables(this.coinInfo.index);
       const count = parseInt(this.bables);
-      console.log("count", count);
       if (count > 0) return true;
       return false;
     },

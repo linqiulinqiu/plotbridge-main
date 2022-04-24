@@ -177,7 +177,6 @@ export default {
       for (let i in wsymbols) {
         blist.push(pbwallet.wcoin_info(wsymbols[i], "bsymbol"));
       }
-      console.log("thissss", blist);
       if (this.from_coin && this.from_coin != "") {
         for (let k in blist) {
           if (this.from_coin == blist[k].address) {
@@ -227,16 +226,12 @@ export default {
     slipAmount: function (newnum, oldnum) {
       this.slipAmount = newnum;
     },
-    watchCoin: function (newCoin) {
-      console.log("watchCoin", newCoin, this.watchCoin);
-    },
     from_amount: debounce(async function (newa, olda) {
       await this.update_amounts();
     }, 500),
     from_coin: debounce(async function (newc, oldc) {
       await this.update_balance(true, false);
       await this.update_amounts();
-      console.log("watchCoin", this.watchCoin);
     }, 500),
     to_coin: debounce(async function (newc, oldc) {
       await this.update_balance(false, true);
@@ -245,11 +240,9 @@ export default {
   },
   methods: {
     watchToken: async function () {
-      console.log("wlist", this.allwlist);
       for (let i in this.allwlist) {
         const item = this.allwlist[i];
         if (item.address == this.from_coin) {
-          console.log("item Info", item);
           await market.watchToken(item.bsymbol);
         }
       }
@@ -281,20 +274,11 @@ export default {
         this.to_val = to_val;
         this.to_amount = await tokens.format(this.to_coin, to_val);
       }
-
-      console.log("to-amount-from", this.from_val, this.from_amount);
-      console.log("to-amount-to", this.to_val, this.to_amount);
     },
     update_balance: async function (from, to) {
       if (from) {
         const from_balance = await tokens.balance(this.from_coin);
         this.from_balance = await tokens.format(this.from_coin, from_balance);
-        console.log(
-          "update-balance-from",
-          from,
-          from_balance,
-          this.from_balance
-        );
       }
       if (to) {
         const to_balance = await tokens.balance(this.to_coin);
@@ -306,17 +290,7 @@ export default {
     },
     swap: async function () {
       this.swapping = true;
-      console.log(this.slipAmount / 100, "%");
       const minreq = this.to_val.sub(this.to_val.mul(this.slipAmount).div(100));
-      console.log(
-        "swapping params",
-        this.from_coin,
-        this.to_coin,
-        this.from_val,
-        minreq,
-        this.slipAmount,
-        120
-      );
       const obj = this;
       try {
         const receipt = await swap.swap(
@@ -327,9 +301,7 @@ export default {
           minreq,
           120
         );
-        console.log("swap", receipt);
         await market.waitEventDone(receipt, async function (evt) {
-          console.log("evt", evt);
           obj.swapping = false;
           obj.from_amount = "";
           obj.to_amount = "";

@@ -86,7 +86,6 @@ export default {
       const id = this.curNFT.id;
       const res = await market.burnNFT(id);
       const obj = this;
-      console.log("burn res", res);
       await market.waitEventDone(res, function (evt) {
         obj.burn_loading = false;
         obj.$store.commit("setCurrentPbtId", false);
@@ -127,7 +126,6 @@ export default {
           this.nftPrice,
           this.nftDesc
         );
-        console.log("sell", res);
         const obj = this;
         await market.waitEventDone(res, async function (evt) {
           obj.set_loading = false;

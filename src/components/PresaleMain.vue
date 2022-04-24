@@ -62,7 +62,6 @@ export default {
     this.loadtime_msg();
   },
   beforeUpdate() {
-    console.log("111");
     this.loadtime_msg();
   },
   data() {
@@ -80,7 +79,7 @@ export default {
       payment: "--",
       buy_loading: false,
       balance: "",
-      working: false,
+      working: true,
     };
   },
   watch: {
@@ -98,7 +97,6 @@ export default {
   methods: {
     loadtime_msg: async function () {
       const toend = (await this.bsc.ctrs.presale.timeRemains()).toNumber();
-      console.log("load", toend);
       if (toend == 0) {
         this.pstat = "e";
       } else {
@@ -147,7 +145,6 @@ export default {
           obj.amount = "";
         });
       } catch (e) {
-        console.log("presale buy err", e);
         this.buy_loading = false;
       }
     },

@@ -19,7 +19,6 @@ function loadCoinlist() {
     for (let i in coinSb) {
         clist[coinSb[i]] = pbwallet.wcoin_info(coinSb[i], "index")
     }
-    console.log("coinlist", clist)
     coinlist = clist
     return coinlist
 }
@@ -40,7 +39,6 @@ async function ListenToWCoin(commit) {
             const balance = await ctr[ctrname].balanceOf(bsc.addr)
             wBalance[i] = await tokens.format(ctr[ctrname].address, balance)
         }
-        console.log("balance", wBalance)
         commit('setWBalance', wBalance)
     }
     await updateBalnce()
@@ -57,7 +55,6 @@ async function connect(commit) {
         return e.message
     }
     if (bsc) {
-        console.log(bsc)
         store.commit("setBsc", bsc)
         await ListenToWCoin(commit)
         return bsc
@@ -72,18 +69,15 @@ async function getmintfee() {
     options.price = await tokens.format(fee[0], fee[1])
     options.ptName = symbol
     options.tokenAddr = fee[0]
-    console.log("options", options)
     return options
 }
 async function getMintAbles() {
     const mintAbles = await bsc.ctrs.pbt.mintables()
-    console.log("mintAbles", mintAbles)
     return mintAbles
 }
 async function mintPBT() {
     try {
         const mintfee = await bsc.ctrs.pbt.mintFee()
-        console.log("mint fee", mintfee)
         const options = {}
         if (mintfee[0] == ethers.constants.AddressZero) {
             options.value = mintfee[1]
@@ -92,11 +86,9 @@ async function mintPBT() {
             const allow = await ctr.allowance(bsc.addr, bsc.ctrs.pbt.address)
             if (mintfee[1].gt(allow)) {
                 const reciept = await ctr.approve(bsc.ctrs.pbt.address, mintfee[1].mul(10000))
-                console.log("mint approve", reciept)
             }
         }
         const res = await bsc.ctrs.pbt.mint(options)
-        console.log("mint res", res)
         return res
     } catch (e) {
         let text = e.message
@@ -116,12 +108,10 @@ async function burnWcoin(amount, coinInfo) {
         return false
     }
     const receipt = await ctr.burn(amount)
-    console.log("burncoin receipt", receipt)
     return receipt
 }
 async function waitEventDone(tx, done) {
     bsc.provider.once(tx.hash, function (evt) {
-        console.log("evt", evt, evt.transactionHash)
         done(tx, evt)
     })
 }
@@ -130,7 +120,6 @@ async function reBindFee() {
     const refee = {}
     refee.symbol = await tokens.symbol(rebindFee[0])
     refee.amount = await tokens.format(rebindFee[0], rebindFee[1])
-    console.log("rebindfee", rebindFee, refee)
     return refee
 }
 async function bindAddr(waddr, pbtId, cointy, rebind) {
@@ -149,18 +138,13 @@ async function bindAddr(waddr, pbtId, cointy, rebind) {
                     })
                 } else { // erc20 token
                     const allow = await checkAllowance(fee[0], bsc.ctrs.pbpuzzlehash.address)
-                    console.log("checkAllowance", allow, allow.lt(fee[1]))
                     if (allow.lt(fee[1])) {
                         const res = await approveAllow(fee[0], bsc.ctrs.pbpuzzlehash.address)
-                        console.log("approveAllowance", res)
                         res.fn = 'approve'
                         await waitEventDone(res, async function (evt) {
-                            console.log("approveAllowance evt done,evt=", evt)
                             const bind = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtid, cointy, addr)
-                            console.log("rebind addr ", bind)
                             return bind
                         })
-                        // return res
                     }
                     res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtid, cointy, addr, {
                         value: fee[1]
@@ -168,7 +152,6 @@ async function bindAddr(waddr, pbtId, cointy, rebind) {
                     return res
                 }
             } else {
-                console.log('withdraw-bind', pbtId, cointy, addr);
                 res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtid, cointy, addr)
                 return res
             }
@@ -184,12 +167,10 @@ async function getBindables(cointy) {
 async function getDepAddr(pbtId, cointy) {
     const ables = await getBindables(cointy)
     if (parseInt(ables) == 0) {
-        console.log("ables", ables)
         return "nothing"
     } else {
         const id = ethers.BigNumber.from(pbtId)
         const res = await bsc.ctrs.pbpuzzlehash.bindDepositPuzzleHash(id, cointy)
-        console.log("obtain  addr", res)
         return res
     }
 }
@@ -202,15 +183,11 @@ async function clearAddr(pbtid, cointy) {
         })
     } else { // erc20 token
         const allow = await checkAllowance(fee[0], bsc.ctrs.pbpuzzlehash.address)
-        console.log("checkAllowance", allow, allow.lt(fee[1]))
         if (allow.lt(fee[1])) {
             const approveRes = await approveAllow(fee[0], bsc.ctrs.pbpuzzlehash.address)
-            console.log("approveAllowance", approveRes)
             approveRes.fn = 'approve'
             await waitEventDone(approveRes, async function (evt) {
-                console.log("approveAllowance evt done,evt=", evt)
                 const bind = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtid, cointy, ethers.constants.AddressZero)
-                console.log("rebind addr ", bind)
                 return bind
             })
             // return approveRes
@@ -229,11 +206,9 @@ async function sendToMarket(id) {
 async function setSellInfo(id, ptName, price, desc) {
     let ptAddr = ptAddrs[ptName]
     if (!ptAddr) {
-        console.log("info", ptName, )
         ptAddr = bsc.ctrs[ptName.toLowerCase()].address
     }
     const nftPrice = await tokens.parse(ptAddr, price)
-    console.log("ptaddr", ptName, ptAddr, nftPrice)
     const res = await bsc.ctrs.pbmarket.onSale(bsc.ctrs.pbt.address, id, ptAddr, nftPrice, desc)
     return res
 }
@@ -246,7 +221,6 @@ async function checkAllowance(priceToken, spender) {
     } else {
         try {
             const allow = await ctr.allowance(bsc.addr, spender)
-            console.log("checkAllowance", allow, allow.lt(amount))
             if (allow.gt(amount)) {
                 return false
             }
@@ -260,7 +234,6 @@ async function approveAllow(token, spender) {
     const ctr = pbwallet.erc20_contract(token)
     const amount = await ctr.totalSupply()
     const total = await tokens.format(token, amount)
-    console.log("totalsupply", total)
     const res = await ctr.approve(spender, amount)
     res.fn = 'approve'
     return res
@@ -275,12 +248,9 @@ async function buyNFT(nft) {
     } else {
         // check allowance
         const allow = await checkAllowance(priceToken, bsc.ctrs.pbpuzzlehash.address)
-        if (allow.lt(price)) { // not enough allowance, approve first
+        if (allow.lt(price)) { 
             const res = await approveAllow(priceToken, bsc.ctrs.pbmarket.address) // TODO: approve can use MAX_UINT256 for infinity
             res.fn = 'approve'
-            // we need to wait for approve confirmed by BSC network, so return and let user buy again
-            // TODO: show "Approve" in button when allowance not enough, then show "Buy" when allowance enough
-            // TODO: check ERC20 balance then buy
             return res
         }
     }
@@ -317,7 +287,6 @@ async function afterFee(coinInfo, mode, amount) {
         return false
     }
     const f = await tokens.format(ctr.address, amount.sub(fee))
-    console.log("return in afterFee", f)
     return f
 }
 async function getfees(ctrname) {
@@ -329,7 +298,6 @@ async function getfees(ctrname) {
     fee.depositFeeRate = depfee[0]
     fee.withdrawFee = await tokens.format(ctr.address, wdfee[1])
     fee.withdrawFeeRate = wdfee[0]
-    console.log("getfees", fee)
     return fee
 
 }
@@ -347,9 +315,7 @@ async function watchToken(coin) {
     const cinfo = pbwallet.wcoin_info(coin, 'symbol')
     let wcoin = ''
     let ctr = {}
-    const img_prefix = "https://pancakeswap.finance/images/tokens/"
     let img_url = ''
-    console.log("cinfo", cinfo)
     if (cinfo) {
         ctr = bsc.ctrs[cinfo.ctrname]
         img_url = "https://app.plotbridge.net/img/" + cinfo.ctrname + '.png'
@@ -359,7 +325,6 @@ async function watchToken(coin) {
         if (lowCoin in bsc.ctrs) {
             ctr = bsc.ctrs[lowCoin]
             img_url = "https://app.plotbridge.net/img/" + lowCoin + '.png'
-            console.log("ctr", ctr, img_url)
             wcoin = coin
         }
     }

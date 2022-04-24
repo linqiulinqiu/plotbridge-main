@@ -37,12 +37,10 @@ export default {
       const list = Object.fromEntries(
         Object.entries(this.marketList).slice(start, down)
       );
-      console.log("mklist", list, this.marketList);
       return list;
     },
     selling_count() {
       const cnt = Object.keys(this.marketList).length;
-      console.log("selling count", cnt);
       return cnt;
     },
   }),

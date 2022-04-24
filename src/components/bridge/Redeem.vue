@@ -112,7 +112,6 @@ export default {
             redeemCache[key] = ci;
           }
         }
-        console.log("loadRedeems redeemCache", redeemCache);
       } else {
         console.log("redeemCache already load, skip loading:", redeemCache);
       }
@@ -121,7 +120,6 @@ export default {
     loadPair: async function () {
       if (this.newToken in redeemCache) {
         const pair = redeemCache[this.newToken];
-        console.log("pair", pair);
         this.oldToken = pair.old_token;
         this.newSymbol = await tokens.symbol(this.newToken);
         this.oldSymbol = await tokens.symbol(this.oldToken);
@@ -141,14 +139,12 @@ export default {
         market.waitEventDone(res, async function (evt) {
           obj.redeeming = false;
           obj.amount = 0;
-          obj.loadPair(); // TODO: maybe a notice could be better after redeem
+          obj.loadPair();
         });
       } catch (e) {
         console.log("redeem err", e);
         this.redeeming = false;
       }
-
-      //TODO: watch tokenRedeem events
     },
   },
 };

@@ -38,7 +38,6 @@ export default {
     },
     loadcoin: function () {
       this.coinMap = market.loadCoinlist();
-      console.log("this.coinMap", this.coinMap);
     },
   },
 };

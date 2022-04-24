@@ -277,11 +277,9 @@ export default {
       this.clear_loading = true;
       const cointy = this.current.coinType;
       const id = this.current.pbtId;
-      console.log("pbtd", id);
       const obj = this;
       try {
         const res = await market.clearAddr(id, cointy);
-        console.log("clearAddr", res);
         await market.waitEventDone(res, async function (evt) {
           obj.clear_loading = false;
         });
@@ -300,9 +298,7 @@ export default {
         if (this.withdrawAddr != false) {
           rebind = true;
         }
-        console.log(" bindaddr params", addr, id, cointy, rebind);
         const res = await market.bindAddr(addr, id, cointy, rebind);
-        console.log("bindWaddr", res, rebind);
         if (res == false) {
           this.bind_loading = false;
           this.$message(this.$t("correct-amount"));

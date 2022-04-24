@@ -69,7 +69,6 @@ async function lpTokens(ctraddr) {
                 info.lpTokens[i] = "BNB"
             }
         }
-        console.log("lptokens", info)
         return info.lpTokens
     }
     return false
@@ -115,11 +114,9 @@ async function balance(ctraddr, owner) {
 
 async function allowance(ctraddr, spender) {
     const info = await tokenInfo(ctraddr)
-    console.log("info", info)
     if (info.ctr.address == ethers.constants.AddressZero) {
         return ethers.constants.MaxUint256
     }
-    console.log('allowance res', await info.ctr.allowance(bsc.addr, spender))
     return await info.ctr.allowance(bsc.addr, spender)
 }
 
@@ -135,7 +132,6 @@ async function approve(ctraddr, spender) {
     const info = await tokenInfo(ctraddr)
     if (info.ctr.address != ethers.constants.AddressZero) {
         const receipt = await info.ctr.approve(spender, await info.ctr.totalSupply())
-        console.log('approve receipt', receipt)
         if ('hash' in receipt) {
             await bsc.provider.waitForTransaction(receipt.hash)
             return true

@@ -220,7 +220,6 @@ export default {
             this.pid,
             amount
           );
-          console.log("force withdraw receipt", receipt);
           await market.waitEventDone(receipt, function (e) {
             obj.force_w_loading = false;
           });
@@ -236,7 +235,6 @@ export default {
         ethers.BigNumber.from(0)
       );
       console.log("claim receipt", receipt);
-      console.log("TODO: close withdraw window when done");
     },
     deposit: async function () {
       this.dep_loading = true;
@@ -245,7 +243,6 @@ export default {
         try {
           const obj = this;
           const receipt = await this.bsc.ctrs.staking.deposit(this.pid, amount);
-          console.log("stake receipt", receipt);
           await market.waitEventDone(receipt, function () {
             obj.dep_loading = false;
             obj.dia_set_amount = false;

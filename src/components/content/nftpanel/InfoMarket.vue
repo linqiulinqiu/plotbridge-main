@@ -69,7 +69,6 @@ export default {
         await market.waitEventDone(res, async function (evt) {
           obj.approve_loading = false;
         });
-        console.log("res approve", res);
       } catch (e) {
         this.approve_loading = false;
         console.log("approve err", e.message);
