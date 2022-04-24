@@ -352,13 +352,13 @@ async function watchToken(coin) {
     console.log("cinfo", cinfo)
     if (cinfo) {
         ctr = bsc.ctrs[cinfo.ctrname]
-        img_url = "https://app.plotbridge.io/#/image/" + cinfo.ctrname + '.png'
+        img_url = "https://app.plotbridge.net/img/" + cinfo.ctrname + '.png'
         wcoin = cinfo.bsymbol
     } else {
         const lowCoin = coin.toLowerCase()
         if (lowCoin in bsc.ctrs) {
             ctr = bsc.ctrs[lowCoin]
-            img_url = "https://app.plotbridge.io/#/image/" + lowCoin + '.png'
+            img_url = "https://app.plotbridge.net/img/" + lowCoin + '.png'
             console.log("ctr", ctr, img_url)
             wcoin = coin
         }
