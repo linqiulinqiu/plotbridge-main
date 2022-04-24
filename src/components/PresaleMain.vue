@@ -79,7 +79,7 @@ export default {
       payment: "--",
       buy_loading: false,
       balance: "",
-      working: true,
+      working: false,
     };
   },
   watch: {
