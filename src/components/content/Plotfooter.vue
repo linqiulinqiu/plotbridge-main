@@ -1,7 +1,9 @@
 <template>
   <el-col class="copyRight">
     <p>
-      <a href=""> © 2022 Plot Network Ltd,{{ $t("cpright1") }} </a>
+      <a href="www.plotnetwork.ltd">
+        © 2022 Plot Network Ltd,{{ $t("cpright1") }}
+      </a>
     </p>
     <!-- <p>{{ $t("cpright2") }}</p>
     <p>
