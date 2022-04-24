@@ -81,6 +81,7 @@
     "inbsc":"In your BSC wallet",
     "input-addr":"Input your withdrawal address below",
     "input-desc":"Input the description",
+    "insufficient-mint-balance":"Insufficient balance for mint. Make sure you have at least {price} {token} in wallet currently connected",
     "id":"Id",
     "img":"Anything is possible.",
     "intoduction":"Intoduction",

@@ -82,6 +82,7 @@
     "input-addr":"在下面输入你的取款地址：",
     "id":"编号",
     "img":"一切皆有可能。",
+    "insufficient-mint-balance":"当前余额不够铸造PBT. 请确保在当前连接的钱包中，至少有 {price} {token}",
     "intoduction":"关于我们",
     "intoduction1":"PlotBridge(PB)是连通时空证明类区块链网络（即常说的空间挖矿，如奇亚，韭菜）和成熟的智能区块链（如币安智能链）之间的桥梁。可使用PB将原生币如奇亚(XCH)，韭菜(XCC)转换成对应的代币如WXCH,WXCC。当然，也可以将代币转换回对应的原生币。<br>当前支持的智能链: <br>- 币安智能链(BSC)<br>当前支持的原生币种和对应的BSC代币: <br> ",
     "intoduction2":"我们是谁?",
@@ -102,7 +103,7 @@
     "lock-time":"锁定时间",
 
     "market":"市场",
-    "mintPBT":"Mint PBT",
+    "mintPBT":"铸造PBT",
     "mintable":"目前可以铸造的NFT数目：",
     "my-nfts":"我的NFT",
     "my-sale":"我的正在售卖的",

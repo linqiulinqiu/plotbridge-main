@@ -64,11 +64,16 @@ export default {
       this.mint_loading = true;
       try {
         const obj = this;
-        const res = await market.mintPBT();
-        await market.waitEventDone(res, async function (evt) {
-          obj.mint_loading = false;
-          obj.showMint();
-        });
+        const fee = await tokens.parse(this.mintFee.tokenAddr, this.mintFee.price)
+        if(this.balance.lt(fee)){
+            this.$message.error(this.$t('insufficient-mint-balance',this.mintFee))
+        }else{
+            const res = await market.mintPBT();
+            await market.waitEventDone(res, async function (evt) {
+              obj.mint_loading = false;
+              obj.showMint();
+            });
+        }
       } catch (e) {
         this.mint_loading = false;
         // this.$message(e.data.message);
