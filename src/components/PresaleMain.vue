@@ -79,6 +79,7 @@ export default {
       payment: "--",
       buy_loading: false,
       balance: "",
+      bnbBalance:false,
       working: true,
     };
   },
@@ -126,10 +127,18 @@ export default {
       this.buyable = await tokens.format(token, buyable);
       const bl = await tokens.balance(token);
       this.balance = await tokens.format(token, bl);
+      this.bnbBalance = await tokens.balance('');
     },
     max_amount: async function () {
       // TODO: can be more accurate
-      this.amount = Math.min(this.remain, this.buyable);
+      const price = await tokens.parse('',this.price_str)
+      const gasFee = await tokens.parse('','0.001') // TODO: use fixed estimation for gas-fee, can be more accurate
+      if(this.bnbBalance.lte(gasFee)){
+          this.amount = 0
+      }else{
+        const affordable = this.bnbBalance.sub(gasFee).div(price)
+        this.amount = Math.min(this.remain, this.buyable, affordable);
+      }
     },
     buy: async function () {
       this.buy_loading = true;
