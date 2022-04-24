@@ -12,29 +12,34 @@
         >{{ $t("mintPBT") }}
       </el-button>
     </el-col>
-    <el-col v-if="Object.keys(this.myList).length > 0" class="nftarea">
-      <el-col class="nftlist">
-        <MylistPage
-          v-bind:nftlist="nftlist"
-          v-bind:open="openNFT"
-          v-bind:current="current"
-        />
+    <el-col v-if="loadDown">
+      <el-col v-if="Object.keys(this.myList).length > 0" class="nftarea">
+        <el-col class="nftlist">
+          <MylistPage
+            v-bind:nftlist="nftlist"
+            v-bind:open="openNFT"
+            v-bind:current="current"
+          />
+        </el-col>
+        <el-col class="btn-bar">
+          <el-pagination
+            background
+            :total="Object.keys(this.myList).length"
+            layout="prev,pager,next"
+            @current-change="handleCurrentChange"
+            :current-page="this.pageNum"
+            :page-size="this.pageSize"
+          ></el-pagination>
+        </el-col>
       </el-col>
-      <el-col class="btn-bar">
-        <el-pagination
-          background
-          :total="Object.keys(this.myList).length"
-          layout="prev,pager,next"
-          @current-change="handleCurrentChange"
-          :current-page="this.pageNum"
-          :page-size="this.pageSize"
-        ></el-pagination>
+      <el-col v-else class="content">
+        <el-col>
+          {{ $t("no-nft") }}
+        </el-col>
       </el-col>
     </el-col>
-    <el-col v-else class="content">
-      <el-col>
-        {{ $t("no-nft") }}
-      </el-col>
+    <el-col v-else class="load">
+      {{ $t("data") }}
     </el-col>
     <el-col class="bottom-box" v-if="isMarket">
       <router-link class="bottom" :to="this.market"
@@ -70,6 +75,7 @@ export default {
   computed: mapState({
     bsc: "bsc",
     current: "current",
+    loadDown: "loadDown",
     nftlist(state) {
       let pageSize = this.pageSize;
       const start = this.pageNum * pageSize - pageSize;
@@ -137,6 +143,9 @@ export default {
   padding-bottom: 20px;
   font-size: 18px;
   font-weight: 600;
+}
+.load {
+  padding: 50px;
 }
 i {
   margin-right: 8px;

@@ -149,25 +149,36 @@ export default {
       this.connect_loading = true;
       const commit = this.$store.commit;
       const bsc = await data.connect(commit);
-      if(typeof(bsc)=='string'||!bsc){
-        if(bsc){
-            this.$message.error(`Connect failed: ${bsc}`)
-        }else{
-            const h = this.$createElement
-            this.$msgbox({
-                title: 'Connect failed',
-                message: h('div',null,[
-                h('h4',null,'A BSC wallet is required for further operation,'),
-                h('p',null,'make sure you have MetaMask or other BSC wallet installed.'),
-                h('p',null,'Or, MetaMask can be install via the official plugin store of your web-browser'),
-                h('p',null,'(Chrome),(Firefox),(Brave)')
-                ])
-            })
+      if (typeof bsc == "string" || !bsc) {
+        if (bsc) {
+          this.$message.error(`Connect failed: ${bsc}`);
+        } else {
+          const h = this.$createElement;
+          this.$msgbox({
+            title: "Connect failed",
+            message: h("div", null, [
+              h("h4", null, "A BSC wallet is required for further operation,"),
+              h(
+                "p",
+                null,
+                "make sure you have MetaMask or other BSC wallet installed."
+              ),
+              h(
+                "p",
+                null,
+                "Or, MetaMask can be install via the official plugin store of your web-browser"
+              ),
+              h("p", null, "(Chrome),(Firefox),(Brave)"),
+            ]),
+          });
         }
         this.connect_loading = false;
-      }else{
+      } else {
         commit("setBaddr", bsc.addr);
-        await data.loadAlllists_brief(store);
+        const d = await data.loadAlllists_brief(store);
+        if (d == "down") {
+          this.$store.commit("setLoadDown", true);
+        }
         await data.loadAlllists_detail(store);
         this.connect_loading = false;
       }

@@ -1,23 +1,26 @@
 <template>
   <el-col>
-    <div v-if="selling_count > 0">
-      <ul>
-        <li class="marketlist" v-for="nft in this.mklist" :key="nft.id">
-          <SellingItem :info="nft" @click.native="openNFT(nft)" />
-        </li>
-      </ul>
-      <el-col :lg="{ sapn: 4, offset: 15 }" :span="8">
-        <el-pagination
-          background
-          :total="Object.keys(this.marketList).length"
-          @current-change="handleXccPaegChange"
-          :current-page="this.xccpageNum"
-          :page-size="4"
-          layout="prev,pager,next"
-        ></el-pagination>
-      </el-col>
-    </div>
-    <p v-else>{{ $t("no-selling") }}</p>
+    <el-col v-if="loadDown">
+      <div v-if="selling_count > 0">
+        <ul>
+          <li class="marketlist" v-for="nft in this.mklist" :key="nft.id">
+            <SellingItem :info="nft" @click.native="openNFT(nft)" />
+          </li>
+        </ul>
+        <el-col :lg="{ sapn: 4, offset: 15 }" :span="8">
+          <el-pagination
+            background
+            :total="Object.keys(this.marketList).length"
+            @current-change="handleXccPaegChange"
+            :current-page="this.xccpageNum"
+            :page-size="4"
+            layout="prev,pager,next"
+          ></el-pagination>
+        </el-col>
+      </div>
+      <p v-else>{{ $t("no-selling") }}</p>
+    </el-col>
+    <el-col v-else>{{ $t("data") }}</el-col>
   </el-col>
 </template>
 <script>
@@ -27,6 +30,7 @@ export default {
   props: ["marketList", "pageSize"],
   computed: mapState({
     baddr: "baddr",
+    loadDown: "loadDown",
     mklist() {
       const start = this.xccpageNum * this.pageSize - this.pageSize;
       const down = this.xccpageNum * this.pageSize;

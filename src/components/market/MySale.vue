@@ -1,24 +1,29 @@
 <template>
   <el-col>
-    <el-col v-if="Object.keys(this.mySaleList).length > 0">
-      <ul>
-        <li v-for="nft in this.mslist" :key="nft.uri" class="marketlist">
-          <SellingItem :info="nft" @click.native="openNFT(nft)" />
-        </li>
-      </ul>
-      <el-col :lg="{ sapn: 4, offset: 15 }" :span="8">
-        <el-pagination
-          background
-          :total="Object.keys(this.mySaleList).length"
-          @current-change="handleCurPageChange()"
-          :current-page="this.mypageNum"
-          :page-size="10"
-          layout="prev,pager,next"
-        ></el-pagination>
+    <el-col v-if="loadDown">
+      <el-col v-if="Object.keys(this.mySaleList).length > 0">
+        <ul>
+          <li v-for="nft in this.mslist" :key="nft.uri" class="marketlist">
+            <SellingItem :info="nft" @click.native="openNFT(nft)" />
+          </li>
+        </ul>
+        <el-col :lg="{ sapn: 4, offset: 15 }" :span="8">
+          <el-pagination
+            background
+            :total="Object.keys(this.mySaleList).length"
+            @current-change="handleCurPageChange()"
+            :current-page="this.mypageNum"
+            :page-size="10"
+            layout="prev,pager,next"
+          ></el-pagination>
+        </el-col>
+      </el-col>
+      <el-col v-else>
+        <h4>{{ $t("no-mysale") }}</h4>
       </el-col>
     </el-col>
     <el-col v-else>
-      <h4>{{ $t("no-mysale") }}</h4>
+      {{ $t("data") }}
     </el-col>
   </el-col>
 </template>
@@ -28,6 +33,7 @@ export default {
   name: "MySale",
   props: ["mySaleList", "pageSize"],
   computed: mapState({
+    loadDown: "loadDown",
     mslist() {
       const start = this.mypageNum * this.pageSize - this.pageSize;
       const down = this.mypageNum * this.pageSize;

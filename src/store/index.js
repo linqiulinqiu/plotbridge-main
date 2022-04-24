@@ -14,14 +14,18 @@ export default new Vuex.Store({
         marketList: {},
         mySaleList: {},
         WBalance: 0,
+        loadDown: false
     },
     mutations: {
         setBsc(state, bsc) {
-            tokens.setbsc(bsc)  // TODO: remove this injection later
+            tokens.setbsc(bsc) // TODO: remove this injection later
             state.bsc = bsc
         },
         setBaddr(state, baddr) {
             state.baddr = baddr
+        },
+        setLoadDown(state, boolean) {
+            state.loadDown = boolean
         },
         setCurrentPbtId(state, pbtId) {
             if (pbtId != state.current.pbtId) {
