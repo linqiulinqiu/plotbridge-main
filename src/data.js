@@ -15,10 +15,13 @@ ptInfos[ethers.constants.AddressZero] = {
 
 async function connect(commit) {
     bsc = await market.connect(commit)
-    console.log("bsc in connect", bsc)
-    if (bsc) {
-        commit("setBsc", bsc)
+    if(typeof(bsc)=='string'){
         return bsc
+    }else{
+        if (bsc) {
+            commit("setBsc", bsc)
+            return bsc
+        }
     }
     return false
 }

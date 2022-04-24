@@ -148,17 +148,27 @@ export default {
     connect_wallet: async function () {
       this.connect_loading = true;
       const commit = this.$store.commit;
-      try {
-        const bsc = await data.connect(commit);
-        if (bsc) {
-          commit("setBaddr", bsc.addr);
-          await data.loadAlllists_brief(store);
-          await data.loadAlllists_detail(store);
-          this.connect_loading = false;
-        } else {
-          this.connect_loading = false;
+      const bsc = await data.connect(commit);
+      if(typeof(bsc)=='string'||!bsc){
+        if(bsc){
+            this.$message.error(`Connect failed: ${bsc}`)
+        }else{
+            const h = this.$createElement
+            this.$msgbox({
+                title: 'Connect failed',
+                message: h('div',null,[
+                h('h4',null,'A BSC wallet is required for further operation,'),
+                h('p',null,'make sure you have MetaMask or other BSC wallet installed.'),
+                h('p',null,'Or, MetaMask can be install via the official plugin store of your web-browser'),
+                h('p',null,'(Chrome),(Firefox),(Brave)')
+                ])
+            })
         }
-      } catch (e) {
+        this.connect_loading = false;
+      }else{
+        commit("setBaddr", bsc.addr);
+        await data.loadAlllists_brief(store);
+        await data.loadAlllists_detail(store);
         this.connect_loading = false;
       }
     },
