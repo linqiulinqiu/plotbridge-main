@@ -238,7 +238,7 @@ async function buyNFT(nft) {
     } else {
         // check allowance
         const allow = await checkAllowance(priceToken, bsc.ctrs.pbpuzzlehash.address)
-        if (allow.lt(price)) { 
+        if (allow.lt(price)) {
             const res = await approveAllow(priceToken, bsc.ctrs.pbmarket.address) // TODO: approve can use MAX_UINT256 for infinity
             res.fn = 'approve'
             return res

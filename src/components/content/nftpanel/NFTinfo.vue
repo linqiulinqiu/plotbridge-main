@@ -6,7 +6,7 @@
       :sm="14"
       :xs="18"
     >
-      <el-col v-if="meta.image">
+      <el-col v-loading="meta.loading">
         <img :src="meta.image" alt="Img" class="info-img" />
       </el-col>
       <p>{{ $t("id") }}:#{{ this.nftId }}</p>
