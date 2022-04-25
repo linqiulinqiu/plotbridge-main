@@ -181,7 +181,6 @@ async function initMyList(bsc, commit){
     const ids = []
     for (let i = 0; i < cnt; i++) {
         const idx = (await bsc.ctrs.pbt.tokenOfOwnerByIndex(bsc.addr, i)).toString()
-        console.log('load mine PBT', i, idx)
         myList[idx] = {
             loading: true,
             id: idx
