@@ -202,6 +202,7 @@ async function initMyList(bsc, commit){
         const pbxs = await loadPbxs(idx)
         const item = copyObj(myList[idx])
         item.pbxs = pbxs
+        item.loading = false
         myList[idx] = item
         myList = copyObj(myList)
         commit('setMylist', myList)
@@ -230,6 +231,7 @@ async function initMarketList(bsc, commit){
     for(let i in ids){
         const idx = ids[i]
         infos[idx].market = await loadMarketInfo(idx)
+        infos[idx].loading = false
         setMarketItem(idx, infos[idx], commit)
     }
     commit('setLoadDone', 'm')
