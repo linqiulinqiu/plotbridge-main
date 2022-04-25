@@ -50,7 +50,7 @@ async function ListenToWCoin(commit) {
 
 async function connect(commit) {
     try {
-        bsc = await pbwallet.connect(true)
+        bsc = await pbwallet.connect(false)
     } catch (e) {
         return e.message
     }
@@ -238,7 +238,7 @@ async function buyNFT(nft) {
     } else {
         // check allowance
         const allow = await checkAllowance(priceToken, bsc.ctrs.pbpuzzlehash.address)
-        if (allow.lt(price)) { 
+        if (allow.lt(price)) {
             const res = await approveAllow(priceToken, bsc.ctrs.pbmarket.address) // TODO: approve can use MAX_UINT256 for infinity
             res.fn = 'approve'
             return res

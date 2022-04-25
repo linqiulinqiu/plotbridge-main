@@ -64,12 +64,10 @@ export default {
   computed: mapState({
     current: "current",
     haveRedeem() {
-      if (this.redeemCache.length != 0) {
-        if (this.newToken in this.redeemCache) {
-          console.log("redeemCache", this.redeemCache);
+      for (let i in redeemCache) {
+        if (this.newToken == i) {
           return true;
         }
-        return false;
       }
       return false;
     },
@@ -125,9 +123,6 @@ export default {
             redeemCache[key] = ci;
           }
         }
-        console.log("rds", redeemCache);
-      } else {
-        console.log("redeemCache already load, skip loading:", redeemCache);
       }
       this.loadPair();
     },
