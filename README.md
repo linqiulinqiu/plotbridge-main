@@ -1,4 +1,4 @@
-# poltnetwork
+# plotbridge-testnet
 
 ## Project setup
 ```
