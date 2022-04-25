@@ -26,7 +26,7 @@ export default new Vuex.Store({
             state.baddr = baddr
         },
         setLoadDone(state, done) {
-            if(!state.loadDone.includes){
+            if(!state.loadDone.includes(done)){
                 state.loadDone = state.loadDone.concat(done)
             }
         },
