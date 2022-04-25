@@ -282,13 +282,6 @@ function startKeeper(_bsc, commit) {
             }
         })
     }
-    if(bsc.ctrs.pbmarket.filters.OffSale){
-        bsc.ctrs.pbmarket.on(bsc.ctrs.pbmarket.filters.OffSale, async function (evt) {
-            if (evt.event == "OffSale") {
-                await updateMarketListItem(evt.args.tokenId, commit)
-            }
-        })
-    }
 }
 
 exports.startKeeper = startKeeper
