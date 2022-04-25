@@ -76,29 +76,19 @@ async function getMintAbles() {
     return mintAbles
 }
 async function mintPBT() {
-    try {
-        const mintfee = await bsc.ctrs.pbt.mintFee()
-        const options = {}
-        if (mintfee[0] == ethers.constants.AddressZero) {
-            options.value = mintfee[1]
-        } else {
-            const ctr = pbwallet.erc20_contract(mintfee[0])
-            const allow = await ctr.allowance(bsc.addr, bsc.ctrs.pbt.address)
-            if (mintfee[1].gt(allow)) {
-                const reciept = await ctr.approve(bsc.ctrs.pbt.address, mintfee[1].mul(10000))
-            }
+    const mintfee = await bsc.ctrs.pbt.mintFee()
+    const options = {}
+    if (mintfee[0] == ethers.constants.AddressZero) {
+        options.value = mintfee[1]
+    } else {
+        const ctr = pbwallet.erc20_contract(mintfee[0])
+        const allow = await ctr.allowance(bsc.addr, bsc.ctrs.pbt.address)
+        if (mintfee[1].gt(allow)) {
+            const reciept = await ctr.approve(bsc.ctrs.pbt.address, mintfee[1].mul(10000))
         }
-        const res = await bsc.ctrs.pbt.mint(options)
-        return res
-    } catch (e) {
-        let text = e.message
-        if ('data' in e) {
-            if ('message' in e.data) {
-                text = e.data.message
-            }
-        }
-        return text
     }
+    const res = await bsc.ctrs.pbt.mint(options)
+    return res
 }
 async function burnWcoin(amount, coinInfo) {
     const ctr = bsc.ctrs[coinInfo.ctrname]
