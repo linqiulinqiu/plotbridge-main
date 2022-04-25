@@ -1,43 +1,48 @@
 <template>
   <el-col id="redeem">
     <el-col v-if="this.oldBalance.gt(0)">
-      <p>{{ $t("old-balance") }}:{{ this.obStr }}</p>
-      <el-col>
-        <el-input
-          type="text"
-          v-model="amount"
-          clearable
-          maxlength="20"
-          suffix-icon="el-icon-edit"
-        ></el-input>
+      <el-col v-if="haveRedeem">
+        <p>{{ $t("old-balance") }}:{{ this.obStr }}</p>
+        <el-col>
+          <el-input
+            type="text"
+            v-model="amount"
+            clearable
+            maxlength="20"
+            suffix-icon="el-icon-edit"
+          ></el-input>
 
-        <ApproveButton
-          :bsc="bsc"
-          :token="this.oldToken"
-          :spender="this.bsc.ctrs.tokenredeem.address"
-          :min-req="this.oldBalance"
-        >
-          <el-button @click="all">{{ $t("all") }}</el-button>
-          <el-button @click="redeem" type="primary" :loading="redeeming">{{
-            $t("redeem")
-          }}</el-button>
-        </ApproveButton>
+          <ApproveButton
+            :bsc="bsc"
+            :token="this.oldToken"
+            :spender="this.bsc.ctrs.tokenredeem.address"
+            :min-req="this.oldBalance"
+          >
+            <el-button @click="all">{{ $t("all") }}</el-button>
+            <el-button @click="redeem" type="primary" :loading="redeeming">{{
+              $t("redeem")
+            }}</el-button>
+          </ApproveButton>
+        </el-col>
+        <p>
+          {{ $t("rd-info") }}
+        </p>
+        <p v-if="this.amount">
+          {{
+            $t("rd-rate", {
+              amount: parseFloat(this.amount),
+              oldsymbol: this.oldSymbol,
+              newsymbol: this.newSymbol,
+            })
+          }}
+        </p>
       </el-col>
-      <p>
-        {{ $t("rd-info") }}
-      </p>
-      <p v-if="this.amount">
-        {{
-          $t("rd-rate", {
-            amount: parseFloat(this.amount),
-            oldsymbol: this.oldSymbol,
-            newsymbol: this.newSymbol,
-          })
-        }}
-      </p>
+      <el-col v-else>
+        <p>{{ $t("redeem-notice2") }}</p>
+      </el-col>
     </el-col>
     <el-col v-else>
-      <p>{{$t('redeem-notice')}}</p>
+      <p>{{ $t("redeem-notice") }}</p>
     </el-col>
   </el-col>
 </template>
@@ -45,7 +50,6 @@
 import { mapState } from "vuex";
 import ApproveButton from "../lib/ApproveButton.vue";
 import market from "../../market";
-import pbwallet from "pbwallet";
 import { ethers } from "ethers";
 import tokens from "../../tokens";
 import debounce from "lodash/debounce";
@@ -58,8 +62,17 @@ export default {
     ApproveButton,
   },
   computed: mapState({
-    redeemBalance: "redeemBalance",
     current: "current",
+    haveRedeem() {
+      if (this.redeemCache.length != 0) {
+        if (this.newToken in this.redeemCache) {
+          console.log("redeemCache", this.redeemCache);
+          return true;
+        }
+        return false;
+      }
+      return false;
+    },
   }),
   data() {
     return {
@@ -112,6 +125,7 @@ export default {
             redeemCache[key] = ci;
           }
         }
+        console.log("rds", redeemCache);
       } else {
         console.log("redeemCache already load, skip loading:", redeemCache);
       }
@@ -124,6 +138,7 @@ export default {
         this.newSymbol = await tokens.symbol(this.newToken);
         this.oldSymbol = await tokens.symbol(this.oldToken);
         this.oldBalance = await tokens.balance(this.oldToken);
+        console.log("oldBalance", this.oldBalance);
       }
     },
     all: async function () {
