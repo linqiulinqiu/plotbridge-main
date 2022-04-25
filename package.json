@@ -14,7 +14,7 @@
     "moment": "^2.29.3",
     "pbwallet": "github:tgarm/pbwallet#0.3.1",
     "pbweb-nftkeeper": "bitbucket:plotnet/pbweb-nftkeeper#0.2.18",
-    "pbweb-ui": "bitbucket:plotnet/pbweb-ui#0.0.14",
+    "pbweb-ui": "bitbucket:plotnet/pbweb-ui#0.1.0",
     "vue": "^2.6.11",
     "vue-async-computed": "^3.9.0",
     "vue-clipboard2": "^0.3.3",

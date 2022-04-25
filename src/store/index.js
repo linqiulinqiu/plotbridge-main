@@ -14,7 +14,8 @@ export default new Vuex.Store({
         marketList: {},
         mySaleList: {},
         WBalance: 0,
-        loadDown: false
+        loadDone: '',
+        
     },
     mutations: {
         setBsc(state, bsc) {
@@ -24,8 +25,10 @@ export default new Vuex.Store({
         setBaddr(state, baddr) {
             state.baddr = baddr
         },
-        setLoadDown(state, boolean) {
-            state.loadDown = boolean
+        setLoadDone(state, done) {
+            if(!state.loadDone.includes){
+                state.loadDone = state.loadDone.concat(done)
+            }
         },
         setCurrentPbtId(state, pbtId) {
             if (pbtId != state.current.pbtId) {

@@ -5,16 +5,9 @@ import {
 import pbwallet from "pbwallet"
 import keeper from "pbweb-nftkeeper";
 let bsc = {}
-let myList = {}
-let marketList = {}
-const ptInfos = {}
-ptInfos[ethers.constants.AddressZero] = {
-    symbol: 'BNB',
-    decimals: 18
-}
 
 async function connect(commit) {
-    bsc = await market.connect(commit)
+    bsc = await pbwallet.connect(true)
     if (typeof (bsc) == 'string') {
         return bsc
     } else {
@@ -26,37 +19,12 @@ async function connect(commit) {
     return false
 }
 
-function fix_uri(uri) {
-    if (uri.startsWith('ipfs:')) {
-        return uri.replace('ipfs://', 'https://ipfs.io/ipfs/')
-    } else {
-        return uri
-    }
-}
 async function getCoinTypes(pid) {
     const id = ethers.BigNumber.from(pid)
     const cointype = await bsc.ctrs.pbpuzzlehash.pbtCoinTypes(id)
     return cointype
 }
-async function nftBriefInfo(id) {
-    const uri = await bsc.ctrs.pbt.tokenURI(id.toNumber())
-    let meta = {}
-    try {
-        const metaData = await fetch(fix_uri(uri))
-        const img = await metaData.json()
-        meta = metaData
-        meta['image'] = await fix_uri(String(img.image))
-    } catch (e) {
-        meta['image'] = "https://app.plotbridge.net/img/loading.png"
-    }
-    const info = {
-        id: id.toNumber(),
-        uri: uri,
-        meta: meta,
-    }
-    return info
 
-}
 async function loadMarketinfo(id) {
     const pbt = bsc.ctrs.pbt
     const sinfo = await bsc.ctrs.pbmarket.getSaleInfo(pbt.address, Number(id))
@@ -97,8 +65,11 @@ async function loadlist_brief(addr) {
     const cnt = await bsc.ctrs.pbt.balanceOf(addr)
     const briefList = {}
     for (let i = 0; i < cnt; i++) {
+        console.log('load user PBT', i)
         const idx = await bsc.ctrs.pbt.tokenOfOwnerByIndex(addr, i)
-        const info = await nftBriefInfo(idx)
+        console.log('index', idx)
+        const info = false;// await nftBriefInfo(idx)
+        console.log('nft info', info)
         const key = String(idx)
         briefList[key] = info
     }

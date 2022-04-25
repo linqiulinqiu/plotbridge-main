@@ -12,7 +12,7 @@
         >{{ $t("mintPBT") }}
       </el-button>
     </el-col>
-    <el-col v-if="loadDown">
+    <el-col>
       <el-col v-if="Object.keys(this.myList).length > 0" class="nftarea">
         <el-col class="nftlist">
           <MylistPage
@@ -32,21 +32,20 @@
           ></el-pagination>
         </el-col>
       </el-col>
-      <el-col v-else class="content">
+      <el-col v-else-if="loadDone.includes('p')" class="content">
         <el-col>
           {{ $t("no-nft") }}
         </el-col>
       </el-col>
-    </el-col>
-    <el-col v-else class="load">
-      {{ $t("data") }}
+      <el-col v-else>
+      {{$t('data')}}
+      </el-col>
     </el-col>
     <el-col class="bottom-box" v-if="isMarket">
       <router-link class="bottom" :to="this.market"
         >{{ $t("to-market") }}
       </router-link>
     </el-col>
-
     <el-dialog :visible.sync="mintVisible">
       <el-card>
         <MintPBT
@@ -75,7 +74,7 @@ export default {
   computed: mapState({
     bsc: "bsc",
     current: "current",
-    loadDown: "loadDown",
+    loadDone: "loadDone",
     nftlist(state) {
       let pageSize = this.pageSize;
       const start = this.pageNum * pageSize - pageSize;
