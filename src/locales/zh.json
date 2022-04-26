@@ -19,7 +19,7 @@
     "b-guide3":"购买NFT后，请检查是否有取款地址，如果有，请重新绑定上自己的取款地址。",
     "beyond-limit":"超出金额限制后，交易时间会大幅增加，请耐心等待",
     
-    "connect":"请连接钱包",
+    "connect":"连接钱包",
     "cancel":"取消",
     "change-price":"更改出售信息",
     "change-waddr":"更改取款地址",
@@ -142,7 +142,7 @@
     "redeem-notice2":"兑换功能即将上线",
 
 
-
+    "save":"保存",
     "select-coin":"选择币种",
     "sell":"售卖",
     "send-tomk":"发送到市场",
