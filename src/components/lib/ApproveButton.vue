@@ -43,20 +43,20 @@ export default {
   },
   methods: {
     checkAllowance: async function () {
-      if(this.token==ethers.constants.AddressZero){
-          this.needApprove = false
-          this.checking = false
-      }else{
-          this.checking = true;
-          let minReq = this.minReq;
-          if (isNaN(minReq)) minReq = 0;
-          const allow = await tokens.allowance(this.token, this.spender);
-          if (allow && allow.gte(this.minReq)) {
-            this.needApprove = false;
-          } else {
-            this.needApprove = true;
-          }
-          this.checking = false;
+      if (this.token == ethers.constants.AddressZero) {
+        this.needApprove = false;
+        this.checking = false;
+      } else {
+        this.checking = true;
+        let minReq = this.minReq;
+        if (isNaN(minReq)) minReq = 0;
+        const allow = await tokens.allowance(this.token, this.spender);
+        if (allow && allow.gte(this.minReq)) {
+          this.needApprove = false;
+        } else {
+          this.needApprove = true;
+        }
+        this.checking = false;
       }
     },
     approve: async function () {
@@ -65,11 +65,12 @@ export default {
         const done = await tokens.approve(this.token, this.spender);
         if (done) {
           await this.checkAllowance();
+          this.approving = false;
         }
       } catch (e) {
         console.log("maybe rejected?", e);
+        this.approving = false;
       }
-      this.approving = false;
     },
   },
 };

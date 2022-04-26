@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <el-col v-if="loadDown">
+    <el-col>
       <el-col v-if="Object.keys(this.mySaleList).length > 0">
         <ul>
           <li v-for="nft in this.mslist" :key="nft.uri" class="marketlist">
@@ -19,11 +19,9 @@
         </el-col>
       </el-col>
       <el-col v-else>
-        <h4>{{ $t("no-mysale") }}</h4>
+        <h4 v-if="loadDone.includes('m')">{{ $t("no-mysale") }}</h4>
+        <h4 v-else>{{ $t('data') }}</h4>
       </el-col>
-    </el-col>
-    <el-col v-else>
-      {{ $t("data") }}
     </el-col>
   </el-col>
 </template>
@@ -33,7 +31,7 @@ export default {
   name: "MySale",
   props: ["mySaleList", "pageSize"],
   computed: mapState({
-    loadDown: "loadDown",
+    loadDone: "loadDone",
     mslist() {
       const start = this.mypageNum * this.pageSize - this.pageSize;
       const down = this.mypageNum * this.pageSize;

@@ -72,7 +72,7 @@
 <script>
 import { mapState } from "vuex";
 import market from "../../market";
-import data from "../../data";
+import keeper from "../../keeper";
 import { i18n, setup } from "../../locales";
 import store from "../../store";
 
@@ -148,7 +148,7 @@ export default {
     connect_wallet: async function () {
       this.connect_loading = true;
       const commit = this.$store.commit;
-      const bsc = await data.connect(commit);
+      const bsc = await market.connect(commit);
       if (typeof bsc == "string" || !bsc) {
         if (bsc) {
           this.$message.error(`Connect failed: ${bsc}`);
@@ -175,11 +175,7 @@ export default {
         this.connect_loading = false;
       } else {
         commit("setBaddr", bsc.addr);
-        const d = await data.loadAlllists_brief(store);
-        if (d == "down") {
-          this.$store.commit("setLoadDown", true);
-        }
-        await data.loadAlllists_detail(store);
+        await keeper.startKeeper(bsc, commit)
         this.connect_loading = false;
       }
     },

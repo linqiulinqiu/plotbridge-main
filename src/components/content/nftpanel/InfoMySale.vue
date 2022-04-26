@@ -11,7 +11,7 @@
         ></el-input>
         <el-select v-model="ptName" class="selecToken">
           <el-option value="BNB" key="BNB" label="BNB"></el-option>
-          <el-option value="USDT" key="USDT" label="USDT"></el-option>
+          <el-option value="PBP" key="PBP" label="PBP"></el-option>
         </el-select>
       </p>
       <label for="description" class="labels">{{ $t("desc") }}</label>
@@ -57,10 +57,20 @@ export default {
   props: ["clearPbtId", "curNFT"],
   computed: mapState({ bcoin: "bcoin", current: "current" }),
   data() {
+      let price = ''
+      let desc = ''
+      let ptn = 'BNB'
+    if('market' in this.curNFT){
+        price = this.curNFT.market.price
+        desc = this.curNFT.market.desc
+        if(this.curNFT.market.ptName){
+            ptn = this.curNFT.market.ptName
+        }
+    }
     return {
-      nftPrice: "",
-      nftDesc: "",
-      ptName: "BNB",
+      nftPrice: price,
+      nftDesc: desc,
+      ptName: ptn,
       change_loading: false,
       re_loading: false,
     };
