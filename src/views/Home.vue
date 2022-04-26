@@ -1,15 +1,20 @@
 <template>
   <el-col id="home">
     <div class="notice">
-      <h2>{{$t('home1')}}</h2>
-      <p>{{$t('home2')}}</p>
+      <h2>{{ $t("home1") }}</h2>
+      <p>{{ $t("home2") }}</p>
+      <ConnectUs />
     </div>
   </el-col>
 </template>
 
 <script>
+import ConnectUs from "../components/lib/ConnectUs.vue";
 export default {
   name: "Home",
+  components: {
+    ConnectUs,
+  },
 };
 </script>
 
@@ -24,11 +29,11 @@ export default {
   width: 100%;
   background: url("../assets/image/banner.jpg") center no-repeat;
   background-size: cover;
- position: relative;
+  position: relative;
 }
-.notice{
-position: absolute;
-left: 43vw;
-top: 28vh;
+.notice {
+  position: absolute;
+  left: 43vw;
+  top: 28vh;
 }
 </style>
