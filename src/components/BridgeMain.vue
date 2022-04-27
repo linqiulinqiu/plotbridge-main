@@ -119,6 +119,6 @@ export default {
 #balance #bridge-fee {
   position: absolute;
   top: 5.25px;
-  left: 340px;
+  left: 380px;
 }
 </style>
