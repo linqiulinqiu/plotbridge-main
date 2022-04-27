@@ -104,7 +104,7 @@ export default {
         this.time_msg = times.formatRelTS(
           Math.floor(Date.now() / 1000) + toend
         );
-        this.pstat = "s";
+        this.pstat = "e";
       }
       return this.time_msg;
     },
