@@ -49,9 +49,10 @@
             <span slot="content" class="font">
               {{ $t("bsc") }}: {{ baddr }}
             </span>
-            <el-button class="font">{{
-              baddr.substr(0, 6) + "..." + baddr.substr(-4, 4)
-            }}</el-button>
+            <el-button class="font">
+              {{ baddr.substr(0, 6) + "..." + baddr.substr(-4, 4) }}
+              <span v-if="testnet">{{ testnet }}</span>
+            </el-button>
           </el-tooltip>
         </span>
       </el-col>
@@ -66,6 +67,41 @@
         </el-select>
       </el-col>
     </el-row>
+    <el-dialog
+      :visible.sync="connect_faild"
+      :title="this.$t('con-failed')"
+      :center="false"
+      :span="10"
+    >
+      <el-card>
+        <h4>{{ $t("con-f1") }}</h4>
+        <p>{{ $t("con-f2") }}</p>
+        <p>
+          {{ $t("con-f3") }}
+        </p>
+        <span>
+          <a
+            href="https://chrome.google.com/webstore/search/metamask"
+            target="_blank"
+          >
+            Chrome
+          </a>
+          <br />
+          <a
+            href="https://chrome.google.com/webstore/search/metamask"
+            target="_blank"
+            >Brave</a
+          >
+          <br />
+          <a
+            href="https://addons.mozilla.org/firefox/addon/ether-metamask"
+            target="_blank"
+          >
+            Firefox
+          </a>
+        </span>
+      </el-card>
+    </el-dialog>
   </div>
 </template>
 
@@ -74,7 +110,6 @@ import { mapState } from "vuex";
 import market from "../../market";
 import keeper from "../../keeper";
 import { i18n, setup } from "../../locales";
-import store from "../../store";
 
 function versions() {
   const vs = {};
@@ -119,6 +154,22 @@ export default {
         { tag: this.$t("doc"), link: "/Doc" },
       ];
     },
+    testnet: function (state) {
+      console.log("state bsc", state.bsc);
+      if ("chain" in state.bsc) {
+        if ("chainNetName" in state.bsc.chain) {
+          switch (state.bsc.chain.chainNetName) {
+            case "bnbt":
+              return "(TESTNET)";
+            case "bnb":
+              return "";
+            default:
+              return `(${state.bsc.chain.chainNetName})`;
+          }
+        }
+      }
+      return "";
+    },
     menuIndex() {
       const path = tags(this.$route.path);
       return path;
@@ -138,6 +189,7 @@ export default {
       ],
       lang: i18n.locale,
       versions: versions(),
+      connect_faild: false,
     };
   },
   methods: {
@@ -153,29 +205,12 @@ export default {
         if (bsc) {
           this.$message.error(`Connect failed: ${bsc}`);
         } else {
-          const h = this.$createElement;
-          this.$msgbox({
-            title: "Connect failed",
-            message: h("div", null, [
-              h("h4", null, "A BSC wallet is required for further operation,"),
-              h(
-                "p",
-                null,
-                "make sure you have MetaMask or other BSC wallet installed."
-              ),
-              h(
-                "p",
-                null,
-                "Or, MetaMask can be install via the official plugin store of your web-browser"
-              ),
-              h("p", null, "(Chrome),(Firefox),(Brave)"),
-            ]),
-          });
+          this.connect_faild = true;
         }
         this.connect_loading = false;
       } else {
         commit("setBaddr", bsc.addr);
-        await keeper.startKeeper(bsc, commit)
+        keeper.startKeeper(bsc, commit);
         this.connect_loading = false;
       }
     },

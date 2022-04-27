@@ -19,7 +19,7 @@
     "b-guide3":"购买NFT后，请检查是否有取款地址，如果有，请重新绑定上自己的取款地址。",
     "beyond-limit":"超出金额限制后，交易时间会大幅增加，请耐心等待",
     
-    "connect":"请连接钱包",
+    "connect":"连接钱包",
     "cancel":"取消",
     "change-price":"更改出售信息",
     "change-waddr":"更改取款地址",
@@ -35,6 +35,10 @@
     "contact":"联系我们",
     "contact1":"- Discord: <a href='https://discord.com/invite/xHC9fBfeVW' target='_blank'>https://discord.com/invite/xHC9fBfeVW</a> <br>- 电报: <a href='https://t.me/PlotBridge' target='_blank'>https://t.me/PlotBridge</a><br>- 推特: <a href='https://twitter.com/plot_bridge' target='_blank'>https://twitter.com/plot_bridge</a>",
     "claim":"领取",
+    "con-failed":"连接失败",
+    "con-f1":"进一步操作需要BSC钱包，",
+    "con-f2":"确保已安装MetaMask钱包或者其他BSC钱包，",
+    "con-f3":"或者，您可以通过您的浏览器官方插件商店安装MetaMask钱包。",
 
     "deposit":"存款",
     "desc":"描述",
@@ -129,6 +133,7 @@
     "presale":"预售",
     "prepay":"预计支付",
     "purchase":"可购买",
+    "p-end":"预售结束",
 
 
 
@@ -142,7 +147,7 @@
     "redeem-notice2":"兑换功能即将上线",
 
 
-
+    "save":"保存",
     "select-coin":"选择币种",
     "sell":"售卖",
     "send-tomk":"发送到市场",

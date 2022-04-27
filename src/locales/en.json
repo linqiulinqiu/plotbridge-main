@@ -35,7 +35,11 @@
     "cpright3":"All third party trademarks are the property of their respective owners",
     "contact":"Contact us",
     "contact1":"- Discord: <a href='https://discord.com/invite/xHC9fBfeVW' target='_blank'>https://discord.com/invite/xHC9fBfeVW</a> <br>- Telegram: <a href='https://t.me/PlotBridge' target='_blank'>https://t.me/PlotBridge</a><br>- Twitter: <a href='https://twitter.com/plot_bridge' target='_blank'>https://twitter.com/plot_bridge</a>",
-    "claim":"claim",
+    "claim":"Claim",
+    "con-failed":"Connect failed",
+    "con-f1":"A BSC wallet is required for further operation",
+    "con-f2":"make sure you have MetaMask or other BSC wallet installed.",
+    "con-f3":"Or, MetaMask can be install via the official plugin store of your web-browser",
 
     "deposit":"Deposit",
     "desc":"description",
@@ -130,6 +134,7 @@
     "presale":"Presale",
     "prepay":"Expected payment",
     "purchase":"Avaliable for purchase",
+    "p-end":"Presale ended",
    
     "redeem":"Upgrade",
     "rd-info":"Tokens in previous version of PlotBridge can be upgraded here.",
@@ -140,7 +145,7 @@
     "redeem-notice":"Not to upgrade tokens",
     "redeem-notice1":"Upgrade function will online soon",
 
-
+    "save":"Save",
     "select-coin":"Select Coin",
     "sell":"Sell",
     "send-tomk":"Send to the market",

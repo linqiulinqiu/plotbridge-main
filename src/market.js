@@ -23,11 +23,6 @@ function loadCoinlist() {
     return coinlist
 }
 
-function coinContract(coin) {
-    const wcoin = 'w' + coin.toLowerCase()
-    return bsc.ctrs[wcoin]
-}
-
 async function ListenToWCoin(commit) {
     const coinlist = loadCoinlist()
     const wBalance = {}
@@ -50,7 +45,7 @@ async function ListenToWCoin(commit) {
 
 async function connect(commit) {
     try {
-        bsc = await pbwallet.connect(false)
+        bsc = await pbwallet.connect(true)
     } catch (e) {
         return e.message
     }

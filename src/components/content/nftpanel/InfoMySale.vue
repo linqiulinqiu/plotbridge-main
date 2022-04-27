@@ -31,7 +31,7 @@
           :loading="change_loading"
           class="btn-infoms"
         >
-          {{ $t("change-price") }}
+          {{ $t("save") }}
         </el-button>
         <el-button
           @click="retreatNFT"
