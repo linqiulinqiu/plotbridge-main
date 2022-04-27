@@ -23,11 +23,6 @@ function loadCoinlist() {
     return coinlist
 }
 
-function coinContract(coin) {
-    const wcoin = 'w' + coin.toLowerCase()
-    return bsc.ctrs[wcoin]
-}
-
 async function ListenToWCoin(commit) {
     const coinlist = loadCoinlist()
     const wBalance = {}

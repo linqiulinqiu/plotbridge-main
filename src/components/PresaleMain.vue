@@ -40,10 +40,10 @@
       </el-col>
     </el-col>
     <el-col v-else-if="pstat == 'e'">
-      <p>Presale ended</p>
+      <p>{{ $t("p-end") }}</p>
     </el-col>
     <el-col v-else>
-      <p>Loading</p>
+      <p>{{ $t("data") }}</p>
     </el-col>
   </el-col>
 </template>
@@ -79,7 +79,7 @@ export default {
       payment: "--",
       buy_loading: false,
       balance: "",
-      bnbBalance:false,
+      bnbBalance: false,
       working: true,
     };
   },
@@ -111,7 +111,7 @@ export default {
     refresh: async function () {
       const token = this.bsc.ctrs.pbp.address;
       const pkgs = await this.bsc.ctrs.presale.pkgs();
-      console.log('pkgs', pkgs)
+      console.log("pkgs", pkgs);
       if (pkgs[0].length > 0) this.working = true;
       for (let i in pkgs[0]) {
         const remain = pkgs[0][i].sub(pkgs[1][i]);
@@ -120,31 +120,36 @@ export default {
           this.remain = await tokens.format(token, remain);
           this.price = await tokens.format("", pkgs[2][i]);
           this.price_str = await tokens.format("", pkgs[2][i].div(1e9));
-          break
+          break;
         }
       }
       const buyable = await this.bsc.ctrs.presale.buyable();
       this.buyable = await tokens.format(token, buyable);
       const bl = await tokens.balance(token);
       this.balance = await tokens.format(token, bl);
-      this.bnbBalance = await tokens.balance('');
+      this.bnbBalance = await tokens.balance("");
     },
     max_amount: async function () {
       // TODO: can be more accurate
-      const price = await tokens.parse('',this.price_str)
-      const gasFee = await tokens.parse('','0.001') // TODO: use fixed estimation for gas-fee, can be more accurate
-      if(this.bnbBalance.lte(gasFee)){
-          this.amount = 0
-      }else{
-        const affordable = this.bnbBalance.sub(gasFee).div(price)
+      const price = await tokens.parse("", this.price_str);
+      const gasFee = await tokens.parse("", "0.001"); // TODO: use fixed estimation for gas-fee, can be more accurate
+      if (this.bnbBalance.lte(gasFee)) {
+        this.amount = 0;
+      } else {
+        const affordable = this.bnbBalance.sub(gasFee).div(price);
         this.amount = Math.min(this.remain, this.buyable, affordable);
       }
     },
     buy: async function () {
       this.buy_loading = true;
+      if (this.amount == 0 && this.amount == "") {
+        this.buy_loading = false;
+        return false;
+      }
       const token = this.bsc.ctrs.pbp.address;
       const amount = await tokens.parse(token, this.amount);
       const payment = await tokens.parse("", this.payment);
+
       try {
         const obj = this;
         const receipt = await this.bsc.ctrs.presale.buy(amount, {
