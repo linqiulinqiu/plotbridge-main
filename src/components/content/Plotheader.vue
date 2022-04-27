@@ -49,9 +49,10 @@
             <span slot="content" class="font">
               {{ $t("bsc") }}: {{ baddr }}
             </span>
-            <el-button class="font">{{
-              baddr.substr(0, 6) + "..." + baddr.substr(-4, 4)
-            }}</el-button>
+            <el-button class="font">
+                {{baddr.substr(0, 6) + "..." + baddr.substr(-4, 4)}}
+                <span v-if="testnet">{{ testnet }}</span>
+           </el-button>
           </el-tooltip>
         </span>
       </el-col>
@@ -118,6 +119,22 @@ export default {
         { tag: this.$t("presale"), link: "/Presale" },
         { tag: this.$t("doc"), link: "/Doc" },
       ];
+    },
+    testnet: function(state){
+        console.log('state bsc', state.bsc)
+        if('chain' in state.bsc){
+            if('chainNetName' in state.bsc.chain){
+                switch(state.bsc.chain.chainNetName){
+                    case 'bnbt':
+                        return '(TESTNET)'
+                    case 'bnb':
+                        return ''
+                    default:
+                        return `(${state.bsc.chain.chainNetName})`
+                }
+            }
+        }
+        return ''
     },
     menuIndex() {
       const path = tags(this.$route.path);
