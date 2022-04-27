@@ -5,7 +5,7 @@
     "approve":"授权",
     "add-token-tip":"添加当前代币信息到metaMask（小狐狸）钱包中",
     "add-to-wallet":"添加{coin}到钱包",
-    "add-lp":"增加{coin}流动性",
+    "add-lp":"增加{coin}-{coin1}流动性",
 
     "balance":"余额",
     "bridge":"桥梁",
