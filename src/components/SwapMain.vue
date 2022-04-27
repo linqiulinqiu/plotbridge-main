@@ -96,18 +96,18 @@
         <el-button @click="watchToken" v-if="this.watchCoin" class="btn-link">{{
           $t("add-to-wallet", { coin: this.watchCoin.bsymbol })
         }}</el-button>
-        <el-button v-if="this.watchCoin.bsymbol == 'PBP'" class="btn-link">
+        <el-button v-if="this.watchCoin" class="btn-link">
           <a
             target="_blank"
             :href="this.lp_pre + 'add/BNB' + '/' + this.watchCoin.address"
-            >{{ $t("add-lp", { coin: watchCoin.bsymbol }) }}
+            >{{ $t("add-lp", { coin: watchCoin.bsymbol, coin1: "BNB" }) }}
           </a>
         </el-button>
         <el-button v-if="this.watchBcoin" class="btn-link">
           <a
             target="_blank"
             :href="this.lp_pre + 'add/' + pbpAddr + '/' + watchBcoin.address"
-            >{{ $t("add-lp", { coin: watchBcoin.bsymbol }) }}
+            >{{ $t("add-lp", { coin: watchBcoin.bsymbol, coin1: "PBP" }) }}
           </a>
         </el-button>
       </el-col>
@@ -172,17 +172,13 @@ export default {
       return false;
     },
     watchBcoin() {
-      const wsymbols = pbwallet.wcoin_list("bsymbol");
-      const blist = [];
-      for (let i in wsymbols) {
-        blist.push(pbwallet.wcoin_info(wsymbols[i], "bsymbol"));
-      }
+      const list = this.watchlist();
+      console.log("list", list);
       if (this.from_coin && this.from_coin != "") {
-        for (let k in blist) {
-          if (this.from_coin == blist[k].address) {
-            return blist[k];
+        for (let i in list) {
+          if (this.from_coin == list[i].address) {
+            if (list[i].bsymbol != "PBP") return list[i];
           }
-          return false;
         }
       }
       return false;
@@ -204,7 +200,7 @@ export default {
 
   data() {
     return {
-      lp_pre: "https://pancake.kiemtienonline360.com/#/",
+      lp_pre: "https://pancakeswap.finance/",
       allwlist: [],
       BNBaddr: ethers.constants.AddressZero,
       from_balance: false,
@@ -243,7 +239,8 @@ export default {
       for (let i in this.allwlist) {
         const item = this.allwlist[i];
         if (item.address == this.from_coin) {
-          await market.watchToken(item.bsymbol);
+          const coin = item.bsymbol.toLowerCase();
+          await market.watchToken(coin);
         }
       }
     },
@@ -339,18 +336,18 @@ export default {
       }
     },
     watchlist: function () {
-      const blist = pbwallet.wcoin_list("bsymbol");
       const coinlist = this.allwlist;
+      const busdaddr = this.bsc.ctrs.busd.address;
+      const usdtaddr = this.bsc.ctrs.usdt.address;
       const list = {};
       for (let i in coinlist) {
-        if (coinlist[i].address != ethers.constants.AddressZero) {
+        const addr = coinlist[i].address;
+        if (
+          addr != ethers.constants.AddressZero &&
+          addr != busdaddr &&
+          addr != usdtaddr
+        ) {
           list[coinlist[i].address] = coinlist[i];
-        }
-      }
-      for (let j in list) {
-        for (let k in blist) {
-          if (list[j] != undefined)
-            if (list[j].bsymbol == blist[k]) delete list[j];
         }
       }
       return list;

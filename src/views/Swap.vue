@@ -32,7 +32,7 @@ export default {
   }),
   data() {
     return {
-      working: false,
+      working: true,
     };
   },
 };

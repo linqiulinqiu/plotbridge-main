@@ -104,14 +104,13 @@ export default {
         this.time_msg = times.formatRelTS(
           Math.floor(Date.now() / 1000) + toend
         );
-        this.pstat = "s";
+        this.pstat = "e";
       }
       return this.time_msg;
     },
     refresh: async function () {
       const token = this.bsc.ctrs.pbp.address;
       const pkgs = await this.bsc.ctrs.presale.pkgs();
-      console.log("pkgs", pkgs);
       if (pkgs[0].length > 0) this.working = true;
       for (let i in pkgs[0]) {
         const remain = pkgs[0][i].sub(pkgs[1][i]);

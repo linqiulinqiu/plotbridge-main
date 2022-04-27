@@ -4,7 +4,7 @@
     "approve":"Approve",
     "add-token-tip":"Add the current token information to the metamask Wallet",
     "add-to-wallet":"Add {coin} to wallet",
-    "add-lp":"Add {coin} Lp",
+    "add-lp":"Add {coin}-{coin1} Lp",
 
     "balance":"Balance",
     "bridge":"Bridge",

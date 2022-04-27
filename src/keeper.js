@@ -9,7 +9,6 @@ const ptInfos = {}
 
 async function getCoinTypes(pbtid) {
     const cointype = await bsc.ctrs.pbpuzzlehash.pbtCoinTypes(pbtid)
-    console.log("getCoinTypes", cointype)
     return cointype
 }
 
@@ -112,11 +111,9 @@ function setMarketItem(key, info, commit){
 }
 
 async function addToMyList(id, commit) {
-    console.log('add-to-mylist', myList, id)
     const key = n2str(id)
     if (!(key in myList)) {
         const info = await nftBriefInfo(id)
-        console.log('a-t-m info', info)
         info.pbxs = await loadPbxs(id)
         myList[key] = info
         commit("setMylist", copyObj(myList))
@@ -177,7 +174,6 @@ async function updateMarketListItem(id, commit) {
 
 async function initMyList(bsc, commit){
     const cnt = (await bsc.ctrs.pbt.balanceOf(bsc.addr)).toNumber()
-    console.log('init-my-list', cnt.toString())
     const ids = []
     for (let i = 0; i < cnt; i++) {
         const idx = (await bsc.ctrs.pbt.tokenOfOwnerByIndex(bsc.addr, i)).toString()
@@ -262,7 +258,6 @@ function startKeeper(_bsc, commit) {
     if (bsc.ctrs.pbpuzzlehash.filters.WithdrawPuzzleHashChanged) {
         bsc.ctrs.pbpuzzlehash.on(bsc.ctrs.pbpuzzlehash.filters.WithdrawPuzzleHashChanged, async function (evt) {
             if (evt.event == 'WithdrawPuzzleHashChanged') {
-                console.log("WithdrawPuzzleHashChangedr", evt)
                 await updateMyListItem(evt.args.pbtId, commit)
             }
         })
@@ -270,7 +265,6 @@ function startKeeper(_bsc, commit) {
     if (bsc.ctrs.pbpuzzlehash.filters.DepositPuzzleHashChanged) {
         bsc.ctrs.pbpuzzlehash.on(bsc.ctrs.pbpuzzlehash.filters.DepositPuzzleHashChanged, async function (evt) {
             if (evt.event == 'DepositPuzzleHashChanged') {
-                console.log("DepositPuzzleHashChanged", evt)
                 await updateMyListItem(evt.args.pbtId, commit)
             }
         })
