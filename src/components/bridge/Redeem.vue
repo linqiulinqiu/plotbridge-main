@@ -133,7 +133,6 @@ export default {
         this.newSymbol = await tokens.symbol(this.newToken);
         this.oldSymbol = await tokens.symbol(this.oldToken);
         this.oldBalance = await tokens.balance(this.oldToken);
-        console.log("oldBalance", this.oldBalance);
       }
     },
     all: async function () {

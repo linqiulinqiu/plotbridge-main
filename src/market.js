@@ -296,27 +296,30 @@ async function getLimit(ctrname) {
 }
 
 async function watchToken(coin) {
-    if (!bsc.provider) return false
-    const cinfo = pbwallet.wcoin_info(coin, 'symbol')
     let wcoin = ''
     let ctr = {}
     let img_url = ''
+    let decimals = ''
+    if (!bsc.provider) return false
+    const cinfo = pbwallet.wcoin_info(coin, 'symbol')
     if (cinfo) {
         ctr = bsc.ctrs[cinfo.ctrname]
         img_url = "https://app.plotbridge.net/img/" + cinfo.ctrname + '.png'
         wcoin = cinfo.bsymbol
+        decimals = await ctr.decimals()
     } else {
         const lowCoin = coin.toLowerCase()
         if (lowCoin in bsc.ctrs) {
             ctr = bsc.ctrs[lowCoin]
             img_url = "https://app.plotbridge.net/img/" + lowCoin + '.png'
             wcoin = coin
+            decimals = await ctr.decimals()
         }
     }
     const options = {
         address: ctr.address,
         symbol: wcoin,
-        decimals: await ctr.decimals(),
+        decimals: decimals,
         image: img_url
     }
     const added = await bsc.provider.send(

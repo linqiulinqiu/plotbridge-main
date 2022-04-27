@@ -155,7 +155,6 @@ export default {
       ];
     },
     testnet: function (state) {
-      console.log("state bsc", state.bsc);
       if ("chain" in state.bsc) {
         if ("chainNetName" in state.bsc.chain) {
           switch (state.bsc.chain.chainNetName) {

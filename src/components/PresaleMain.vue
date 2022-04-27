@@ -111,7 +111,6 @@ export default {
     refresh: async function () {
       const token = this.bsc.ctrs.pbp.address;
       const pkgs = await this.bsc.ctrs.presale.pkgs();
-      console.log("pkgs", pkgs);
       if (pkgs[0].length > 0) this.working = true;
       for (let i in pkgs[0]) {
         const remain = pkgs[0][i].sub(pkgs[1][i]);

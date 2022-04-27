@@ -30,7 +30,7 @@
               effect="light"
               :content="this.$t('add-token-tip')"
             >
-              <el-button size="mini" type="primary" @click="addToken">
+              <el-button size="mini" type="primary" @click.prevent="addToken">
                 {{ $t("add-token") }}
               </el-button>
             </el-tooltip>
@@ -66,7 +66,6 @@ import LPLink from "./bridge/LpLink.vue";
 import Withdraw from "./bridge/Withdraw.vue";
 import Redeem from "./bridge/Redeem.vue";
 import BridgeFee from "./bridge/BridgeFee.vue";
-
 import { mapState } from "vuex";
 import market from "../market";
 import pbwallet from "pbwallet";
@@ -97,7 +96,11 @@ export default {
   methods: {
     addToken: async function () {
       const coin = this.coinInfo.symbol;
-      await market.watchToken(coin);
+      try {
+        await market.watchToken(coin);
+      } catch (e) {
+        console.log("addtoen err", e);
+      }
     },
   },
 };
