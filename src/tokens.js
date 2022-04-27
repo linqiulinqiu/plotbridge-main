@@ -128,6 +128,11 @@ async function supply(ctraddr) {
     return await info.ctr.totalSupply()
 }
 
+async function decimals(ctraddr) {
+    const info = await tokenInfo(ctraddr)
+    return info.decimals
+}
+
 async function approve(ctraddr, spender) {
     const info = await tokenInfo(ctraddr)
     if (info.ctr.address != ethers.constants.AddressZero) {
@@ -148,6 +153,7 @@ function setbsc(b) {
 exports.allowance = allowance
 exports.approve = approve
 exports.balance = balance
+exports.decimals = decimals
 exports.format = formatToken
 exports.parse = parseToken
 exports.setbsc = setbsc

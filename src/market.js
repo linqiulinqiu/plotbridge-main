@@ -295,40 +295,28 @@ async function getLimit(ctrname) {
     return amount
 }
 
-async function watchToken(coin) {
-    let wcoin = ''
-    let ctr = {}
-    let img_url = ''
-    let decimals = ''
-    if (!bsc.provider) return false
-    const cinfo = pbwallet.wcoin_info(coin, 'symbol')
-    if (cinfo) {
-        ctr = bsc.ctrs[cinfo.ctrname]
-        img_url = "https://app.plotbridge.net/img/" + cinfo.ctrname + '.png'
-        wcoin = cinfo.bsymbol
-        decimals = await ctr.decimals()
-    } else {
-        const lowCoin = coin.toLowerCase()
-        if (lowCoin in bsc.ctrs) {
-            ctr = bsc.ctrs[lowCoin]
-            img_url = "https://app.plotbridge.net/img/" + lowCoin + '.png'
-            wcoin = coin
-            decimals = await ctr.decimals()
-        }
-    }
+async function watchToken(ctrname) {
+    const ctr = bsc.ctrs[ctrname]
+    const dec = await tokens.decimals(ctr.address)
+    const symbol = await tokens.symbol(ctr.address)
     const options = {
         address: ctr.address,
-        symbol: wcoin,
-        decimals: decimals,
-        image: img_url
+        symbol: symbol,
+        decimals: dec,
+        image: `/assets/logo/{ctrname}.png`
     }
-    const added = await bsc.provider.send(
-        'wallet_watchAsset', {
-            type: 'ERC20',
-            options: options
-        }
-    )
-    return added
+    try {
+        const added = await bsc.provider.send(
+            'wallet_watchAsset', {
+                type: 'ERC20',
+                options: options
+            }
+        )
+        return added
+    } catch (e) {
+        console.log('add watch err', e)
+
+    }
 }
 async function burnNFT(id) {
     const pbtId = ethers.BigNumber.from(id)

@@ -95,9 +95,8 @@ export default {
   },
   methods: {
     addToken: async function () {
-      const coin = this.coinInfo.symbol;
       try {
-        await market.watchToken(coin);
+        await market.watchToken(this.coinInfo.ctrname);
       } catch (e) {
         console.log("addtoen err", e);
       }
