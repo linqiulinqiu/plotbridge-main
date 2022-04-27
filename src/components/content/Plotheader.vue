@@ -68,9 +68,10 @@
       </el-col>
     </el-row>
     <el-dialog
-      :visible="connect_faild"
+      :visible.sync="connect_faild"
       :title="this.$t('con-failed')"
-      :span="12"
+      :center="false"
+      :span="10"
     >
       <el-card>
         <h4>{{ $t("con-f1") }}</h4>
@@ -78,17 +79,27 @@
         <p>
           {{ $t("con-f3") }}
         </p>
-        <p>
-          <a href="https://chrome.google.com/webstore/search/metamask">
+        <span>
+          <a
+            href="https://chrome.google.com/webstore/search/metamask"
+            target="_blank"
+          >
             Chrome
           </a>
           <br />
-          <a href="https://chrome.google.com/webstore/search/metamask">Brave</a>
+          <a
+            href="https://chrome.google.com/webstore/search/metamask"
+            target="_blank"
+            >Brave</a
+          >
           <br />
-          <a href="https://addons.mozilla.org/firefox/addon/ether-metamask">
+          <a
+            href="https://addons.mozilla.org/firefox/addon/ether-metamask"
+            target="_blank"
+          >
             Firefox
           </a>
-        </p>
+        </span>
       </el-card>
     </el-dialog>
   </div>
@@ -195,24 +206,6 @@ export default {
           this.$message.error(`Connect failed: ${bsc}`);
         } else {
           this.connect_faild = true;
-          const h = this.$createElement;
-          this.$msgbox({
-            title: "Connect failed",
-            message: h("div", null, [
-              h("h4", null, "A BSC wallet is required for further operation,"),
-              h(
-                "p",
-                null,
-                "make sure you have MetaMask or other BSC wallet installed."
-              ),
-              h(
-                "p",
-                null,
-                "Or, MetaMask can be install via the official plugin store of your web-browser"
-              ),
-              h("p", null, "(Chrome),(Firefox),(Brave)"),
-            ]),
-          });
         }
         this.connect_loading = false;
       } else {
