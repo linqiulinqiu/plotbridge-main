@@ -57,35 +57,7 @@
         </el-col>
         <el-col v-else>
           <p>{{ $t("getaddr") }}</p>
-          <el-col>
-            <el-link
-              class="a-link"
-              icon="el-icon-chat-line-square"
-              type="primary"
-              href="https://discord.gg/xHC9fBfeVW"
-              target="_blank"
-            >
-              discord
-            </el-link>
-            <el-link
-              class="a-link"
-              icon="el-icon-chat-line-square"
-              type="primary"
-              href="https://t.me/PlotBridge"
-              target="_blank"
-            >
-              telegram
-            </el-link>
-            <el-link
-              class="a-link"
-              icon="el-icon-chat-line-square"
-              type="primary"
-              href="https://twitter.com/plot_bridge"
-              target="_blank"
-            >
-              twitter
-            </el-link>
-          </el-col>
+          <ConnectUs />
         </el-col>
       </el-col>
     </el-col>
@@ -99,9 +71,11 @@
 import { mapState } from "vuex";
 import market from "../../market";
 import BridgeFee from "./BridgeFee.vue";
+import ConnectUs from "../lib/ConnectUs.vue";
 export default {
   components: {
     BridgeFee,
+    ConnectUs,
   },
   props: ["curNFT", "coinInfo"],
   computed: mapState({
@@ -209,9 +183,7 @@ export default {
 .el-skeleton__item {
   opacity: 0.5;
 }
-.a-link {
-  margin: 25px;
-}
+
 .after-get {
   min-height: 100px;
   padding: 15px 0px;

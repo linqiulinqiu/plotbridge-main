@@ -1,0 +1,36 @@
+<template>
+  <el-col>
+    <el-link
+      class="a-link"
+      icon="el-icon-chat-line-square"
+      type="primary"
+      href="https://discord.gg/xHC9fBfeVW"
+      target="_blank"
+    >
+      discord
+    </el-link>
+    <el-link
+      class="a-link"
+      icon="el-icon-chat-line-square"
+      type="primary"
+      href="https://t.me/PlotBridge"
+      target="_blank"
+    >
+      telegram
+    </el-link>
+    <el-link
+      class="a-link"
+      icon="el-icon-chat-line-square"
+      type="primary"
+      href="https://twitter.com/plot_bridge"
+      target="_blank"
+    >
+      twitter
+    </el-link>
+  </el-col>
+</template>
+<style>
+.a-link {
+  margin: 25px;
+}
+</style>

@@ -8,13 +8,18 @@
         </li>
       </ul>
       <p>{{ $t("home-note") }}</p>
+            <ConnectUs />
     </el-col>
   </el-col>
 </template>
 
 <script>
+import ConnectUs from "../components/lib/ConnectUs.vue";
 export default {
   name: "Home",
+  components: {
+    ConnectUs,
+  },
 };
 </script>
 
@@ -34,6 +39,6 @@ export default {
 .card {
   margin-top: 30px;
   color: #000;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.3)
 }
 </style>
