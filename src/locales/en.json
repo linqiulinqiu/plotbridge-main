@@ -81,9 +81,16 @@
     "home":"Home",
     "home-title":"Welcome to the PlotBridge beta version",
     "home-news":[
-        "Dear PXCH-BUSD, PXCC-BUSD liquidity providers，a small amount of PBP reward has been airdroped to your BSC wallet address. This airdrop is based on snapshot on March 30, 2022",
-        "Official liquidity pool created: PBP-BNB(30,000,000 PBP vs 20 BNB), WXCH-PBP and WXCC-PBP liquidity pairs has been created on PancakeSwap",
-        "PBP presale ended successfully: totally 30,750,000 PBP sold, 16.8756 BNB received."
+        {
+            "ts":"2022-04-28",
+            "msg":"Dear PXCH-BUSD, PXCC-BUSD liquidity providers，a small amount of PBP reward has been airdroped to your BSC wallet address. This airdrop is based on snapshot on March 30, 2022"
+        },{
+            "ts":"2022-04-27",
+            "msg":"Official liquidity pool created: PBP-BNB(30,000,000 PBP vs 20 BNB), WXCH-PBP and WXCC-PBP liquidity pairs has been created on PancakeSwap"
+        },{
+            "ts":"2022-04-27",
+            "msg":"PBP presale ended successfully: totally 30,750,000 PBP sold, 16.8756 BNB received."
+        }
     ],
     "home-note":"Any questions? We'd love to hear from you",
 
