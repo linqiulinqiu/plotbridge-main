@@ -5,21 +5,21 @@
         :href="addLp.url"
         target="_blank"
       >
-        {{ $t("add-lp") }} {{ addLp.txt }}
+        {{ $t("add-lp",[addLp.txt]) }}
       </a>
     </el-button>
     <el-button v-if="tokenInfo" class="btn-link">
       <a
         :href="tokenInfo.url"
         target="_blank"
-        >{{ $t("token") }} {{ tokenInfo.txt }}
+        >{{ $t("token-info", [tokenInfo.txt]) }}
       </a>
     </el-button>
     <el-button v-if="poolInfo" class="btn-link">
       <a
         :href="poolInfo.url"
         target="_blank"
-        >{{ $t("pool") }} {{ poolInfo.txt }}
+        >{{ $t("pair-info", [poolInfo.txt]) }}
       </a>
     </el-button>
   </span>
@@ -68,7 +68,7 @@ export default {
         }
         this.addLp = {
             url: `${swap}/add/${pb}/${pa}`,
-            txt: `Add ${txt} LP`
+            txt: txt
         }
         this.tokenInfo = {
             url: `${explorer}/token/${pa}`,
@@ -77,7 +77,7 @@ export default {
 
         this.poolInfo = {
             url: `${swap}/info/pool/${pair}`,
-            txt: `${txt} Pool Info`
+            txt: txt
         }
       }
   }
