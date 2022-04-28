@@ -4,7 +4,7 @@
     "approve":"Approve",
     "add-token-tip":"Add the current token information to the metamask Wallet",
     "add-to-wallet":"Add {coin} to wallet",
-    "add-lp":"Add {coin}-{coin1} Lp",
+    "add-lp":"Add {0} LP",
 
     "balance":"Balance",
     "bridge":"Bridge",
@@ -147,7 +147,7 @@
     "prepay":"Expected payment",
     "purchase":"Avaliable for purchase",
     "p-end":"Presale ended",
-    "pool":"{coin} pool",
+    "pair-info":"{0} Pair Info",
    
     "redeem":"Upgrade",
     "rd-info":"Tokens in previous version of PlotBridge can be upgraded here.",
@@ -179,7 +179,7 @@
     "tips-amount2":"The amount is too much, and you don't have enough balance",
     "tips-waddr":"When an account is bound to multiple addresses of multiple wallets, the money may be randomly sent to one of them. Please pay attention to check.",
     "total-staked":"Total staked：",
-    "token-info":"{coin} Info",
+    "token-info":"{0} Token Info",
 
     "withdraw":"Withdraw",
     "w-rate":"Withdraw rate",
