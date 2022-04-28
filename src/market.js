@@ -318,7 +318,6 @@ async function watchToken(ctrname) {
         return added
     } catch (e) {
         console.log('add watch err', e)
-
     }
 }
 async function burnNFT(id) {

@@ -135,6 +135,7 @@
     "prepay":"Expected payment",
     "purchase":"Avaliable for purchase",
     "p-end":"Presale ended",
+    "pool":"{coin} pool",
    
     "redeem":"Upgrade",
     "rd-info":"Tokens in previous version of PlotBridge can be upgraded here.",
@@ -166,6 +167,7 @@
     "tips-amount2":"The amount is too much, and you don't have enough balance",
     "tips-waddr":"When an account is bound to multiple addresses of multiple wallets, the money may be randomly sent to one of them. Please pay attention to check.",
     "total-staked":"Total staked：",
+    "token-info":"{coin} Info",
 
     "withdraw":"Withdraw",
     "w-rate":"Withdraw rate",

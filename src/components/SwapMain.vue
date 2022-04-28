@@ -96,20 +96,9 @@
         <el-button @click="watchToken" v-if="this.watchCoin" class="btn-link">{{
           $t("add-to-wallet", { coin: this.watchCoin.bsymbol })
         }}</el-button>
-        <el-button v-if="this.watchCoin" class="btn-link">
-          <a
-            target="_blank"
-            :href="this.lp_pre + 'add/BNB' + '/' + this.watchCoin.address"
-            >{{ $t("add-lp", { coin: watchCoin.bsymbol, coin1: "BNB" }) }}
-          </a>
-        </el-button>
-        <el-button v-if="this.watchBcoin" class="btn-link">
-          <a
-            target="_blank"
-            :href="this.lp_pre + 'add/' + pbpAddr + '/' + watchBcoin.address"
-            >{{ $t("add-lp", { coin: watchBcoin.bsymbol, coin1: "PBP" }) }}
-          </a>
-        </el-button>
+        <span v-if="watchBcoin">
+          <LinkButton :coinInfo="watchBcoin" :pbpaddr="pbpAddr" />
+        </span>
       </el-col>
     </el-col>
     <el-dialog :title="this.$t('setting')" :visible.sync="dia_slip">
@@ -127,7 +116,7 @@
           <el-button
             class="slipbtn"
             @click="slipAmount = i"
-            :class="{ isActive: i == slipAmount }"
+            :class="{ isActived: i == slipAmount }"
             >{{ i / 100 }}%
           </el-button>
         </el-col>
@@ -147,10 +136,12 @@ import pbwallet from "pbwallet";
 import tokens from "../tokens";
 import swap from "../swap";
 import market from "../market";
+import LinkButton from "./lib/LinkButton.vue";
 export default {
   name: "SwapMain",
   components: {
     ApproveButton,
+    LinkButton,
   },
   computed: mapState({
     bsc: "bsc",
@@ -158,26 +149,26 @@ export default {
       return state.bsc.ctrs.pbp.address;
     },
     watchCoin() {
-      const pbpaddr = this.bsc.ctrs.pbp.address;
       if (this.from_coin && this.from_coin != "") {
-        for (let i in this.allwlist)
+        for (let i in this.allwlist) {
           if (
-            this.allwlist[i].address == pbpaddr &&
-            this.from_coin == pbpaddr
+            this.allwlist[i].address == this.pbpAddr &&
+            this.from_coin == this.pbpAddr
           ) {
             return this.allwlist[i];
           }
+        }
         return false;
       }
       return false;
     },
     watchBcoin() {
       const list = this.watchlist();
-      console.log("list", list);
       if (this.from_coin && this.from_coin != "") {
         for (let i in list) {
           if (this.from_coin == list[i].address) {
-            if (list[i].bsymbol != "PBP") return list[i];
+            console.log("list", list[i]);
+            return list[i];
           }
         }
       }
@@ -200,7 +191,6 @@ export default {
 
   data() {
     return {
-      lp_pre: "https://pancakeswap.finance/",
       allwlist: [],
       BNBaddr: ethers.constants.AddressZero,
       from_balance: false,
@@ -393,7 +383,7 @@ export default {
   top: -25px;
   right: -110px;
 }
-.isActive {
+.isActived {
   color: #38f2af !important;
   background: #373943 !important;
 }

@@ -1,34 +1,32 @@
 <template>
   <el-col id="lplink">
     <el-button v-if="this.coinInfo" class="lp-style">
-      <router-link to="/Swap"
-        >{{ $t("buy") }} {{ this.coinInfo.bsymbol }}</router-link
-      >
+      <router-link to="/Swap">
+        {{ $t("buy") }} {{ this.coinInfo.bsymbol }}
+      </router-link>
     </el-button>
-    <el-button v-if="this.coinInfo" class="lp-style">
-      <a
-        target="_"
-        :href="this.pre_link + 'add/' + pbpAddr + '/' + this.coinInfo.address"
-        >{{ $t("add-lp", { coin: this.coinInfo.bsymbol }) }}
-      </a>
-    </el-button>
+    <span v-if="this.coinInfo">
+      <LinkButton :coinInfo="this.coinInfo" :pbpaddr="pbpAddr" />
+    </span>
   </el-col>
 </template>
 <script>
 import { mapState } from "vuex";
+import LinkButton from "../lib/LinkButton.vue";
 
 export default {
   name: "LPLink",
   props: ["coinInfo"],
+  components: {
+    LinkButton,
+  },
   computed: mapState({
     pbpAddr(state) {
       return state.bsc.ctrs.pbp.address;
     },
   }),
   data() {
-    return {
-      pre_link: "https://pancake.kiemtienonline360.com/#/",
-    };
+    return {};
   },
 };
 </script>
