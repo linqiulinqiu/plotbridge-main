@@ -2,11 +2,11 @@
   <el-col id="home">
     <el-col class="notice" :span="12" :offset="6">
       <h2>{{ $t("home-title") }}</h2>
-      <ul :span="15">
-        <li v-for="txt in $t('home-news')" :key="txt">
-          <el-card class="card">{{ txt }}</el-card>
-        </li>
-      </ul>
+      <el-timeline id="news-timeline">
+        <el-timeline-item v-for="item in $t('home-news')" :key="item.msg" :timestamp="item.ts">
+          <el-card class="card">{{ item.msg }}</el-card>
+        </el-timeline-item>
+      </el-timeline>
       <p>{{ $t("home-note") }}</p>
             <ConnectUs />
     </el-col>
@@ -36,8 +36,12 @@ export default {
   background-size: cover;
   position: relative;
 }
+
+#news-timeline {
+    margin-top: 50px;
+}
+
 .card {
-  margin-top: 30px;
   color: #000;
   background-color: rgba(255, 255, 255, 0.3)
 }
