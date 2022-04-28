@@ -12,7 +12,7 @@
     "human-format": "^1.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
-    "pbwallet": "github:tgarm/pbwallet#0.3.3",
+    "pbwallet": "github:tgarm/pbwallet#0.3.4",
     "pbweb-nftkeeper": "bitbucket:plotnet/pbweb-nftkeeper#0.2.18",
     "pbweb-ui": "bitbucket:plotnet/pbweb-ui#0.1.1",
     "vue": "^2.6.11",
