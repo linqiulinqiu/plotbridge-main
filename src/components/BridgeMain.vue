@@ -53,7 +53,7 @@
             </el-tabs>
           </el-col>
           <el-col>
-            <!-- <LPLink :coinInfo="coinInfo" /> -->
+            <LPLink :coinInfo="coinInfo" />
           </el-col>
         </el-col>
       </el-col>

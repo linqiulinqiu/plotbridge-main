@@ -134,6 +134,7 @@
     "prepay":"预计支付",
     "purchase":"可购买",
     "p-end":"预售结束",
+    "pool":"{coin}池",
 
 
 
@@ -173,6 +174,7 @@
     "tips-amount2":"数额过大，余额不够呢！",
     "tips-waddr":"您已绑定了此币种的取款地址(另一个PBT)，不建议再绑定其他地址了",
     "total-staked":"总质押：",
+    "token-info":"{coin}信息",
 
     "withdraw":"取款",
     "w-rate":"取款费率",
