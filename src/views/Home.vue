@@ -1,8 +1,11 @@
 <template>
   <el-col id="home">
     <div class="notice">
-      <h2>{{$t('home1')}}</h2>
-      <p>{{$t('home2')}}</p>
+      <h2>{{$t('home-title')}}</h2>
+      <ul>
+        <li v-for="txt in $t('home-news')">{{txt}}</li>
+      </ul>
+      <p>{{$t('home-para')}}</p>
     </div>
   </el-col>
 </template>

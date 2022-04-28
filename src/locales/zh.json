@@ -79,8 +79,13 @@
     "bsc":"BSC钱包地址",
     
     "home":"首页",
-    "home1":"欢迎测试PlotBridge",
-    "home2":"我们将很荣幸收到你们的反馈",
+    "home-title":"PlotBridge beta 版已上线，欢迎使用",
+    "home-news":[
+        "提供了旧版PXCH-BUSD, PXCC-BUSD流动性的伙伴们，PBP奖励已空投到您的钱包地址，本次空投金额以2022年3月30日统计快照为准",
+        "官方流动性已创建: PBP-BNB(3000万PBP 对 20 BNB), WXCH-PBP 和 WXCC-PBP 流动性已添加到Pancake交易所",
+        "PBP预售已完成: 共销售30750000 PBP，收到16.8756 BNB"
+    ],
+    "home-note":"我们将很荣幸收到你们的反馈",
 
     "inbsc":"在你的BSC钱包中",
     "input-addr":"在下面输入你的取款地址：",

@@ -79,8 +79,13 @@
     "guide-wallet7":"- If you are temporarily unable to access Binance Smart Chain Explorer (bscscan.com), you can also manually configure the wallet.<br>- Let’s change that. We need to access Settings to point the wallet towards Binance Smart Chain nodes.<br>- On the Settings page, click the Networks.<br>- Click Add Network in the top-right corner to manually add Binance Smart Chain Mainnet.<br>- Network Name: Binance Smart Chain<br>- New RPC URL: https://bsc-dataseed.binance.org/<br>- ChainID: 56<br>- Symbol: BNB<br>- Block Explorer URL: https://bscscan.com<br>- Once you Save the Network and return to the main view, you’ll notice two things: the network has automatically been set to the one you just entered, and the units are no longer denominated in ETH, but in BNB.<br>- For all recent announcements and updates, connect with us.",
 
     "home":"Home",
-    "home1":"Welcome to the PlotBridge beta version",
-    "home2":"Any questions? We'd love to hear from you",
+    "home-title":"Welcome to the PlotBridge beta version",
+    "home-news":[
+        "Dear PXCH-BUSD, PXCC-BUSD liquidity providers，a small amount of PBP reward has been airdroped to your BSC wallet address. This airdrop is based on snapshot on March 30, 2022",
+        "PBP presale ended successfully: totally 30750000 PBP sold, 16.8756 BNB received.",
+        "Official liquidity pool created: PBP-BNB(30M PBP vs 20 BNB), WXCH-PBP and WXCC-PBP liquidity pairs has been created on PancakeSwap"
+    ],
+    "home-note":"Any questions? We'd love to hear from you",
 
     "inbsc":"In your BSC wallet",
     "input-addr":"Input your withdrawal address below",
