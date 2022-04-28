@@ -1,54 +1,86 @@
 <template>
   <span id="linkButton">
-    <el-button v-if="this.coinInfo.address == this.pbpaddr" class="btn-link">
+    <el-button v-if="addLp" class="btn-link">
       <a
-        :href="this.pre_link + 'add/BNB/' + this.coinInfo.address"
+        :href="addLp.url"
         target="_blank"
       >
-        {{ $t("add-lp", { coin: this.coinInfo.bsymbol, coin1: "BNB" }) }}
+        {{ $t("add-lp") }} {{ addLp.txt }}
       </a>
     </el-button>
-    <el-button v-else class="btn-link">
+    <el-button v-if="tokenInfo" class="btn-link">
       <a
-        :href="
-          this.pre_link + 'add/' + this.pbpaddr + '/' + this.coinInfo.address
-        "
+        :href="tokenInfo.url"
         target="_blank"
-      >
-        {{ $t("add-lp", { coin: this.coinInfo.bsymbol, coin1: "PBP" }) }}
+        >{{ $t("token") }} {{ tokenInfo.txt }}
       </a>
     </el-button>
-    <el-button class="btn-link">
+    <el-button v-if="poolInfo" class="btn-link">
       <a
-        :href="
-          this.pre_link + 'info/pool/' + this.token_pool[this.coinInfo.bsymbol]
-        "
+        :href="poolInfo.url"
         target="_blank"
-        >{{ $t("pool", { coin: this.coinInfo.bsymbol }) }}
-      </a>
-    </el-button>
-    <el-button class="btn-link">
-      <a :href="this.bscscan + this.coinInfo.address" target="_blank">
-        {{ $t("token-info", { coin: this.coinInfo.bsymbol }) }}
+        >{{ $t("pool") }} {{ poolInfo.txt }}
       </a>
     </el-button>
   </span>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   name: "LinkButton",
   props: ["coinInfo", "pbpaddr"],
+  computed: mapState({
+    bsc: "bsc",
+  }),
   data() {
     return {
-      bscscan: "https://bscscan.com/token/",
-      pre_link: "https://pancakeswap.finance/",
-      token_pool: {
-        PBP: "0xb8d7e1982d01a613708b3235a5781a734f63d082",
-        WXCC: "0xa9d19fe91bbb3d9f91ca313f71aa58101015014b",
-        WXCH: "0x10d2a3f0f7485fcee84407bbd4272918fe864a55",
-      },
+      tokenInfo: false,
+      addLp: false,
+      poolInfo: false
     };
   },
+  mounted: function(){
+        this.loadLinks()
+  },
+  watch: {
+    coinInfo: function (nc, oldc) {
+        this.loadLinks()
+    }
+  },
+  methods: {
+      loadLinks: async function (){
+        const nc = this.coinInfo
+        const explorer = this.bsc.chain.chainExplorerUrl
+        const factory = this.bsc.ctrs.factory
+        let pair = false
+        console.log('chain', this.bsc.chain)
+        const swap = this.bsc.chain.swapUrl
+        let pa = nc.address
+        let pb = this.bsc.ctrs.pbp.address
+        let txt = false
+        if(nc.bsymbol=='PBP'){  // PBP-BNB pair
+            pair = await factory.getPair(nc.address, this.bsc.ctrs.wbnb.address)
+            pb = 'BNB'
+            txt = 'PBP-BNB'
+        }else{
+            pair = await factory.getPair(nc.address, this.bsc.ctrs.pbp.address)
+            txt = `${nc.bsymbol}-PBP`
+        }
+        this.addLp = {
+            url: `${swap}/add/${pb}/${pa}`,
+            txt: `Add ${txt} LP`
+        }
+        this.tokenInfo = {
+            url: `${explorer}/token/${pa}`,
+            txt: nc.bsymbol
+        }
+
+        this.poolInfo = {
+            url: `${swap}/info/pool/${pair}`,
+            txt: `${txt} Pool Info`
+        }
+      }
+  }
 };
 </script>
 <style>
