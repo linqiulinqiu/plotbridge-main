@@ -44,6 +44,9 @@
     <el-col v-else>
       <p>{{ $t("redeem-notice") }}</p>
     </el-col>
+    <el-link :href="oldUrl.url" target="_blank">
+      {{ oldUrl.text }}
+    </el-link>
   </el-col>
 </template>
 <script>
@@ -53,11 +56,11 @@ import market from "../../market";
 import { ethers } from "ethers";
 import tokens from "../../tokens";
 import debounce from "lodash/debounce";
-const redeemCache = []; // new redeem created very unusual, so we assume it won't happen in a single web session
+const redeemCache = [];
 
 export default {
   name: "Redeem",
-  props: ["bsc", "newToken"],
+  props: ["bsc", "coinInfo"],
   components: {
     ApproveButton,
   },
@@ -65,7 +68,7 @@ export default {
     current: "current",
     haveRedeem() {
       for (let i in redeemCache) {
-        if (this.newToken == i) {
+        if (this.coinInfo.address == i) {
           return true;
         }
       }
@@ -83,10 +86,12 @@ export default {
       amount: "",
       checking: false,
       redeeming: false,
+      oldUrl: false,
     };
   },
   mounted() {
     this.loadRedeems();
+    // this.loadOldToken();
   },
   watch: {
     current: function (newcointy) {
@@ -94,8 +99,9 @@ export default {
         this.amount = "";
       }
     },
-    newToken: debounce(function () {
+    coinInfo: debounce(function () {
       this.loadPair();
+      this.loadOldToken();
     }, 500),
     amount: debounce(async function (newv, oldv) {
       if (!newv || isNaN(newv) || newv == "") {
@@ -111,6 +117,18 @@ export default {
     },
   },
   methods: {
+    loadOldToken: async function () {
+      console.log("this.coinINfo", this.coinInfo, this.oldToken);
+      const factory = this.bsc.ctrs.factory;
+      const busd = this.bsc.ctrs.busd.address;
+      const swap = this.bsc.chain.swapUrl;
+      console.log("chain", factory, swap);
+
+      this.oldUrl = {
+        url: `${swap}/info/token/${this.oldToken}`,
+        text: `P${this.coinInfo.symbol}  info`,
+      };
+    },
     loadRedeems: async function () {
       if (redeemCache.length == 0) {
         const rds = await this.bsc.ctrs.tokenredeem.getRedeemList();
@@ -125,12 +143,13 @@ export default {
         }
       }
       this.loadPair();
+      this.loadOldToken();
     },
     loadPair: async function () {
-      if (this.newToken in redeemCache) {
-        const pair = redeemCache[this.newToken];
+      if (this.coinInfo.address in redeemCache) {
+        const pair = redeemCache[this.coinInfo.address];
         this.oldToken = pair.old_token;
-        this.newSymbol = await tokens.symbol(this.newToken);
+        this.newSymbol = await tokens.symbol(this.coinInfo.address);
         this.oldSymbol = await tokens.symbol(this.oldToken);
         this.oldBalance = await tokens.balance(this.oldToken);
       }
@@ -159,6 +178,9 @@ export default {
 };
 </script>
 <style>
+#redeem .el-link {
+  color: #38f2af;
+}
 #redeem {
   font-size: 20px;
 }
