@@ -8,7 +8,7 @@
         </el-timeline-item>
       </el-timeline>
       <p>{{ $t("home-note") }}</p>
-            <ConnectUs />
+      <ConnectUs />
     </el-col>
   </el-col>
 </template>

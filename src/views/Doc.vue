@@ -46,26 +46,21 @@ export default {
         },
         {
           index: "2",
-          link: "/Doc/RoadMap",
-          value: this.$t("road-map"),
-        },
-        {
-          index: "3",
           link: "/Doc/GuideforBridge",
           value: this.$t("guide-bridge"),
         },
         {
-          index: "4",
+          index: "3",
           link: "/Doc/GuideforMarket",
           value: this.$t("guide-market"),
         },
         {
-          index: "5",
+          index: "4",
           link: "/Doc/GuideforWallet",
           value: this.$t("guide-wallet"),
         },
         {
-          index: "6",
+          index: "5",
           link: "/Doc/Contact",
           value: this.$t("contact"),
         },
