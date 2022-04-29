@@ -44,14 +44,16 @@
     <el-col v-else>
       <p>{{ $t("redeem-notice") }}</p>
     </el-col>
-    <el-link :href="oldUrl.url" target="_blank">
-      {{ oldUrl.text }}
-    </el-link>
+    <el-col>
+      <p><LinkButton v-if="oldToken" :readonly=true :token="oldToken" :btoken="bsc.ctrs.busd.address"></LinkButton></p>
+      <p><LinkButton v-if="newToken" :readonly=false :token="newToken" :btoken="bsc.ctrs.pbp.address"></LinkButton></p>
+    </el-col>
   </el-col>
 </template>
 <script>
 import { mapState } from "vuex";
 import ApproveButton from "../lib/ApproveButton.vue";
+import LinkButton from "../lib/LinkButton.vue";
 import market from "../../market";
 import { ethers } from "ethers";
 import tokens from "../../tokens";
@@ -63,6 +65,7 @@ export default {
   props: ["bsc", "coinInfo"],
   components: {
     ApproveButton,
+    LinkButton
   },
   computed: mapState({
     current: "current",
@@ -81,6 +84,7 @@ export default {
       obStr: "",
       oldToken: false,
       oldSymbol: false,
+      newToken: false,
       newSymbol: false,
       oBalance: false,
       amount: "",
@@ -118,16 +122,9 @@ export default {
   },
   methods: {
     loadOldToken: async function () {
-      console.log("this.coinINfo", this.coinInfo, this.oldToken);
       const factory = this.bsc.ctrs.factory;
       const busd = this.bsc.ctrs.busd.address;
       const swap = this.bsc.chain.swapUrl;
-      console.log("chain", factory, swap);
-
-      this.oldUrl = {
-        url: `${swap}/info/token/${this.oldToken}`,
-        text: `P${this.coinInfo.symbol}  info`,
-      };
     },
     loadRedeems: async function () {
       if (redeemCache.length == 0) {
@@ -150,6 +147,7 @@ export default {
         const pair = redeemCache[this.coinInfo.address];
         this.oldToken = pair.old_token;
         this.newSymbol = await tokens.symbol(this.coinInfo.address);
+        this.newToken = this.coinInfo.address;
         this.oldSymbol = await tokens.symbol(this.oldToken);
         this.oldBalance = await tokens.balance(this.oldToken);
       }
