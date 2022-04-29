@@ -48,7 +48,7 @@
                 <Withdraw :curNFT="this.curNFT" :coinInfo="coinInfo" />
               </el-tab-pane>
               <el-tab-pane :label="$t('redeem')">
-                <Redeem :bsc="this.bsc" :newToken="this.coinInfo.address" />
+                <Redeem :bsc="this.bsc" :coinInfo="coinInfo" />
               </el-tab-pane>
             </el-tabs>
           </el-col>
