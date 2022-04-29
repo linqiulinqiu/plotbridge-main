@@ -46,7 +46,6 @@
     </el-col>
     <el-col>
       <p><LinkButton v-if="oldToken" :readonly=true :token="oldToken" :btoken="bsc.ctrs.busd.address"></LinkButton></p>
-      <p><LinkButton v-if="newToken" :readonly=false :token="newToken" :btoken="bsc.ctrs.pbp.address"></LinkButton></p>
     </el-col>
   </el-col>
 </template>
