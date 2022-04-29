@@ -1,10 +1,13 @@
-<template> 
+<template>
   <el-col>
-    <h1>{{$t('guide-market')}}</h1>
+    <h1>
+      <a href="https://www.plotbridge.io/guidesub/marketguide/" target="_blank">
+        {{ $t("guide-market") }}
+      </a>
+    </h1>
     <el-col>
-      <p>{{$t('guide-market1')}}</p>
+      <p>{{ $t("guide-market1") }}</p>
     </el-col>
-    
   </el-col>
 </template>
 
