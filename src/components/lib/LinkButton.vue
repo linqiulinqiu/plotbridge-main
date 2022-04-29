@@ -1,6 +1,6 @@
 <template>
   <span id="linkButton">
-    <el-button v-if="addLp" class="btn-link">
+    <el-button v-if="addLp&&!readonly" class="btn-link">
       <a
         :href="addLp.url"
         target="_blank"
@@ -26,9 +26,11 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import tokens from "../../tokens";
+import { ethers } from "ethers";
 export default {
   name: "LinkButton",
-  props: ["coinInfo", "pbpaddr"],
+  props: ["token", "btoken","readonly"],
   computed: mapState({
     bsc: "bsc",
   }),
@@ -43,41 +45,58 @@ export default {
         this.loadLinks()
   },
   watch: {
-    coinInfo: function (nc, oldc) {
+    token: function (nc, oldc) {
         this.loadLinks()
     }
   },
   methods: {
       loadLinks: async function (){
-        const nc = this.coinInfo
         const explorer = this.bsc.chain.chainExplorerUrl
         const factory = this.bsc.ctrs.factory
-        let pair = false
-        console.log('chain', this.bsc.chain)
-        const swap = this.bsc.chain.swapUrl
-        let pa = nc.address
-        let pb = this.bsc.ctrs.pbp.address
-        let txt = false
-        if(nc.bsymbol=='PBP'){  // PBP-BNB pair
-            pair = await factory.getPair(nc.address, this.bsc.ctrs.wbnb.address)
-            pb = 'BNB'
-            txt = 'PBP-BNB'
-        }else{
-            pair = await factory.getPair(nc.address, this.bsc.ctrs.pbp.address)
-            txt = `${nc.bsymbol}-PBP`
+        const ta = {
+            addr: this.token
         }
+        if(!this.token||this.token==ethers.constants.AddressZero){
+            this.addLp = false
+            this.tokenInfo = false
+            this.poolInfo = false
+            return  // Token A must set
+        }
+        ta.symbol = await tokens.symbol(this.token)
+        let btoken = this.btoken
+
+        if(!this.btoken){
+            btoken = this.bsc.ctrs.pbp.address
+        }
+        const tb = { addr: btoken }
+        if(btoken==this.token||btoken==ethers.constants.AddressZero){
+            tb.addr = this.bsc.ctrs.wbnb.address
+            tb.symbol = 'BNB'
+            tb.add = 'BNB'
+        }else{
+            tb.addr = btoken
+            tb.symbol = await tokens.symbol(tb.addr)
+            tb.add = tb.addr
+        }
+        let pair = false
+        const swap = this.bsc.chain.swapUrl
+        pair = await factory.getPair(ta.addr, tb.addr)
+        const txt = `${ta.symbol}-${tb.symbol}`
         this.addLp = {
-            url: `${swap}/add/${pb}/${pa}`,
+            url: `${swap}/add/${tb.add}/${ta.addr}`,
             txt: txt
         }
         this.tokenInfo = {
-            url: `${explorer}/token/${pa}`,
-            txt: nc.bsymbol
+            url: `${explorer}/token/${ta.addr}`,
+            txt: ta.symbol
         }
-
-        this.poolInfo = {
-            url: `${swap}/info/pool/${pair}`,
-            txt: txt
+        if(pair){
+            this.poolInfo = {
+                url: `${swap}/info/pool/${pair}`,
+                txt: txt
+            }
+        }else{
+            this.poolInfo = false
         }
       }
   }

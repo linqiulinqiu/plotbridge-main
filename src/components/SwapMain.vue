@@ -97,7 +97,7 @@
           $t("add-to-wallet", { coin: this.watchCoin.bsymbol })
         }}</el-button>
         <span v-if="watchBcoin">
-          <LinkButton :coinInfo="watchBcoin" :pbpaddr="pbpAddr" />
+          <LinkButton :token="from_coin" :btoken="to_coin" />
         </span>
       </el-col>
     </el-col>

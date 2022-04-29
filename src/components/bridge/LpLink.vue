@@ -6,7 +6,12 @@
       </router-link>
     </el-button>
     <span v-if="this.coinInfo">
-      <LinkButton :coinInfo="this.coinInfo" :pbpaddr="pbpAddr" />
+      <LinkButton
+        v-if="coinInfo"
+        :readonly="false"
+        :token="this.coinInfo.address"
+        :btoken="pbpAddr"
+      ></LinkButton>
     </span>
   </el-col>
 </template>
@@ -21,6 +26,7 @@ export default {
     LinkButton,
   },
   computed: mapState({
+    bsc: "bsc",
     pbpAddr(state) {
       return state.bsc.ctrs.pbp.address;
     },
