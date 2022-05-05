@@ -49,7 +49,7 @@ export default {
       stakeTokens: [],
       time_msg: "",
       total_alloc: 1,
-      working: false,
+      working: true,
     };
   },
   methods: {

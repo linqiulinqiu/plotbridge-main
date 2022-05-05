@@ -134,7 +134,7 @@ export default {
   },
   data() {
     return {
-      apy: "-",
+      apy: "",
       farm_amount: "",
       earned_amount: "",
       stk_symbol: "-",
