@@ -5,6 +5,7 @@
     "add-token-tip":"Add the current token information to the metamask Wallet",
     "add-to-wallet":"Add {coin} to wallet",
     "add-lp":"Add {0} LP",
+    "add":"Add",
 
     "balance":"Balance",
     "bridge":"Bridge",
@@ -57,6 +58,7 @@
     "ending":"Ending time",
     
     "function":"Function",
+    "force-w":"Force withdraw",
     
     "get":"You will get：",
     "getaddr":"No address for this type of deposit,please contract us with discord or telegram. ",
@@ -78,6 +80,10 @@
     "home":"Home",
     "home-title":"Welcome to the PlotBridge beta version",
     "home-news":[
+        {
+            "ts":"2022-05-06",
+            "msg":"Our staking reward program will be started on May, 6. Initial pools including: PBP-BNB Cake LP, PBP-WXCH Cake LP, PBP-WXCC Cake LP and PBP single token, welcome to stake and earn!"
+        },
         {
             "ts":"2022-04-28",
             "msg":"Dear PXCH-BUSD, PXCC-BUSD liquidity providers，a small amount of PBP reward has been airdroped to your BSC wallet address. This airdrop is based on snapshot on March 30, 2022"
@@ -104,6 +110,7 @@
     "look-info":"Please connect wallet",
     "loading":"Loading ...",
     "lock-time":"Locking time",
+    "locked":"Locked, please wait {time} seconds or force extraction",
     
     "market":"MarketPlace",
     "mintPBT":"Mint PBT",

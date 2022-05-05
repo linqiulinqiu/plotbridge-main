@@ -167,7 +167,6 @@ export default {
       if (this.from_coin && this.from_coin != "") {
         for (let i in list) {
           if (this.from_coin == list[i].address) {
-            console.log("list", list[i]);
             return list[i];
           }
         }

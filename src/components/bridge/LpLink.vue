@@ -11,6 +11,7 @@
         :readonly="false"
         :token="this.coinInfo.address"
         :btoken="pbpAddr"
+        :onlyLp="false"
       ></LinkButton>
     </span>
   </el-col>

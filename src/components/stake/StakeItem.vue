@@ -53,9 +53,13 @@
           <el-button @click="dia_withdraw = true" class="stake-btn">
             {{ $t("withdraw") }}
           </el-button>
-          <el-button @click="open_lplink" class="stake-btn" v-if="this.isLp">
-            <a :href="this.lplink" target="_blank">add lp</a>
-          </el-button>
+          <LinkButton
+            class="addlp"
+            v-if="this.isLp"
+            :token="this.lptoken[0]"
+            :btoken="this.lptoken[1]"
+            :onlyLp="true"
+          />
         </el-col>
       </el-row>
     </el-col>
@@ -65,7 +69,6 @@
         <p>
           <span>{{ $t("balance") }}：{{ stk_balance }}{{ stk_symbol }}</span>
         </p>
-        <!-- 显示钱包中WXCC余额 -->
         <el-input v-model="stake_amount" clearable maxlength="20"> </el-input>
         <el-button @click="stake_amount = stk_balance">all</el-button>
 
@@ -98,9 +101,9 @@
           >{{ $t("withdraw") }}
         </el-button>
         <el-col v-else>
-          <p>锁定中，请等待{{ this.withdraw_wait }}秒，或强制提取</p>
+          <p>{{ $t("locked", { time: this.withdraw_wait }) }}</p>
           <el-button @click="force_withdraw" :loading="force_w_loading">
-            force withdraw
+            {{ $t("force-w") }}
           </el-button>
         </el-col>
       </el-card>
@@ -115,10 +118,12 @@ import ApproveButton from "../lib/ApproveButton.vue";
 import { mapState } from "vuex";
 import times from "../../times";
 import market from "../../market";
+import LinkButton from "../lib/LinkButton.vue";
 export default {
   name: "Stake",
   components: {
     ApproveButton,
+    LinkButton,
   },
   props: ["pid", "stakeAddr", "locktime", "lpamount", "poolreward"],
   computed: mapState({
@@ -130,6 +135,7 @@ export default {
   mounted() {
     this.refresh();
     this.loadLp();
+    this.open_lplink();
     setInterval(this.refresh, 12000);
   },
   data() {
@@ -149,11 +155,9 @@ export default {
       w_loading: false,
       force_w_loading: false,
       isLp: false,
-      lp_prelink: "https://pancake.kiemtienonline360.com/#/add/",
-      lplink: "",
+      lptoken: "",
     };
   },
-  watch: {},
   methods: {
     hformat: function (val) {
       if (isNaN(val) || val == "") {
@@ -168,14 +172,11 @@ export default {
     },
     loadLp: async function () {
       this.isLp = await tokens.islp(this.stakeAddr);
-    },
-    open_lplink: async function () {
-      const stake_addr = this.stakeAddr;
       if (this.isLp) {
-        const token = await tokens.lptokens(stake_addr);
-        this.lplink = this.lp_prelink + token[0] + "/" + token[1];
+        this.lptoken = await tokens.lptokens(this.stakeAddr);
       }
     },
+    open_lplink: async function () {},
     refresh: async function () {
       const pid = ethers.BigNumber.from(this.pid);
       const stakeAddr = this.stakeAddr;
