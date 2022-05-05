@@ -21,7 +21,7 @@
       </a>
     </el-button>
   </span>
-  <span v-else class="addlp">
+  <span v-else id="addlp">
     <el-button v-if="addLp && !readonly">
       <a :href="addLp.url" target="_blank"> {{ $t("add") }} LP </a>
     </el-button>
@@ -110,13 +110,13 @@ export default {
 };
 </script>
 <style>
-.addlp {
-  margin-top: 10px;
+#addlp .el-button {
+  margin-top: 10px !important;
 }
-.addlp a {
+#addlp a {
   color: #373943;
 }
-.addlp a:hover {
+#addlp a:hover {
   color: #668b66;
 }
 #linkButton {
