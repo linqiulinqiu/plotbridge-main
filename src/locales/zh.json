@@ -108,7 +108,7 @@
     "look-info":"请连接钱包",
     "loading":"加载中......",
     "lock-time":"锁定时间",
-    "locked":"锁定中，请等待{time}秒，或者强制提取。",
+    "locked":"锁定中，请等待{time}，或者强制解锁，并放弃在本池将获得的全部收益",
 
     "market":"市场",
     "mintPBT":"铸造PBT",
@@ -167,17 +167,15 @@
     "slip-fail":"您的交易可能失败",
     "select":"请选择",
     "stake":"质押",
-    "staking":"质押中：",
+    "staking":"质押中",
     "set-s-amount":"设置质押数量",
     "stage":"阶段",
     "stake-start":"质押奖励开始时间",
-
-
     "to-market":"去往市场",    
     "tips-amount1":"数额过小，将什么都收不到呢！",
     "tips-amount2":"数额过大，余额不够呢！",
     "tips-waddr":"您已绑定了此币种的取款地址(另一个PBT)，不建议再绑定其他地址了",
-    "total-staked":"总质押：",
+    "total-staked":"总质押",
     "token-info":"{0} 代币信息",
 
     "withdraw":"取款",

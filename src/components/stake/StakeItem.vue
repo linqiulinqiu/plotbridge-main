@@ -28,7 +28,7 @@
           <p>
             {{ $t("staking") }}：
             <span class="font">{{ hformat(farm_amount) }}</span>
-            <span class="font" v-if="isNaN(farm_amount) && farm_amount == ''">
+            <span class="font" v-if="!isNaN(farm_amount) && farm_amount != 0">
               ( {{ hformat((farm_amount * 100) / lpamount) }} %)
             </span>
           </p>
@@ -45,6 +45,7 @@
           :xs="{ span: 6 }"
         >
           <el-button
+            v-if="can_withdraw"
             @click="claim"
             class="stake-btn"
             :loading="claim_loading"
@@ -53,7 +54,7 @@
           <el-button @click="dia_set_amount = true" class="stake-btn">
             {{ $t("deposit") }}
           </el-button>
-          <el-button @click="dia_withdraw = true" class="stake-btn">
+          <el-button v-if="can_withdraw" @click="dia_withdraw = true" class="stake-btn">
             {{ $t("withdraw") }}
           </el-button>
           <LinkButton
@@ -106,7 +107,7 @@
           >{{ $t("withdraw") }}
         </el-button>
         <el-col v-else>
-          <p>{{ $t("locked", { time: this.withdraw_wait }) }}</p>
+          <p>{{ $t("locked", { time: withdraw_wait_str }) }}</p>
           <el-button @click="force_withdraw" :loading="force_w_loading">
             {{ $t("force-w") }}
           </el-button>
@@ -136,6 +137,14 @@ export default {
     locktime_str: function () {
       return times.formatD(this.locktime, false);
     },
+    withdraw_wait_str: function(){
+      return times.formatD(this.withdraw_wait, false)
+    },
+    can_withdraw: function(){
+        if(!this.farm_amount) return false
+        if(this.farm_amount=='0.0') return false
+        return true
+    }
   }),
   mounted() {
     this.refresh();
@@ -239,17 +248,32 @@ export default {
     claim: async function () {
       this.claim_loading = true;
       const obj = this;
+      let receipt = false;
       try {
-        const receipt = await this.bsc.ctrs.staking.withdraw(
-          this.pid,
-          ethers.BigNumber.from(0)
-        );
+        const amount = ethers.BigNumber.from(0)
+        if(this.withdraw_wait==0){
+          receipt = await this.bsc.ctrs.staking.withdraw(this.pid,amount)
+        }else{
+          const resp = await this.$confirm(this.$t('locked', {time:this.withdraw_wait_str}),{
+              type: 'warning'
+          })
+          console.log('resp', resp)
+          receipt = await this.bsc.ctrs.staking.forceWithdraw(this.pid,amount)
+        }
         await market.waitEventDone(receipt, function (e) {
           obj.claim_loading = false;
         });
       } catch (e) {
         this.claim_loading = false;
-        console.log("claim err", e);
+        if(e=='cancel'){
+            // nothing need to do here
+        }else if('data' in e){
+            if('code' in e.data){
+                if(e.data.code==3){ // should be "still in lock time"
+
+                }
+            }
+        }
       }
     },
     deposit: async function () {

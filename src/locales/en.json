@@ -110,7 +110,7 @@
     "look-info":"Please connect wallet",
     "loading":"Loading ...",
     "lock-time":"Locking time",
-    "locked":"Locked, please wait {time} seconds or force extraction",
+    "locked":"Locked, please wait {time} for unlock or force unlock by give up all earned reward in this pool",
     
     "market":"MarketPlace",
     "mintPBT":"Mint PBT",
@@ -161,7 +161,7 @@
     "s-swap":"Simple Swap",
     "s-swap1":"Trade common tokens (powered by PancakeSwap)",
     "stake":"Earn",
-    "staking":"Staking：",
+    "staking":"Staking",
     "set-s-amount":"Set Stake Amount",
     "stage":"Stage",
     "stake-start":"Staking reward start time",
@@ -171,7 +171,7 @@
     "tips-amount1":"The amount is too small, you won't receive anything.",
     "tips-amount2":"The amount is too much, and you don't have enough balance",
     "tips-waddr":"When an account is bound to multiple addresses of multiple wallets, the money may be randomly sent to one of them. Please pay attention to check.",
-    "total-staked":"Total staked：",
+    "total-staked":"Total staked",
     "token-info":"{0} Token Info",
 
     "withdraw":"Withdraw",
