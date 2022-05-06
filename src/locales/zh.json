@@ -5,7 +5,8 @@
     "approve":"授权",
     "add-token-tip":"添加当前代币信息到metaMask（小狐狸）钱包中",
     "add-to-wallet":"添加{coin}到钱包",
-    "add-lp":"增加{0}流动性",
+    "add-lp":"添加{0}流动性",
+    "add":"添加",
 
     "balance":"余额",
     "bridge":"桥梁",
@@ -52,10 +53,11 @@
     "dep-rebind":"该类型地址已经绑定了，请刷新页面后查看。",
 
     "earn":"盈利",
-    "earned":"以赚取：",
+    "earned":"已赚取：",
     "ending":"结束时间",
 
     "function":"支持",
+    "force-w":"强制取款",
     
     "get":"你将会得到 :",
     "getaddr":"该类型的存款地址已经没有了，请在discord或电报上联系我们。",
@@ -78,6 +80,10 @@
     "home":"首页",
     "home-title":"PlotBridge beta 版已上线，欢迎使用",
     "home-news":[
+        {
+            "ts":"2022-05-06",
+            "msg":"质押奖励模块开放，初步开放的代币池包括：PBP-BNB Cake LP，PBP-WXCH Cake LP，PBP-WXCC Cake LP，PBP单币。欢迎加入质押，赢取奖励。"
+        },
         {
             "ts":"2022-04-28",
             "msg":"提供了旧版PXCH-BUSD, PXCC-BUSD流动性的伙伴们，PBP奖励已空投到您的钱包地址，本次空投金额以2022年3月30日统计快照为准。"
@@ -102,6 +108,7 @@
     "look-info":"请连接钱包",
     "loading":"加载中......",
     "lock-time":"锁定时间",
+    "locked":"锁定中，请等待{time}秒，或者强制提取。",
 
     "market":"市场",
     "mintPBT":"铸造PBT",
@@ -163,7 +170,7 @@
     "staking":"质押中：",
     "set-s-amount":"设置质押数量",
     "stage":"阶段",
-    "stake-satrt":"质押奖励开始时间",
+    "stake-start":"质押奖励开始时间",
 
 
     "to-market":"去往市场",    
