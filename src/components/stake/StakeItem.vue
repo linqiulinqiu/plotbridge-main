@@ -28,7 +28,7 @@
           <p>
             {{ $t("staking") }}：
             <span class="font">{{ hformat(farm_amount) }}</span>
-            <span class="font">
+            <span class="font" v-if="isNaN(farm_amount) && farm_amount == ''">
               ( {{ hformat((farm_amount * 100) / lpamount) }} %)
             </span>
           </p>
@@ -161,6 +161,7 @@ export default {
   },
   methods: {
     hformat: function (val) {
+      console.log("val", val, typeof val);
       if (isNaN(val) || val == "") {
         return "";
       } else if (typeof val == "number") {
