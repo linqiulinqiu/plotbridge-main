@@ -45,7 +45,15 @@
       <p>{{ $t("redeem-notice") }}</p>
     </el-col>
     <el-col>
-      <p><LinkButton v-if="oldToken" :readonly=true :token="oldToken" :btoken="bsc.ctrs.busd.address"></LinkButton></p>
+      <p>
+        <LinkButton
+          v-if="oldToken"
+          :readonly="true"
+          :token="oldToken"
+          :btoken="bsc.ctrs.busd.address"
+          :onlyLp="false"
+        ></LinkButton>
+      </p>
     </el-col>
   </el-col>
 </template>
@@ -64,7 +72,7 @@ export default {
   props: ["bsc", "coinInfo"],
   components: {
     ApproveButton,
-    LinkButton
+    LinkButton,
   },
   computed: mapState({
     current: "current",

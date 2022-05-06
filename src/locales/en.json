@@ -49,7 +49,7 @@
     "dep-limit":"The recommended limit for a single deposit is :",
     "dep-addr":"Get deposit address for {bcoin}",
     "doc":"Doc",
-    "data":"Data loading",
+    "data":"Loading...",
     "destroy":"Destroy NFT",
     "dep-rebind":"Unable to rebind deposit address,please refresh the page.",
 

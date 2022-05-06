@@ -29,7 +29,7 @@
             {{ $t("staking") }}：
             <span class="font">{{ hformat(farm_amount) }}</span>
             <span class="font">
-              {{ hformat((farm_amount * 100) / lpamount) }} %
+              ( {{ hformat((farm_amount * 100) / lpamount) }} %)
             </span>
           </p>
           <span>
@@ -79,7 +79,9 @@
           :spender="bsc.ctrs.staking.address"
           :min-req="stk_balance_bn"
         >
-          <el-button @click="deposit">{{ $t("deposit") }}</el-button>
+          <el-button @click="deposit" :loading="dep_loading">{{
+            $t("deposit")
+          }}</el-button>
         </ApproveButton>
       </el-card>
     </el-dialog>
@@ -135,7 +137,6 @@ export default {
   mounted() {
     this.refresh();
     this.loadLp();
-    this.open_lplink();
     setInterval(this.refresh, 12000);
   },
   data() {
@@ -176,7 +177,6 @@ export default {
         this.lptoken = await tokens.lptokens(this.stakeAddr);
       }
     },
-    open_lplink: async function () {},
     refresh: async function () {
       const pid = ethers.BigNumber.from(this.pid);
       const stakeAddr = this.stakeAddr;
@@ -206,6 +206,7 @@ export default {
           await market.waitEventDone(receipt, function (e) {
             obj.w_loading = false;
             obj.dia_withdraw = false;
+            obj.refresh();
           });
         } catch (e) {
           this.w_loading = false;
@@ -223,6 +224,7 @@ export default {
           );
           await market.waitEventDone(receipt, function (e) {
             obj.force_w_loading = false;
+            obj.refresh();
           });
         } catch (e) {
           this.force_w_loading = false;
@@ -247,6 +249,7 @@ export default {
           await market.waitEventDone(receipt, function () {
             obj.dep_loading = false;
             obj.dia_set_amount = false;
+            obj.refresh();
           });
         } catch (e) {
           this.dep_loading = false;
