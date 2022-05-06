@@ -44,9 +44,12 @@
           :sm="{ span: 6 }"
           :xs="{ span: 6 }"
         >
-          <el-button @click="claim" class="stake-btn">{{
-            $t("claim")
-          }}</el-button>
+          <el-button
+            @click="claim"
+            class="stake-btn"
+            :loading="claim_loading"
+            >{{ $t("claim") }}</el-button
+          >
           <el-button @click="dia_set_amount = true" class="stake-btn">
             {{ $t("deposit") }}
           </el-button>
@@ -155,13 +158,13 @@ export default {
       dep_loading: false,
       w_loading: false,
       force_w_loading: false,
+      claim_loading: false,
       isLp: false,
       lptoken: "",
     };
   },
   methods: {
     hformat: function (val) {
-      console.log("val", val, typeof val);
       if (isNaN(val) || val == "") {
         return "";
       } else if (typeof val == "number") {
@@ -234,11 +237,20 @@ export default {
       }
     },
     claim: async function () {
-      const receipt = await this.bsc.ctrs.staking.withdraw(
-        this.pid,
-        ethers.BigNumber.from(0)
-      );
-      console.log("claim receipt", receipt);
+      this.claim_loading = true;
+      const obj = this;
+      try {
+        const receipt = await this.bsc.ctrs.staking.withdraw(
+          this.pid,
+          ethers.BigNumber.from(0)
+        );
+        await market.waitEventDone(receipt, function (e) {
+          obj.claim_loading = false;
+        });
+      } catch (e) {
+        this.claim_loading = false;
+        console.log("claim err", e);
+      }
     },
     deposit: async function () {
       this.dep_loading = true;

@@ -49,7 +49,6 @@ export default {
   },
   methods: {
     loadLinks: async function () {
-      console.log("onlyLp", this.onlyLp);
       const explorer = this.bsc.chain.chainExplorerUrl;
       const factory = this.bsc.ctrs.factory;
       const ta = {
