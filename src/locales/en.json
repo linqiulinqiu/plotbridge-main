@@ -82,7 +82,7 @@
     "home-news":[
         {
             "ts":"2022-05-06",
-            "msg":"Our staking reward program will be started on May, 6. Initial pools including: PBP-BNB Cake LP, PBP-WXCH Cake LP, PBP-WXCC Cake LP and PBP single token, welcome to stake and earn!"
+            "msg":"Our staking reward program starts. Initial pools including: PBP-BNB Cake LP, PBP-WXCH Cake LP, PBP-WXCC Cake LP and PBP single token, welcome to stake and earn!"
         },
         {
             "ts":"2022-04-28",
@@ -164,7 +164,7 @@
     "staking":"Staking：",
     "set-s-amount":"Set Stake Amount",
     "stage":"Stage",
-    "stake-start":"Staking start time",
+    "stake-start":"Staking reward start time",
 
 
     "to-market":"Go to the market",    

@@ -53,7 +53,7 @@
     "dep-rebind":"该类型地址已经绑定了，请刷新页面后查看。",
 
     "earn":"盈利",
-    "earned":"以赚取：",
+    "earned":"已赚取：",
     "ending":"结束时间",
 
     "function":"支持",
@@ -82,7 +82,7 @@
     "home-news":[
         {
             "ts":"2022-05-06",
-            "msg":"质押奖励模块即将开放，初步开放的代币池包括：PBP-BNB Cake LP，PBP-WXCH Cake LP，PBP-WXCC Cake LP，PBP单币。欢迎加入质押，赢取奖励。"
+            "msg":"质押奖励模块开放，初步开放的代币池包括：PBP-BNB Cake LP，PBP-WXCH Cake LP，PBP-WXCC Cake LP，PBP单币。欢迎加入质押，赢取奖励。"
         },
         {
             "ts":"2022-04-28",
@@ -170,7 +170,7 @@
     "staking":"质押中：",
     "set-s-amount":"设置质押数量",
     "stage":"阶段",
-    "stake-satrt":"质押奖励开始时间",
+    "stake-start":"质押奖励开始时间",
 
 
     "to-market":"去往市场",    
