@@ -5,11 +5,6 @@
         {{ $t("add-lp", [addLp.txt]) }}
       </a>
     </el-button>
-    <el-button v-if="addLp && !readonly" class="btn-link">
-      <a :href="addLp.url" target="_blank">
-        {{ $t("add-lp", [addLp.txt]) }}
-      </a>
-    </el-button>
     <el-button v-if="tokenInfo" class="btn-link">
       <a :href="tokenInfo.url" target="_blank"
         >{{ $t("token-info", [tokenInfo.txt]) }}
@@ -54,6 +49,7 @@ export default {
   },
   methods: {
     loadLinks: async function () {
+      console.log("onlyLp", this.onlyLp);
       const explorer = this.bsc.chain.chainExplorerUrl;
       const factory = this.bsc.ctrs.factory;
       const ta = {
