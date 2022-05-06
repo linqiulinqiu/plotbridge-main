@@ -44,7 +44,7 @@
     "deposit":"存款",
     "desc":"描述",
     "doc":"文档",
-    "data":"数据加载中",
+    "data":"加载中......",
     "destroy":"销毁NFT",
     "dep-limit":"单次存款建议限额为：",
     "dep-rate":"存款费率",
