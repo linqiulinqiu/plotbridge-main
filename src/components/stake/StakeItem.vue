@@ -29,7 +29,7 @@
             {{ $t("staking") }}：
             <span class="font">{{ hformat(farm_amount) }}</span>
             <span class="font">
-              {{ hformat((farm_amount * 100) / lpamount) }} %
+              ( {{ hformat((farm_amount * 100) / lpamount) }} %)
             </span>
           </p>
           <span>
