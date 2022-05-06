@@ -299,7 +299,6 @@ async function watchToken(ctrname) {
     const ctr = bsc.ctrs[ctrname]
     const dec = await tokens.decimals(ctr.address)
     const symbol = await tokens.symbol(ctr.address)
-    // const url = 'https://app.plotbridge.net/img/' + ctrname + '.png'
     const url = window.location.origin + '/image/' + ctrname + '.png'
     console.log("url", url)
     const options = {

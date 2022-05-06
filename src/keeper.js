@@ -13,7 +13,7 @@ async function getCoinTypes(pbtid) {
 }
 
 function copyObj(src, dest) {
-    if(!dest){
+    if (!dest) {
         dest = {}
     }
     for (var k in src) {
@@ -30,8 +30,8 @@ function fix_uri(uri) {
     }
 }
 
-function n2str(n){
-    if(ethers.BigNumber.isBigNumber(n)){
+function n2str(n) {
+    if (ethers.BigNumber.isBigNumber(n)) {
         return n.toString()
     }
     return parseInt(n).toString()
@@ -97,13 +97,15 @@ async function loadMarketInfo(id) {
     return info
 }
 
-function setMarketItem(key, info, commit){
+function setMarketItem(key, info, commit) {
+    console.log("marketlist", marketList)
     const item = copyObj(info)
-    if('market' in item){
-        if(item.market.seller=='-self'){
+    if ('market' in item) {
+        if (item.market.seller == '-self') {
             mySaleList[key] = item
             commit('setMySalelist', copyObj(mySaleList))
-        }else if(item.market.price!='0.0'){
+        }
+        if (item.market.price != '0.0') {
             marketList[key] = item
             commit('setMarketlist', copyObj(marketList))
         }
@@ -123,7 +125,7 @@ async function addToMyList(id, commit) {
 }
 
 async function addToMarketList(id, commit) {
-    const key = n2str(id) 
+    const key = n2str(id)
     if (!(key in marketList) && !(key in mySaleList)) {
         const info = await nftBriefInfo(id)
         info.market = await loadMarketInfo(id)
@@ -137,7 +139,7 @@ function deleteFromMarketList(id, commit) {
     const key = n2str(id)
     if (key in marketList) {
         delete marketList[key]
-    } else if(key in mySaleList){
+    } else if (key in mySaleList) {
         delete mySaleList[key]
         commit('setMySalelist', copyObj(mySaleList))
     } else {
@@ -165,14 +167,15 @@ async function updateMyListItem(id, commit) {
 }
 async function updateMarketListItem(id, commit) {
     const key = n2str(id)
-    if ((key in marketList)||(key in mySaleList)) {
+    if ((key in marketList) || (key in mySaleList)) {
         const info = await nftBriefInfo(id)
         info.market = await loadMarketInfo(id)
         setMarketItem(key, info, commit)
+        console.log("market list")
     }
 }
 
-async function initMyList(bsc, commit){
+async function initMyList(bsc, commit) {
     const cnt = (await bsc.ctrs.pbt.balanceOf(bsc.addr)).toNumber()
     const ids = []
     for (let i = 0; i < cnt; i++) {
@@ -185,14 +188,14 @@ async function initMyList(bsc, commit){
         commit('setMylist', myList)
         ids[i] = idx
     }
-    for(let i in ids){
+    for (let i in ids) {
         const idx = ids[i]
         const info = await nftBriefInfo(idx)
         myList[idx] = info
         myList = copyObj(myList)
         commit('setMylist', myList)
     }
-    for(let i in ids){
+    for (let i in ids) {
         const idx = ids[i]
         const pbxs = await loadPbxs(idx)
         const item = copyObj(myList[idx])
@@ -205,7 +208,7 @@ async function initMyList(bsc, commit){
     commit('setLoadDone', 'p')
 }
 
-async function initMarketList(bsc, commit){
+async function initMarketList(bsc, commit) {
     const cnt = await bsc.ctrs.pbt.balanceOf(bsc.ctrs.pbmarket.address)
     const ids = []
     const infos = []
@@ -217,13 +220,13 @@ async function initMarketList(bsc, commit){
             id: idx
         }, commit)
     }
-    for(let i in ids){
+    for (let i in ids) {
         const idx = ids[i]
         const info = await nftBriefInfo(idx)
         setMarketItem(idx, info, commit)
         infos[idx] = info
     }
-    for(let i in ids){
+    for (let i in ids) {
         const idx = ids[i]
         infos[idx].market = await loadMarketInfo(idx)
         infos[idx].loading = false
