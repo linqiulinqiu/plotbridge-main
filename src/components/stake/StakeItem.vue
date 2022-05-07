@@ -23,13 +23,13 @@
             <span class="font">{{ hformat(lpamount) }}</span>
           </p>
           <p>
-            APR：<span class="font">{{ apy }}</span> %
+            APR：<span class="font">{{ apy }}%</span>
           </p>
           <p>
             {{ $t("staking") }}：
             <span class="font">{{ hformat(farm_amount) }}</span>
-            <span class="font" v-if="isNaN(farm_amount) && farm_amount == ''">
-              ( {{ hformat((farm_amount * 100) / lpamount) }} %)
+            <span class="font" v-if="!isNaN(farm_amount) && farm_amount != 0">
+              ({{ hformat((farm_amount * 100) / lpamount) }}%)
             </span>
           </p>
           <span>
@@ -38,31 +38,35 @@
             &nbsp;&nbsp; PBP
           </span>
         </el-col>
-        <el-col
-          :lg="{ span: 6 }"
-          :md="{ span: 6 }"
-          :sm="{ span: 6 }"
-          :xs="{ span: 6 }"
-        >
+        <el-col :span="6">
           <el-button
-            @click="claim"
             class="stake-btn"
+            v-if="can_withdraw"
             :loading="claim_loading"
-            >{{ $t("claim") }}</el-button
-          >
+            @click="claim"
+            >{{ $t("claim") }}
+          </el-button>
+
           <el-button @click="dia_set_amount = true" class="stake-btn">
             {{ $t("deposit") }}
           </el-button>
-          <el-button @click="dia_withdraw = true" class="stake-btn">
+          <el-button
+            v-if="can_withdraw"
+            @click="dia_withdraw = true"
+            class="stake-btn"
+          >
             {{ $t("withdraw") }}
           </el-button>
           <LinkButton
-            class="addlp"
+            class="addlp stake-btn"
             v-if="this.isLp"
             :token="this.lptoken[0]"
             :btoken="this.lptoken[1]"
             :onlyLp="true"
           />
+          <el-button v-else class="stake-btn">
+            <router-link :to="this.toswap">{{ $t("buy") }}</router-link>
+          </el-button>
         </el-col>
       </el-row>
     </el-col>
@@ -73,7 +77,9 @@
           <span>{{ $t("balance") }}：{{ stk_balance }}{{ stk_symbol }}</span>
         </p>
         <el-input v-model="stake_amount" clearable maxlength="20"> </el-input>
-        <el-button @click="stake_amount = stk_balance">all</el-button>
+        <el-button @click="stake_amount = stk_balance">{{
+          $t("all")
+        }}</el-button>
 
         <ApproveButton
           v-if="stk_balance"
@@ -106,7 +112,7 @@
           >{{ $t("withdraw") }}
         </el-button>
         <el-col v-else>
-          <p>{{ $t("locked", { time: this.withdraw_wait }) }}</p>
+          <p>{{ $t("locked", { time: this.withdraw_wait_str }) }}</p>
           <el-button @click="force_withdraw" :loading="force_w_loading">
             {{ $t("force-w") }}
           </el-button>
@@ -133,14 +139,20 @@ export default {
   props: ["pid", "stakeAddr", "locktime", "lpamount", "poolreward"],
   computed: mapState({
     bsc: "bsc",
-    locktime_str: function () {
-      return times.formatD(this.locktime, false);
+    can_withdraw: function () {
+      if (!this.farm_amount) return false;
+      if (this.farm_amount == "0.0") return false;
+      return true;
     },
   }),
   mounted() {
     this.refresh();
     this.loadLp();
+    this.loadLocktime();
     setInterval(this.refresh, 12000);
+  },
+  beforeUpdate() {
+    this.loadLocktime();
   },
   data() {
     return {
@@ -149,18 +161,22 @@ export default {
       earned_amount: "",
       stk_symbol: "-",
       stk_balance: "",
+      locktime_str: "",
       stk_balance_bn: 0,
       stake_amount: 0,
       withdraw_amount: 0,
       withdraw_wait: 0,
+      withdraw_wait_str: "",
       dia_set_amount: false,
       dia_withdraw: false,
+      claim_popover: false,
       dep_loading: false,
       w_loading: false,
       force_w_loading: false,
       claim_loading: false,
       isLp: false,
       lptoken: "",
+      toswap: "/Swap",
     };
   },
   methods: {
@@ -170,9 +186,14 @@ export default {
       } else if (typeof val == "number") {
         return hformat(val);
       } else if (typeof val == "string") {
-        return hformat(parseFloat(val));
+        val = parseFloat(val);
       } else {
-        return hformat(val.toNumber());
+        val = val.toNumber();
+      }
+      if (val > 1) {
+        return hformat(val, { separator: "" });
+      } else {
+        return val;
       }
     },
     loadLp: async function () {
@@ -180,6 +201,10 @@ export default {
       if (this.isLp) {
         this.lptoken = await tokens.lptokens(this.stakeAddr);
       }
+    },
+    loadLocktime: function () {
+      this.locktime_str = times.formatD(this.locktime, false);
+      this.withdraw_wait_str = times.formatD(this.withdraw_wait, false);
     },
     refresh: async function () {
       const pid = ethers.BigNumber.from(this.pid);
@@ -239,17 +264,39 @@ export default {
     claim: async function () {
       this.claim_loading = true;
       const obj = this;
+      let receipt = false;
       try {
-        const receipt = await this.bsc.ctrs.staking.withdraw(
-          this.pid,
-          ethers.BigNumber.from(0)
-        );
-        await market.waitEventDone(receipt, function (e) {
-          obj.claim_loading = false;
-        });
+        const amount = ethers.BigNumber.from(0);
+        if (this.withdraw_wait == 0) {
+          receipt = await this.bsc.ctrs.staking.withdraw(this.pid, amount);
+        } else {
+          const resp = await this.$confirm(
+            this.$t("locked2"),
+            this.$t("locked1", { time: this.withdraw_wait_str }),
+            {
+              confirmButtonText: this.$t("sure"),
+              cancelButtonText: this.$t("cancel"),
+              type: "warning",
+            }
+          );
+          console.log("resp", resp);
+          receipt = await this.bsc.ctrs.staking.forceWithdraw(this.pid, amount);
+
+          await market.waitEventDone(receipt, function (e) {
+            obj.claim_loading = false;
+          });
+        }
       } catch (e) {
         this.claim_loading = false;
-        console.log("claim err", e);
+        if (e == "cancel") {
+          // nothing need to do here
+        } else if ("data" in e) {
+          if ("code" in e.data) {
+            if (e.data.code == 3) {
+              // should be "still in lock time"
+            }
+          }
+        }
       }
     },
     deposit: async function () {
@@ -284,6 +331,7 @@ export default {
     transform: rotate(1800deg);
   }
 }
+
 .stake-btn {
   width: 60%;
   margin-left: 0px !important;

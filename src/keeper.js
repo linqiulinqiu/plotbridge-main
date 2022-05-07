@@ -98,7 +98,6 @@ async function loadMarketInfo(id) {
 }
 
 function setMarketItem(key, info, commit) {
-    console.log("marketlist", marketList)
     const item = copyObj(info)
     if ('market' in item) {
         if (item.market.seller == '-self') {

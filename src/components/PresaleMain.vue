@@ -81,6 +81,7 @@ export default {
       balance: "",
       bnbBalance: false,
       working: true,
+      toend: "",
     };
   },
   watch: {
@@ -105,6 +106,7 @@ export default {
           Math.floor(Date.now() / 1000) + toend
         );
         this.pstat = "e";
+        console.log("this.time_msg", this.time_msg);
       }
       return this.time_msg;
     },
