@@ -5,10 +5,6 @@
         © 2022 Plot Network Ltd,{{ $t("cpright1") }}
       </a>
     </p>
-    <!-- <p>{{ $t("cpright2") }}</p>
-    <p>
-      {{ $t("cpright3") }}
-    </p> -->
   </el-col>
 </template>
 

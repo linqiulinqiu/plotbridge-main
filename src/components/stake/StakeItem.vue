@@ -38,32 +38,34 @@
             &nbsp;&nbsp; PBP
           </span>
         </el-col>
-        <el-col
-          :lg="{ span: 6 }"
-          :md="{ span: 6 }"
-          :sm="{ span: 6 }"
-          :xs="{ span: 6 }"
-        >
+        <el-col :span="6">
           <el-button
             v-if="can_withdraw"
             @click="claim"
             class="stake-btn"
             :loading="claim_loading"
-            >{{ $t("claim") }}</el-button
-          >
+            >{{ $t("claim") }}
+          </el-button>
           <el-button @click="dia_set_amount = true" class="stake-btn">
             {{ $t("deposit") }}
           </el-button>
-          <el-button v-if="can_withdraw" @click="dia_withdraw = true" class="stake-btn">
+          <el-button
+            v-if="can_withdraw"
+            @click="dia_withdraw = true"
+            class="stake-btn"
+          >
             {{ $t("withdraw") }}
           </el-button>
           <LinkButton
-            class="addlp"
+            class="addlp stake-btn"
             v-if="this.isLp"
             :token="this.lptoken[0]"
             :btoken="this.lptoken[1]"
             :onlyLp="true"
           />
+          <el-button v-else class="stake-btn">
+            <router-link :to="this.toswap">{{ $t("buy") }}</router-link>
+          </el-button>
         </el-col>
       </el-row>
     </el-col>
@@ -74,7 +76,9 @@
           <span>{{ $t("balance") }}：{{ stk_balance }}{{ stk_symbol }}</span>
         </p>
         <el-input v-model="stake_amount" clearable maxlength="20"> </el-input>
-        <el-button @click="stake_amount = stk_balance">all</el-button>
+        <el-button @click="stake_amount = stk_balance">{{
+          $t("all")
+        }}</el-button>
 
         <ApproveButton
           v-if="stk_balance"
@@ -137,14 +141,14 @@ export default {
     locktime_str: function () {
       return times.formatD(this.locktime, false);
     },
-    withdraw_wait_str: function(){
-      return times.formatD(this.withdraw_wait, false)
+    withdraw_wait_str: function () {
+      return times.formatD(this.withdraw_wait, false);
     },
-    can_withdraw: function(){
-        if(!this.farm_amount) return false
-        if(this.farm_amount=='0.0') return false
-        return true
-    }
+    can_withdraw: function () {
+      if (!this.farm_amount) return false;
+      if (this.farm_amount == "0.0") return false;
+      return true;
+    },
   }),
   mounted() {
     this.refresh();
@@ -170,6 +174,7 @@ export default {
       claim_loading: false,
       isLp: false,
       lptoken: "",
+      toswap: "/Swap",
     };
   },
   methods: {
@@ -250,29 +255,32 @@ export default {
       const obj = this;
       let receipt = false;
       try {
-        const amount = ethers.BigNumber.from(0)
-        if(this.withdraw_wait==0){
-          receipt = await this.bsc.ctrs.staking.withdraw(this.pid,amount)
-        }else{
-          const resp = await this.$confirm(this.$t('locked', {time:this.withdraw_wait_str}),{
-              type: 'warning'
-          })
-          console.log('resp', resp)
-          receipt = await this.bsc.ctrs.staking.forceWithdraw(this.pid,amount)
+        const amount = ethers.BigNumber.from(0);
+        if (this.withdraw_wait == 0) {
+          receipt = await this.bsc.ctrs.staking.withdraw(this.pid, amount);
+        } else {
+          const resp = await this.$confirm(
+            this.$t("locked", { time: this.withdraw_wait_str }),
+            {
+              type: "warning",
+            }
+          );
+          console.log("resp", resp);
+          receipt = await this.bsc.ctrs.staking.forceWithdraw(this.pid, amount);
         }
         await market.waitEventDone(receipt, function (e) {
           obj.claim_loading = false;
         });
       } catch (e) {
         this.claim_loading = false;
-        if(e=='cancel'){
-            // nothing need to do here
-        }else if('data' in e){
-            if('code' in e.data){
-                if(e.data.code==3){ // should be "still in lock time"
-
-                }
+        if (e == "cancel") {
+          // nothing need to do here
+        } else if ("data" in e) {
+          if ("code" in e.data) {
+            if (e.data.code == 3) {
+              // should be "still in lock time"
             }
+          }
         }
       }
     },
@@ -308,6 +316,7 @@ export default {
     transform: rotate(1800deg);
   }
 }
+
 .stake-btn {
   width: 60%;
   margin-left: 0px !important;
