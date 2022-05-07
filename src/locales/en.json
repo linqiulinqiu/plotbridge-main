@@ -110,7 +110,8 @@
     "look-info":"Please connect wallet",
     "loading":"Loading ...",
     "lock-time":"Locking time",
-    "locked":"Locked, please wait {time} for unlock or force unlock by give up all earned reward in this pool",
+    "locked1":"Locked, please wait {time} for unlock ,",
+    "locked2":"Or force unlock by give up all earned reward in this pool and recalculate the lock time",
     
     "market":"MarketPlace",
     "mintPBT":"Mint PBT",
@@ -165,6 +166,7 @@
     "set-s-amount":"Set Stake Amount",
     "stage":"Stage",
     "stake-start":"Staking reward start time",
+    "sure":"Sure",
 
 
     "to-market":"Go to the market",    

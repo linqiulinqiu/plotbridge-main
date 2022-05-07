@@ -40,12 +40,13 @@
         </el-col>
         <el-col :span="6">
           <el-button
-            v-if="can_withdraw"
-            @click="claim"
             class="stake-btn"
+            v-if="can_withdraw"
             :loading="claim_loading"
+            @click="claim"
             >{{ $t("claim") }}
           </el-button>
+
           <el-button @click="dia_set_amount = true" class="stake-btn">
             {{ $t("deposit") }}
           </el-button>
@@ -111,7 +112,7 @@
           >{{ $t("withdraw") }}
         </el-button>
         <el-col v-else>
-          <p>{{ $t("locked", { time: withdraw_wait_str }) }}</p>
+          <p>{{ $t("locked", { time: this.withdraw_wait_str }) }}</p>
           <el-button @click="force_withdraw" :loading="force_w_loading">
             {{ $t("force-w") }}
           </el-button>
@@ -138,9 +139,6 @@ export default {
   props: ["pid", "stakeAddr", "locktime", "lpamount", "poolreward"],
   computed: mapState({
     bsc: "bsc",
-    withdraw_wait_str: function () {
-      return times.formatD(this.withdraw_wait, false);
-    },
     can_withdraw: function () {
       if (!this.farm_amount) return false;
       if (this.farm_amount == "0.0") return false;
@@ -168,8 +166,10 @@ export default {
       stake_amount: 0,
       withdraw_amount: 0,
       withdraw_wait: 0,
+      withdraw_wait_str: "",
       dia_set_amount: false,
       dia_withdraw: false,
+      claim_popover: false,
       dep_loading: false,
       w_loading: false,
       force_w_loading: false,
@@ -204,6 +204,7 @@ export default {
     },
     loadLocktime: function () {
       this.locktime_str = times.formatD(this.locktime, false);
+      this.withdraw_wait_str = times.formatD(this.withdraw_wait, false);
     },
     refresh: async function () {
       const pid = ethers.BigNumber.from(this.pid);
@@ -270,17 +271,21 @@ export default {
           receipt = await this.bsc.ctrs.staking.withdraw(this.pid, amount);
         } else {
           const resp = await this.$confirm(
-            this.$t("locked", { time: this.withdraw_wait_str }),
+            this.$t("locked2"),
+            this.$t("locked1", { time: this.withdraw_wait_str }),
             {
+              confirmButtonText: this.$t("sure"),
+              cancelButtonText: this.$t("cancel"),
               type: "warning",
             }
           );
           console.log("resp", resp);
           receipt = await this.bsc.ctrs.staking.forceWithdraw(this.pid, amount);
+
+          await market.waitEventDone(receipt, function (e) {
+            obj.claim_loading = false;
+          });
         }
-        await market.waitEventDone(receipt, function (e) {
-          obj.claim_loading = false;
-        });
       } catch (e) {
         this.claim_loading = false;
         if (e == "cancel") {
