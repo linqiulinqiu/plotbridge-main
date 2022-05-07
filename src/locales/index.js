@@ -33,10 +33,11 @@ export const setup = function (lang) {
     document.body.setAttribute('lang', lang)
     Vue.config.lang = lang
     i18n.locale = lang
-    if(lang=='zh'){
+    if (lang == 'zh') {
         moment.locale('zh-cn')
-    }else{
+    } else {
         moment.locale(lang)
+
     }
 }
 

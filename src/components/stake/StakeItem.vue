@@ -138,9 +138,6 @@ export default {
   props: ["pid", "stakeAddr", "locktime", "lpamount", "poolreward"],
   computed: mapState({
     bsc: "bsc",
-    locktime_str: function () {
-      return times.formatD(this.locktime, false);
-    },
     withdraw_wait_str: function () {
       return times.formatD(this.withdraw_wait, false);
     },
@@ -153,7 +150,11 @@ export default {
   mounted() {
     this.refresh();
     this.loadLp();
+    this.loadLocktime();
     setInterval(this.refresh, 12000);
+  },
+  beforeUpdate() {
+    this.loadLocktime();
   },
   data() {
     return {
@@ -162,6 +163,7 @@ export default {
       earned_amount: "",
       stk_symbol: "-",
       stk_balance: "",
+      locktime_str: "",
       stk_balance_bn: 0,
       stake_amount: 0,
       withdraw_amount: 0,
@@ -184,14 +186,14 @@ export default {
       } else if (typeof val == "number") {
         return hformat(val);
       } else if (typeof val == "string") {
-        val = parseFloat(val)
+        val = parseFloat(val);
       } else {
-        val = val.toNumber()
+        val = val.toNumber();
       }
-      if(val>1){
-        return hformat(val,{separator:''});
-      }else{
-        return val
+      if (val > 1) {
+        return hformat(val, { separator: "" });
+      } else {
+        return val;
       }
     },
     loadLp: async function () {
@@ -199,6 +201,9 @@ export default {
       if (this.isLp) {
         this.lptoken = await tokens.lptokens(this.stakeAddr);
       }
+    },
+    loadLocktime: function () {
+      this.locktime_str = times.formatD(this.locktime, false);
     },
     refresh: async function () {
       const pid = ethers.BigNumber.from(this.pid);

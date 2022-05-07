@@ -42,7 +42,11 @@ export default {
     bsc: "bsc",
   }),
   mounted() {
+    this.startTime();
     this.refresh();
+  },
+  beforeUpdate() {
+    this.startTime();
   },
   data() {
     return {
@@ -53,9 +57,11 @@ export default {
     };
   },
   methods: {
+    startTime: async function () {
+      const time_start = await this.bsc.ctrs.pbp.stakeStart();
+      this.time_msg = times.formatRelTS(time_start);
+    },
     refresh: async function () {
-      const stakeStart = await this.bsc.ctrs.pbp.stakeStart();
-      this.time_msg = times.formatRelTS(stakeStart);
       const pools = await this.bsc.ctrs.staking.pools();
       const stk = [];
       let total_alloc = 0;
