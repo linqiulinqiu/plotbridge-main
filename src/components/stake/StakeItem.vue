@@ -23,13 +23,13 @@
             <span class="font">{{ hformat(lpamount) }}</span>
           </p>
           <p>
-            APR：<span class="font">{{ apy }}</span> %
+            APR：<span class="font">{{ apy }}%</span>
           </p>
           <p>
             {{ $t("staking") }}：
             <span class="font">{{ hformat(farm_amount) }}</span>
             <span class="font" v-if="!isNaN(farm_amount) && farm_amount != 0">
-              ( {{ hformat((farm_amount * 100) / lpamount) }} %)
+              ({{ hformat((farm_amount * 100) / lpamount) }}%)
             </span>
           </p>
           <span>
@@ -184,9 +184,14 @@ export default {
       } else if (typeof val == "number") {
         return hformat(val);
       } else if (typeof val == "string") {
-        return hformat(parseFloat(val));
+        val = parseFloat(val)
       } else {
-        return hformat(val.toNumber());
+        val = val.toNumber()
+      }
+      if(val>1){
+        return hformat(val,{separator:''});
+      }else{
+        return val
       }
     },
     loadLp: async function () {
