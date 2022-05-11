@@ -183,15 +183,17 @@ export default {
     hformat: function (val) {
       if (isNaN(val) || val == "") {
         return "";
-      } else if (typeof val == "number") {
-        return hformat(val);
       } else if (typeof val == "string") {
         val = parseFloat(val);
       } else {
-        val = val.toNumber();
+        val = Number(val);
       }
-      if (val > 1) {
-        return hformat(val, { separator: "" });
+      if (val >= 1) {
+        const value = hformat(val, { separator: "" });
+        return value;
+      } else if (val > 0 && val < 1) {
+        const amount = Math.round(val * Math.pow(10, 6)) / Math.pow(10, 6);
+        return amount;
       } else {
         return val;
       }
