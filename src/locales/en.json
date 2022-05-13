@@ -81,6 +81,10 @@
     "home-title":"Welcome to the PlotBridge beta version",
     "home-news":[
         {
+            "ts":"2022-05-13",
+            "msg":"The destruction reward starts.The destruction includes burning Wcoins and destroying PBT.After the operation is completed,a certain proportion of PBP coin will be obtained."
+        },
+        {
             "ts":"2022-05-06",
             "msg":"Our staking reward program starts. Initial pools including: PBP-BNB Cake LP, PBP-WXCH Cake LP, PBP-WXCC Cake LP and PBP single token, welcome to stake and earn!"
         },

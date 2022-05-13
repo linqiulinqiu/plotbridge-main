@@ -81,6 +81,10 @@
     "home-title":"PlotBridge beta 版已上线，欢迎使用",
     "home-news":[
         {
+            "ts":"2022-05-13",
+            "msg":"销毁奖励开始，销毁包括燃烧W币和销毁PBT，操作完成后，将获得一定比例的PBP币"
+        },
+        {
             "ts":"2022-05-06",
             "msg":"质押奖励模块开放，初步开放的代币池包括：PBP-BNB Cake LP，PBP-WXCH Cake LP，PBP-WXCC Cake LP，PBP单币。欢迎加入质押，赢取奖励。"
         },
