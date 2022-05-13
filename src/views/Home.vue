@@ -1,6 +1,6 @@
 <template>
-  <el-col id="home">
-    <el-col class="notice" :span="12" :offset="6">
+  <el-row id="home" type="flex" justify="space-between">
+    <el-col class="notice" :span="20" :offset="6">
       <h2>{{ $t("home-title") }}</h2>
       <el-timeline id="news-timeline">
         <el-timeline-item
@@ -13,10 +13,10 @@
       </el-timeline>
       <p>{{ $t("home-note") }}</p>
     </el-col>
-    <el-col :span="12" :offset="6">
+    <el-col :span="5" :offset="2">
       <el-card :offset="5" :span="10" class="con-card"><ConnectUs /></el-card>
     </el-col>
-  </el-col>
+  </el-row>
 </template>
 
 <script>
