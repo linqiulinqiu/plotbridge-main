@@ -347,5 +347,6 @@ export default {
     getLimit: getLimit,
     getfees: getfees,
     getmintfee: getmintfee,
-    loadCoinlist: loadCoinlist
+    loadCoinlist: loadCoinlist,
+    ListenToWCoin:ListenToWCoin
 }
