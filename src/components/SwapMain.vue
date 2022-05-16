@@ -145,6 +145,7 @@ export default {
   },
   computed: mapState({
     bsc: "bsc",
+    wBlance: "wBlance",
     pbpAddr(state) {
       return state.bsc.ctrs.pbp.address;
     },
@@ -287,11 +288,27 @@ export default {
           minreq,
           120
         );
+        const commit = this.$store.commit;
         await market.waitEventDone(receipt, async function (evt) {
           obj.swapping = false;
           obj.from_amount = "";
           obj.to_amount = "";
           await obj.update_balance(true, true);
+          for (let i in obj.wBlance) {
+            for (let k in obj.allwlist) {
+              const swapinfo = obj.allwlist[k];
+              if ("index" in swapinfo) {
+                if (
+                  obj.from_coin == swapinfo.address ||
+                  obj.to_coin == swapinfo.address
+                ) {
+                  if (i == swapinfo.index) {
+                    await market.ListenToWCoin(commit);
+                  }
+                }
+              }
+            }
+          }
         });
       } catch (e) {
         console.log("err", e);
