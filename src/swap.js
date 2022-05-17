@@ -47,6 +47,7 @@ async function estimate(bsc, from, to, amount_in, amount_out) {
         return aouts[aouts.length - 1]
     }else if(amount_out){
         const ains = await bsc.ctrs.router.getAmountsIn(amount_out, paths)
+        console.log('ains', ains)
         return ains[0]
     }
 }

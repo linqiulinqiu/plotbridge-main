@@ -29,7 +29,7 @@
             slot="append"
             v-if="from_balance > 0"
             type="primary"
-            @click="from_all"
+            @click="from_all('from')"
             >{{ $t("all") }}</el-button
           >
         </el-input>
@@ -47,7 +47,7 @@
       <el-col id="swap-exc">
         <el-button
           circle
-          icon="el-icon-bottom"
+          :icon="'el-icon-' + up_down"
           size="large"
           @click="order_swap"
           :disabled="change_dis"
@@ -64,7 +64,15 @@
           class="amount-ipt"
           clearable
           maxlength="20"
-        ></el-input>
+        >
+          <el-button
+            slot="append"
+            v-if="to_balance > 0"
+            type="primary"
+            @click="from_all('to')"
+            >{{ $t("all") }}
+          </el-button>
+        </el-input>
         <el-select v-model="to_coin" :placeholder="this.$t('select')">
           <el-option
             v-for="w in allwlist"
@@ -76,7 +84,10 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col class="swap-btn" v-if="this.to_amount > 0">
+      <el-col
+        class="swap-btn"
+        v-if="this.to_amount > 0 && this.from_amount > 0"
+      >
         <ApproveButton
           :bsc="this.bsc"
           :token="this.from_coin"
@@ -184,6 +195,25 @@ export default {
       if (this.slipAmount == 20) return true;
       return false;
     },
+    computeAmount() {
+      if (this.from_coin != "" && this.to_coin != "") {
+        if (this.from_amount != "" || this.to_amount != "") {
+          if (
+            this.from_to == "from" &&
+            ethers.BigNumber.from(this.from_val).gt(0)
+          ) {
+            return true;
+          }
+          if (
+            this.from_to == "to" &&
+            ethers.BigNumber.from(this.to_val).gt(0)
+          ) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
   }),
   mounted: function () {
     this.load_wlist();
@@ -206,22 +236,56 @@ export default {
       slipAmount: 100,
       dia_slip: false,
       slippage: [20, 50, 100, 200],
+      from_to: false,
+      up_down: "bottom",
     };
   },
   watch: {
     slipAmount: function (newnum, oldnum) {
       this.slipAmount = newnum;
     },
+    to_amount: debounce(async function (newv, oldv) {
+      this.to_val = await tokens.parse(this.to_coin, newv);
+      console.log(
+        "to_val",
+        this.to_val,
+        newv,
+        await tokens.format(this.to_coin, this.to_val)
+      );
+
+      if (newv != (await tokens.format(this.to_coin, this.to_val))) {
+        // user input
+        this.from_to = "to";
+        this.up_down = "top";
+        this.from_amount = await this.update_amounts(
+          this.from_to,
+          this.to_coin,
+          newv,
+          this.from_coin
+        );
+      }
+    }, 500),
     from_amount: debounce(async function (newa, olda) {
-      await this.update_amounts();
+      this.from_val = await tokens.parse(this.from_coin, newa);
+      console.log("from", newa);
+      if (newa != (await tokens.format(this.from_coin, this.from_val))) {
+        this.from_to = "from";
+        this.up_down = "bottom";
+        this.to_amount = await this.update_amounts(
+          this.from_to,
+          this.from_coin,
+          newa,
+          this.to_coin
+        );
+      }
     }, 500),
     from_coin: debounce(async function (newc, oldc) {
       await this.update_balance(true, false);
-      await this.update_amounts();
+      this.from_amount = "";
     }, 500),
     to_coin: debounce(async function (newc, oldc) {
       await this.update_balance(false, true);
-      await this.update_amounts();
+      this.to_amount = "";
     }, 500),
   },
   methods: {
@@ -238,28 +302,33 @@ export default {
       const old_from_coin = this.from_coin;
       this.from_coin = this.to_coin;
       this.to_coin = old_from_coin;
+      this.from_amount = "";
+      this.to_amount = "";
     },
-    update_amounts: async function () {
-      let to_val = ethers.BigNumber.from(0);
-      if (this.from_amount == "") {
-        this.to_amount = "";
-      } else if (this.from_coin != "") {
-        this.from_val = await tokens.parse(this.from_coin, this.from_amount);
-        if (this.from_coin != "" && this.to_coin != "" && this.from_val.gt(0)) {
+    update_amounts: async function (from_to, amountAddr, amount, addr) {
+      if (this.computeAmount) {
+        const amount_val = await tokens.parse(amountAddr, amount);
+        if (from_to) {
+          let val = {
+            to: false,
+            from: false,
+          };
+          val[from_to] = amount_val;
           try {
             const est = await swap.estimate(
               this.bsc,
               this.from_coin,
               this.to_coin,
-              this.from_val
+              val["from"],
+              val["to"]
             );
-            to_val = est;
+            const est_amount = await tokens.format(addr, est);
+            console.log("est-amount", est_amount, this.from_to, val);
+            return est_amount;
           } catch (e) {
-            console.log("estimate failed", e);
+            console.log("update amount err", e);
           }
         }
-        this.to_val = to_val;
-        this.to_amount = await tokens.format(this.to_coin, to_val);
       }
     },
     update_balance: async function (from, to) {
@@ -272,14 +341,23 @@ export default {
         this.to_balance = await tokens.format(this.to_coin, to_balance);
       }
     },
-    from_all: function () {
-      this.from_amount = this.from_balance;
+    from_all: function (mode) {
+      if (mode == "from") this.from_amount = this.from_balance;
+      if (mode == "to") this.to_amount = this.to_balance;
     },
     swap: async function () {
       this.swapping = true;
       const minreq = this.to_val.sub(this.to_val.mul(this.slipAmount).div(100));
       const obj = this;
       try {
+        // for fixed output
+        const receipt_fo = await swap.swapfo(
+          this.bsc,
+          this.from_coin,
+          this.to_coin,
+          this.to_val,
+          this.from_val.add(this.from_val.mul(this.slipAmount).div(100))
+        );
         const receipt = await swap.swap(
           this.bsc,
           this.from_coin,
