@@ -245,7 +245,6 @@ export default {
       this.slipAmount = newnum;
     },
     to_amount: debounce(async function (newv, oldv) {
-      this.to_val = await tokens.parse(this.to_coin, newv);
       console.log(
         "to_val",
         this.to_val,
@@ -254,6 +253,8 @@ export default {
       );
 
       if (newv != (await tokens.format(this.to_coin, this.to_val))) {
+        this.to_val = await tokens.parse(this.to_coin, newv);
+
         // user input
         this.from_to = "to";
         this.up_down = "top";
@@ -266,9 +267,10 @@ export default {
       }
     }, 500),
     from_amount: debounce(async function (newa, olda) {
-      this.from_val = await tokens.parse(this.from_coin, newa);
       console.log("from", newa);
       if (newa != (await tokens.format(this.from_coin, this.from_val))) {
+        this.from_val = await tokens.parse(this.from_coin, newa);
+
         this.from_to = "from";
         this.up_down = "bottom";
         this.to_amount = await this.update_amounts(
