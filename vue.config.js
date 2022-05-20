@@ -11,5 +11,8 @@ module.exports = {
         hot: "only",
         compress: true,
         open: true
+    },
+    configureWebpack: {
+        devtool:"source-map"
     }
 }
