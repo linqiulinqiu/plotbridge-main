@@ -36,8 +36,6 @@ export default {
     event: "change",
   },
   data() {
-    console.log(this.info);
-
     return {
       balance: "",
       addr: this.info.addr,
@@ -50,7 +48,10 @@ export default {
   watch: {
     info: async function (newv, oldv) {
       if (this.info.addr) {
+        this.addr = this.info.addr
         this.amount = await tokens.format(this.info.addr, this.info.amount);
+      }else{
+        this.addr = ''
       }
     },
     deep: true,
@@ -70,8 +71,8 @@ export default {
       } else {
         this.info.addr = "";
       }
+      console.log("this.info", this.addr, this.info, this.amount);
       this.info.amount = await tokens.parse(this.info.addr, this.amount);
-      console.log("this.info", this.addr, this.info.amount);
       this.$emit("change", this.info);
       console.log("submit", this.info);
     },

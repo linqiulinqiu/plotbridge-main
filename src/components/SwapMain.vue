@@ -14,7 +14,7 @@
         </el-tooltip>
       </el-col>
       <el-col class="swap-input">
-        <TokenInput :coinList="this.allwlist" v-model="this.from" />
+        <TokenInput :coinList="this.allwlist" v-model="from" />
       </el-col>
       <el-col id="swap-exc">
         <el-button
