@@ -15,10 +15,10 @@
       </el-col>
       <el-col class="swap-input">
         <TokenInput
-          :coinList="this.allwlist"
-          :banCoin="this.banCoin"
+          title="From"
+          :coinList="allwlist"
+          :banCoin="to.addr"
           v-model="from"
-          @change="change($event)"
         />
       </el-col>
       <el-col id="swap-exc">
@@ -26,15 +26,16 @@
           circle
           :icon="'el-icon-' + up_down"
           size="large"
+          @click="orderSwap"
           :disabled="change_dis"
         ></el-button>
       </el-col>
       <el-col class="swap-input">
         <TokenInput
-          :coinList="this.allwlist"
-          :banCoin="this.banCoin"
+          title="To"
+          :coinList="allwlist"
+          :banCoin="from.addr"
           v-model="to"
-          @change="change($event)"
         />
       </el-col>
       <el-col class="swap-btn">
@@ -154,28 +155,24 @@ export default {
   data() {
     return {
       allwlist: [],
-      BNBaddr: ethers.constants.AddressZero,
       from: {
         amount: ethers.BigNumber.from(0),
-        dirty: false,
-        addr: "",
-        title: "from",
+        lastSet: Date.now(),
+        lastEdit: 0,
+        addr: ""
       },
       to: {
         amount: ethers.BigNumber.from(0),
-        dirty: false,
-        addr: "",
-        title: "to",
+        lastSet: Date.now(),
+        lastEdit: 0,
+        addr: ""
       },
-      banCoin: false,
       swapping: false,
       slipAmount: 100,
       dia_slip: false,
       slippage: [20, 50, 100, 200],
       from_to: false,
-      up_down: "bottom",
-      f_oldaddr: { newa: "", olda: "" },
-      t_oldaddr: { newa: "", olda: "" },
+      up_down: "bottom"
     };
   },
   watch: {
@@ -183,80 +180,20 @@ export default {
       this.slipAmount = newnum;
     },
     from: async function (newa, olda) {
-      if (this.gt()) {
-        if (newa.dirty) {
-          // this.getDecimal(this.f_oldaddr);
-          this.to.amount = await this.update_amounts(newa, this.to, newa.title);
-          this.from.dirty = false;
-          this.from_to = "from";
-          this.to = Object.assign({}, this.to);
-          console.log("est_amount in from", this.to);
-        }
-      }
+      await this.estimate()
     },
-    deep: true,
     to: async function (newa, olda) {
-      if (this.gt()) {
-        if (newa.dirty) {
-          // this.getDecimal(this.t_oldaddr);
-          this.from.amount = await this.update_amounts(
-            this.from,
-            newa,
-            newa.title
-          );
-          this.from_to = "to";
-          this.to.dirty = false;
-          this.from = Object.assign({}, this.from);
-          console.log("est_amount in to", this.from.amount);
-        }
-      }
-    },
-    deep: true,
+      await this.estimate()
+    }
   },
   methods: {
-    getDecimal: function (oldaddr) {
-      let oldaa = "";
-      let newaa = "";
-      for (let i in this.allwlist) {
-        const addr = this.allwlist[i].address;
-        if (addr == oldaddr.newa) {
-          newaa = this.allwlist[i].decimals;
-        }
-        if (addr == oldaddr.olda) {
-          oldaa = this.allwlist[i].decimals;
-        }
-      }
-      console.log("this.decimals", oldaa, newaa);
-      if (newaa < oldaa) {
-        this.$message("数据处理失败");
-      }
-    },
-    gt: function () {
-      if (this.from.addr && this.to.addr) {
-        if (this.from.amount && this.from.dirty && this.from.amount.gt(0)) {
-          return true;
-        } else if (this.to.amount && this.to.dirty && this.to.amount.gt(0)) {
-          return true;
-        }
-      }
-      return false;
-    },
-    change: function (e) {
-      this.banCoin = e.addr;
-      if (e.title == "from") {
-        this.from = Object.assign({}, e);
-        if (this.f_oldaddr.newa != this.f_oldaddr.ola) {
-          this.f_oldaddr.olda = this.f_oldaddr.newa;
-        }
-        this.f_oldaddr.newa = e.addr;
-      }
-      if (e.title == "to") {
-        this.to = Object.assign({}, e);
-        if (this.t_oldaddr.newa != this.t_oldaddr.ola) {
-          this.t_oldaddr.olda = this.t_oldaddr.newa;
-        }
-        this.t_oldaddr.newa = e.addr;
-      }
+    orderSwap: function () {
+        const from = this.from
+        const to = this.to
+        to.lastSet = Date.now()
+        from.lastSet = Date.now()
+        this.from = to
+        this.to = from
     },
     watchToken: async function () {
       for (let i in this.allwlist) {
@@ -267,24 +204,50 @@ export default {
         }
       }
     },
-    update_amounts: async function (from, to, title) {
-      let val = {
-        from: false,
-        to: false,
-      };
-      if (title == "from") val[title] = from.amount;
-      if (title == "to") val[title] = to.amount;
-      try {
-        const est = await swap.estimate(
-          this.bsc,
-          from.addr,
-          to.addr,
-          val["from"],
-          val["to"]
-        );
-        return est;
-      } catch (e) {
-        console.log("update amount err", e);
+    estimate: async function () {
+      const from = this.from
+      const to = this.to
+      let from_amount = false
+      let to_amount = false
+      let shouldEstimate = true
+      if(from.addr&&to.addr){
+          if(from.lastEdit>to.lastEdit && from.lastEdit>to.lastSet){
+              if(!from.amount || from.amount.eq(0)){
+                  shouldEstimate = false
+              }
+              from_amount = from.amount
+          }else if(to.lastEdit>from.lastEdit && to.lastEdit>from.lastSet){
+              if(!to.amount || to.amount.eq(0)){
+                  shouldEstimate = false
+              }
+              to_amount = to.amount
+          }else{
+              shouldEstimate = false
+          }
+          if(shouldEstimate){
+              try {
+                const est = await swap.estimate(
+                  this.bsc,
+                  from.addr,
+                  to.addr,
+                  from_amount,
+                  to_amount 
+                );
+                if(from_amount){
+                    const to = Object.assign({}, this.to)
+                    to.amount = est
+                    to.lastSet = Date.now()
+                    this.to = to
+                }else{
+                    const from = Object.assign({}, this.from)
+                    from.amount = est
+                    from.lastSet = Date.now()
+                    this.from =  from
+                }
+              } catch (e) {
+                console.log("update amount err", e);
+              }
+          }
       }
     },
     swap: async function () {
@@ -347,9 +310,6 @@ export default {
       });
       for (let i in wsymbols) {
         this.allwlist.push(pbwallet.wcoin_info(wsymbols[i], "bsymbol"));
-      }
-      for (let k in this.allwlist) {
-        this.allwlist[k]["disabled"] = false;
       }
     },
     watchlist: function () {

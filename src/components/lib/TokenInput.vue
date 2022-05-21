@@ -1,24 +1,24 @@
 <template>
   <el-col>
     <p>
-      {{ info.title }}
+      {{ title }}
       <span class="clearfix"> {{ $t("balance") }}: {{ balance }} </span>
     </p>
     <el-input
       type="text"
       v-model="amount"
-      @change="submit"
+      @change="inputChanged"
       maxlength="20"
       class="amount-ipt"
     >
     </el-input>
-    <el-select v-model="addr" @change="submit" :placeholder="this.$t('select')">
+    <el-select v-model="addr" @change="selChanged" :placeholder="this.$t('select')">
       <el-option
-        v-for="w in this.list"
+        v-for="w in coinList"
         :key="w.address"
         :label="w.bsymbol"
         :value="w.address"
-        :disabled="w.disabled"
+        :disabled="w.address==banCoin"
       >
       </el-option>
     </el-select>
@@ -31,61 +31,62 @@ import { ethers } from "ethers";
 
 export default {
   name: "TokenInput",
-  props: ["coinList", "banCoin", "info"],
-  model: {
-    prop: "info",
-    event: "change",
-  },
-  computed: {
-    list: function () {
-      if (this.banCoin) {
-        for (let i in this.coinList) {
-          this.coinList[i].disabled = false;
-          if (this.coinList[i].address == this.banCoin) {
-            this.coinList[i].disabled = true;
-          }
-        }
-      }
-      return this.coinList;
-    },
-  },
+  props: ["title", "coinList", "banCoin", "value"],
   data() {
     return {
       balance: "",
-      addr: this.info.addr,
-      amount: "",
+      addr: this.value.addr,
+      amount: ""
     };
   },
   watch: {
     addr: async function (newa, olda) {
-      if (newa) {
-        this.amount = "";
-        await this.updateBalance(newa);
+      if (newa && newa!=olda) {
+        await this.updateBalance();
       }
     },
-    info: async function (newv, oldv) {
+    value: async function (newv, oldv) {
       this.addr = newv.addr;
-      if (newv.amount) {
-          this.amount = await tokens.format(newv.addr, newv.amount);
-        
+      if(newv.lastEdit<newv.lastSet){
+          if (newv.amount) {
+              this.amount = await tokens.format(newv.addr, newv.amount);
+          }
       }
     },
     deep: true,
   },
   methods: {
-    submit: async function () {
-      this.info.addr = this.addr;
-      if (this.amount == 0) {
-        this.info.amount = ethers.BigNumber.from(0);
-      } else {
-        this.info.amount = await tokens.parse(this.info.addr, this.amount);
-        this.info.dirty = true;
-      }
-      this.$emit("change", this.info);
+    inputChanged: async function(){
+      const info = Object.assign({}, this.value)
+      info.amount = await this.updateAmount()
+      info.lastEdit = Date.now()
+      this.$emit("input", info);
     },
-    updateBalance: async function (addr) {
-      const coinBalance = await tokens.balance(addr);
-      this.balance = await tokens.format(addr, coinBalance);
+    selChanged: async function () {
+      const info = Object.assign({}, this.value)
+      info.addr = this.addr
+      if(info.lastEdit>info.lastSet){   
+          // for active bar, estimate the other side
+          info.lastEdit = Date.now()
+      }else{// else: for passive bar, estimate this side
+          this.amount = ''
+          info.lastSet = 0
+      }
+      info.amount = await this.updateAmount()
+      this.$emit("input", info);
+    },
+    updateAmount: async function(){
+      if(isNaN(this.amount)){
+        return false
+      }else if(this.addr){
+        return  await tokens.parse(this.addr, this.amount);
+      }else{
+          return false
+      }
+    },
+    updateBalance: async function () {
+      const coinBalance = await tokens.balance(this.addr);
+      this.balance = await tokens.format(this.addr, coinBalance);
     },
   },
 };
