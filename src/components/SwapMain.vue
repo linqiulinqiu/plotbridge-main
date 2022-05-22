@@ -91,7 +91,6 @@
 </template>
 <script>
 import { ethers } from "ethers";
-import debounce from "lodash/debounce";
 import { mapState } from "vuex";
 import ApproveButton from "./lib/ApproveButton.vue";
 import pbwallet from "pbwallet";

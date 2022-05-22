@@ -7,7 +7,6 @@
     <el-input
       type="text"
       v-model="amount"
-      @change="inputChanged"
       maxlength="20"
       class="amount-ipt"
     >
@@ -45,6 +44,11 @@ export default {
         await this.updateBalance();
       }
     },
+    amount: debounce(async function (newa, olda) {
+        if(newa != await tokens.format(this.value.addr, this.value.amount)){ // input change, not by set from upper level
+            await this.inputChanged()
+        }
+    },500),
     value: async function (newv, oldv) {
       this.addr = newv.addr;
       if(newv.lastEdit<newv.lastSet){
