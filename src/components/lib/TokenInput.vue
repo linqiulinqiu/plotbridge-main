@@ -4,20 +4,19 @@
       {{ title }}
       <span class="clearfix"> {{ $t("balance") }}: {{ balance }} </span>
     </p>
-    <el-input
-      type="text"
-      v-model="amount"
-      maxlength="20"
-      class="amount-ipt"
-    >
+    <el-input type="text" v-model="amount" maxlength="20" class="amount-ipt">
     </el-input>
-    <el-select v-model="addr" @change="selChanged" :placeholder="this.$t('select')">
+    <el-select
+      v-model="addr"
+      @change="selChanged"
+      :placeholder="this.$t('select')"
+    >
       <el-option
         v-for="w in coinList"
         :key="w.address"
         :label="w.bsymbol"
         :value="w.address"
-        :disabled="w.address==banCoin"
+        :disabled="w.address == banCoin"
       >
       </el-option>
     </el-select>
@@ -35,57 +34,64 @@ export default {
     return {
       balance: "",
       addr: this.value.addr,
-      amount: ""
+      amount: "",
     };
+  },
+  mounted() {
+    if (this.addr) {
+      setInterval(this.updateBalance, 15000);
+    }
   },
   watch: {
     addr: async function (newa, olda) {
-      if (newa && newa!=olda) {
+      if (newa && newa != olda) {
         await this.updateBalance();
       }
     },
     amount: debounce(async function (newa, olda) {
-        if(newa != await tokens.format(this.value.addr, this.value.amount)){ // input change, not by set from upper level
-            await this.inputChanged()
-        }
-    },500),
+      if (newa != (await tokens.format(this.value.addr, this.value.amount))) {
+        // input change, not by set from upper level
+        await this.inputChanged();
+      }
+    }, 500),
     value: async function (newv, oldv) {
       this.addr = newv.addr;
-      if(newv.lastEdit<newv.lastSet){
-          if (newv.amount) {
-              this.amount = await tokens.format(newv.addr, newv.amount);
-          }
+      if (newv.lastEdit < newv.lastSet) {
+        if (newv.amount) {
+          this.amount = await tokens.format(newv.addr, newv.amount);
+        }
       }
     },
     deep: true,
   },
   methods: {
-    inputChanged: async function(){
-      const info = Object.assign({}, this.value)
-      info.amount = await this.updateAmount()
-      info.lastEdit = Date.now()
+    inputChanged: async function () {
+      const info = Object.assign({}, this.value);
+      info.amount = await this.updateAmount();
+      info.lastEdit = Date.now();
       this.$emit("input", info);
     },
     selChanged: async function () {
-      const info = Object.assign({}, this.value)
-      info.addr = this.addr
-      if(info.lastEdit>info.lastSet){   
-          // for active bar, estimate the other side
-          info.lastEdit = Date.now()
-      }else{// else: for passive bar, estimate this side
-          this.amount = ''
-          info.lastSet = 0
+      const info = Object.assign({}, this.value);
+      info.addr = this.addr;
+      if (info.lastEdit > info.lastSet) {
+        // for active bar, estimate the other side
+        info.lastEdit = Date.now();
+      } else {
+        // else: for passive bar, estimate this side
+        this.amount = "";
+        info.lastSet = 0;
       }
-      info.amount = await this.updateAmount()
+      info.amount = await this.updateAmount();
       this.$emit("input", info);
     },
-    updateAmount: async function(){
-      if(isNaN(this.amount)){
-        return false
-      }else if(this.addr){
-        return  await tokens.parse(this.addr, this.amount);
-      }else{
-          return false
+    updateAmount: async function () {
+      if (isNaN(this.amount)) {
+        return false;
+      } else if (this.addr) {
+        return await tokens.parse(this.addr, this.amount);
+      } else {
+        return false;
       }
     },
     updateBalance: async function () {

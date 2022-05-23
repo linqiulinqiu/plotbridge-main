@@ -158,20 +158,20 @@ export default {
         amount: ethers.BigNumber.from(0),
         lastSet: Date.now(),
         lastEdit: 0,
-        addr: ""
+        addr: "",
       },
       to: {
         amount: ethers.BigNumber.from(0),
         lastSet: Date.now(),
         lastEdit: 0,
-        addr: ""
+        addr: "",
       },
       swapping: false,
       slipAmount: 100,
       dia_slip: false,
       slippage: [20, 50, 100, 200],
       from_to: false,
-      up_down: "bottom"
+      up_down: "bottom",
     };
   },
   watch: {
@@ -179,20 +179,20 @@ export default {
       this.slipAmount = newnum;
     },
     from: async function (newa, olda) {
-      await this.estimate()
+      await this.estimate();
     },
     to: async function (newa, olda) {
-      await this.estimate()
-    }
+      await this.estimate();
+    },
   },
   methods: {
     orderSwap: function () {
-        const from = this.from
-        const to = this.to
-        to.lastSet = Date.now()
-        from.lastSet = Date.now()
-        this.from = to
-        this.to = from
+      const from = this.from;
+      const to = this.to;
+      to.lastSet = Date.now();
+      from.lastSet = Date.now();
+      this.from = to;
+      this.to = from;
     },
     watchToken: async function () {
       for (let i in this.allwlist) {
@@ -204,54 +204,58 @@ export default {
       }
     },
     estimate: async function () {
-      const from = this.from
-      const to = this.to
-      let from_amount = false
-      let to_amount = false
-      let shouldEstimate = true
-      if(from.addr&&to.addr){
-          if(from.lastEdit>to.lastEdit && from.lastEdit>to.lastSet){
-              if(!from.amount || from.amount.eq(0)){
-                  shouldEstimate = false
-              }
-              from_amount = from.amount
-          }else if(to.lastEdit>from.lastEdit && to.lastEdit>from.lastSet){
-              if(!to.amount || to.amount.eq(0)){
-                  shouldEstimate = false
-              }
-              to_amount = to.amount
-          }else{
-              shouldEstimate = false
+      const from = this.from;
+      const to = this.to;
+      let from_amount = false;
+      let to_amount = false;
+      let shouldEstimate = true;
+      if (from.addr && to.addr) {
+        if (from.lastEdit > to.lastEdit && from.lastEdit > to.lastSet) {
+          if (!from.amount || from.amount.eq(0)) {
+            shouldEstimate = false;
           }
-          if(shouldEstimate){
-              try {
-                const est = await swap.estimate(
-                  this.bsc,
-                  from.addr,
-                  to.addr,
-                  from_amount,
-                  to_amount 
-                );
-                if(from_amount){
-                    const to = Object.assign({}, this.to)
-                    to.amount = est
-                    to.lastSet = Date.now()
-                    this.to = to
-                }else{
-                    const from = Object.assign({}, this.from)
-                    from.amount = est
-                    from.lastSet = Date.now()
-                    this.from =  from
-                }
-              } catch (e) {
-                console.log("update amount err", e);
-              }
+          from_amount = from.amount;
+          this.from_to = "from";
+        } else if (to.lastEdit > from.lastEdit && to.lastEdit > from.lastSet) {
+          if (!to.amount || to.amount.eq(0)) {
+            shouldEstimate = false;
           }
+          to_amount = to.amount;
+          this.from_to = "to";
+        } else {
+          shouldEstimate = false;
+        }
+        if (shouldEstimate) {
+          try {
+            const est = await swap.estimate(
+              this.bsc,
+              from.addr,
+              to.addr,
+              from_amount,
+              to_amount
+            );
+            if (from_amount) {
+              const to = Object.assign({}, this.to);
+              to.amount = est;
+              to.lastSet = Date.now();
+              this.to = to;
+            } else {
+              const from = Object.assign({}, this.from);
+              from.amount = est;
+              from.lastSet = Date.now();
+              this.from = from;
+            }
+          } catch (e) {
+            console.log("update amount err", e);
+          }
+        }
       }
     },
     swap: async function () {
       this.swapping = true;
-      const minreq = this.to_val.sub(this.to_val.mul(this.slipAmount).div(100));
+      const minreq = this.to.amount.sub(
+        this.to.amount.mul(this.slipAmount).div(100)
+      );
       const obj = this;
       try {
         // for fixed output
@@ -261,7 +265,7 @@ export default {
             this.bsc,
             this.from.addr,
             this.to.addr,
-            this.from.val,
+            this.from.amount,
             minreq,
             120
           );
@@ -270,8 +274,10 @@ export default {
             this.bsc,
             this.from.addr,
             this.to.addr,
-            this.to.val,
-            this.from.val.add(this.from.val.mul(this.slipAmount).div(100)),
+            this.to.amount,
+            this.from.amount.add(
+              this.from.amount.mul(this.slipAmount).div(100)
+            ),
             120
           );
         }
@@ -279,6 +285,8 @@ export default {
           obj.swapping = false;
           obj.from.amount = ethers.BigNumber.from(0);
           obj.to.amount = ethers.BigNumber.from(0);
+          obj.from = Object.assign({}, obj.from);
+          obj.to = Object.assign({}, obj.to);
         });
       } catch (e) {
         console.log("err", e);
