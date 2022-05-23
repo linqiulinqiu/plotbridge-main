@@ -5,6 +5,9 @@
       <span class="clearfix"> {{ $t("balance") }}: {{ balance }} </span>
     </p>
     <el-input type="text" v-model="amount" maxlength="20" class="amount-ipt">
+      <el-button slot="append" @click="max">
+        {{ $t("all") }}
+      </el-button>
     </el-input>
     <el-select
       v-model="addr"
@@ -97,6 +100,9 @@ export default {
     updateBalance: async function () {
       const coinBalance = await tokens.balance(this.addr);
       this.balance = await tokens.format(this.addr, coinBalance);
+    },
+    max: function () {
+      this.amount = this.balance;
     },
   },
 };
