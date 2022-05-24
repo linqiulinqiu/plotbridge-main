@@ -106,6 +106,9 @@
 </template>
 
 <script>
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+
 import { mapState } from "vuex";
 import market from "../../market";
 import keeper from "../../keeper";
@@ -198,6 +201,24 @@ export default {
     connect_wallet: async function () {
       this.connect_loading = true;
       const commit = this.$store.commit;
+      const providerOptions = {
+          walletconnect: {
+              package: WalletConnectProvider,
+              options: {
+                rpc: {
+                    0x38: 'https://bsc-dataseed.binance.org',
+                    0x61: 'https://data-seed-prebsc-1-s1.binance.org:8545/'
+                }
+              }
+          }
+      };
+      const wmod = new Web3Modal({
+          network: "bnb",
+          cacheProvider: true,
+          providerOptions
+      });
+      const wm_instance = await wmod.connect();
+      console.log('wm_instance', wm_instance);
       const bsc = await market.connect(commit);
       if (typeof bsc == "string" || !bsc) {
         if (bsc) {

@@ -1,4 +1,5 @@
 const pkg = require('./package.json')
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 
 process.env.VUE_APP_MY_VERSION = JSON.stringify(pkg.version)
 process.env.VUE_APP_DEP_VERSIONS = JSON.stringify(pkg.dependencies)
@@ -13,6 +14,12 @@ module.exports = {
         open: true
     },
     configureWebpack: {
-        devtool:"source-map"
+        devtool:"source-map",
+        plugins: [ new NodePolyfillPlugin()],
+        optimization: {
+            splitChunks: {
+                chunks: "all"
+            }
+        }
     }
 }
