@@ -60,7 +60,7 @@ export default {
     value: async function (newv, oldv) {
       this.addr = newv.addr;
       if (newv.lastEdit < newv.lastSet) {
-        if (newv.amount) {
+        if (newv.amount && newv.amount.gt(0)) {
           this.amount = await tokens.format(newv.addr, newv.amount);
         }
       }

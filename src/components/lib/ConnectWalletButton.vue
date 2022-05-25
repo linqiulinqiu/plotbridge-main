@@ -101,7 +101,6 @@ export default {
           package: WalletConnectProvider,
           options: {
             rpc: {
-              //              1: "https://mainnet.infura.io/v3",
               0x38: "https://bsc-dataseed.binance.org",
               0x61: "https://data-seed-prebsc-1-s1.binance.org:8545/",
             },

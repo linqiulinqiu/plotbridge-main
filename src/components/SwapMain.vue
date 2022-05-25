@@ -55,7 +55,10 @@
         </ApproveButton>
       </el-col>
       <el-col class="swap-price">
-        <h4 v-if="price">{{ $t("price") }} : {{ price }}</h4>
+        <h4 v-if="price">
+          {{ $t("price") }} : <span class="font">{{ price.price }}</span>
+          <span class="tokenpair">{{ price.sym[0] }}/{{ price.sym[1] }}</span>
+        </h4>
       </el-col>
       <el-col class="swap-add">
         <el-button @click="watchToken" v-if="this.watchCoin" class="btn-link">{{
@@ -155,14 +158,18 @@ export default {
     },
     price() {
       if (
-        this.from.amount &&
-        !this.to.amount.eq(0) &&
         this.from.addr &&
-        this.to.addr
+        this.to.addr &&
+        !this.to.amount.eq(0) &&
+        !this.from.amount.eq(0)
       ) {
-        const p = this.from.amount.div(this.to.amount);
-        console.log("this.price", p);
-        return parseInt(p);
+        const p = parseInt(this.from.amount.div(this.to.amount));
+        console.log(p, this.from.amount, this.to.amount);
+        const symbol = this.pricePair();
+        return {
+          price: p,
+          sym: symbol,
+        };
       }
       return false;
     },
@@ -360,10 +367,22 @@ export default {
       }
       return list;
     },
+    pricePair: function () {
+      let selectArr = []; //[from.symbol,to.symbol]
+      const list = this.allwlist;
+      for (let i in list) {
+        if (this.from.addr == list[i].address) selectArr[0] = list[i].bsymbol;
+        if (this.to.addr == list[i].address) selectArr[1] = list[i].bsymbol;
+      }
+      return selectArr;
+    },
   },
 };
 </script>
 <style scoped>
+.tokenpair {
+  margin-left: 15px;
+}
 .btn-link.el-button {
   background: rgba(43, 44, 51, 0.8);
   color: #38f2af;
