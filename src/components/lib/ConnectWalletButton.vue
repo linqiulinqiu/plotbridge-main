@@ -1,21 +1,58 @@
 <template>
-  <el-button
-    v-if="!baddr"
-    @click="connect_wallet"
-    class="connect"
-    :loading="connect_loading"
-  >
-    {{ $t("connect") }}
-  </el-button>
-  <span v-else style="color: #fff" class="baddr font">
-    <el-tooltip effect="light" placement="bottom">
-      <span slot="content" class="font"> {{ $t("bsc") }}:{{ baddr }} </span>
-      <el-button class="font">
-        {{ addr }}
-        <span v-if="testnet">{{ testnet }}</span>
-      </el-button>
-    </el-tooltip>
-  </span>
+  <el-col id="connect">
+    <el-button
+      v-if="!baddr"
+      @click="connect_wallet"
+      class="connect"
+      :loading="connect_loading"
+    >
+      {{ $t("connect") }}
+    </el-button>
+    <span v-else style="color: #fff" class="baddr font">
+      <el-tooltip effect="light" placement="bottom">
+        <span slot="content" class="font"> {{ $t("bsc") }}:{{ baddr }} </span>
+        <el-button class="font">
+          {{ addr }}
+          <span v-if="testnet">{{ testnet }}</span>
+        </el-button>
+      </el-tooltip>
+    </span>
+    <el-dialog
+      :visible.sync="connect_faild"
+      :title="this.$t('con-failed')"
+      :center="false"
+      :span="10"
+    >
+      <el-card>
+        <h4>{{ $t("con-f1") }}</h4>
+        <p>{{ $t("con-f2") }}</p>
+        <p>
+          {{ $t("con-f3") }}
+        </p>
+        <span>
+          <a
+            href="https://chrome.google.com/webstore/search/metamask"
+            target="_blank"
+          >
+            Chrome
+          </a>
+          <br />
+          <a
+            href="https://chrome.google.com/webstore/search/metamask"
+            target="_blank"
+            >Brave</a
+          >
+          <br />
+          <a
+            href="https://addons.mozilla.org/firefox/addon/ether-metamask"
+            target="_blank"
+          >
+            Firefox
+          </a>
+        </span>
+      </el-card>
+    </el-dialog>
+  </el-col>
 </template>
 <script>
 import Web3Modal from "web3modal";
@@ -52,6 +89,7 @@ export default {
   data() {
     return {
       connect_loading: false,
+      connect_faild: false,
     };
   },
   methods: {
@@ -66,32 +104,58 @@ export default {
               0x38: "https://bsc-dataseed.binance.org",
               0x61: "https://data-seed-prebsc-1-s1.binance.org:8545/",
             },
+            infuraId: "-",
           },
         },
       };
-      const wmod = new Web3Modal({
-        network: "bnb",
-        cacheProvider: true,
-        providerOptions,
-      });
-      const wm_instance = await wmod.connect();
-      console.log("wm_instance", wm_instance);
-      const bsc = await market.connect(commit);
-      if (typeof bsc == "string" || !bsc) {
-        if (bsc) {
-          this.$message.error(`Connect failed: ${bsc}`);
+      try {
+        const wmod = new Web3Modal({
+          network: "binance",
+          cacheProvider: true,
+          providerOptions,
+        });
+        const wm_instance = await wmod.connect();
+        console.log("wm_instance", wm_instance);
+        const bsc = await market.connect(commit);
+        console.log("bsc", bsc);
+        if (typeof bsc == "string" || !bsc) {
+          if (bsc) {
+            this.$message.error(`Connect failed: ${bsc}`);
+          } else {
+            this.connect_faild = true;
+          }
+          this.connect_loading = false;
         } else {
-          this.connect_faild = true;
+          commit("setBaddr", bsc.addr);
+          keeper.startKeeper(bsc, commit);
+          this.connect_loading = false;
         }
-        this.connect_loading = false;
-      } else {
-        commit("setBaddr", bsc.addr);
-        keeper.startKeeper(bsc, commit);
-        this.connect_loading = false;
+      } catch (e) {
+        console.log("connect wallet err", e);
       }
     },
   },
 };
 </script>
 <style>
+#connect .el-button {
+  margin-top: 25px;
+  background-color: #38f2af;
+  color: #000000;
+  width: 99%;
+  height: 40px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0px;
+  box-shadow: 0px 2px 2px 0px rgba(56, 242, 175, 0.08);
+}
+#connect .baddr {
+  color: #38f2af;
+  width: 99%;
+  margin: 0 auto;
+  font-size: 16px;
+  display: inline-block;
+  margin: 0 auto;
+}
 </style>

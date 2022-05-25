@@ -50,41 +50,6 @@
         </el-select>
       </el-col>
     </el-row>
-    <el-dialog
-      :visible.sync="connect_faild"
-      :title="this.$t('con-failed')"
-      :center="false"
-      :span="10"
-    >
-      <el-card>
-        <h4>{{ $t("con-f1") }}</h4>
-        <p>{{ $t("con-f2") }}</p>
-        <p>
-          {{ $t("con-f3") }}
-        </p>
-        <span>
-          <a
-            href="https://chrome.google.com/webstore/search/metamask"
-            target="_blank"
-          >
-            Chrome
-          </a>
-          <br />
-          <a
-            href="https://chrome.google.com/webstore/search/metamask"
-            target="_blank"
-            >Brave</a
-          >
-          <br />
-          <a
-            href="https://addons.mozilla.org/firefox/addon/ether-metamask"
-            target="_blank"
-          >
-            Firefox
-          </a>
-        </span>
-      </el-card>
-    </el-dialog>
   </div>
 </template>
 
@@ -173,15 +138,12 @@ export default {
       ],
       lang: i18n.locale,
       versions: versions(),
-      connect_faild: false,
     };
   },
   methods: {
     selectTag: function (key) {
       this.$store.commit("setCurrentPbtId", false);
     },
-
-    
   },
 };
 </script>
