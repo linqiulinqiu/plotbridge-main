@@ -1,6 +1,6 @@
 <template>
   <el-col id="swapmain">
-    <el-col v-if="'addr' in this.bsc">
+    <el-col v-if="bsc.addr">
       <el-col id="swapTitle">
         <h3>{{ $t("s-swap") }}</h3>
         <p>{{ $t("s-swap1") }}</p>
@@ -47,12 +47,15 @@
         >
           <el-button
             v-if="from.addr != to.addr"
-            @click="swap"
+            @click.prevent="swap"
             :loading="swapping"
             type="primary"
             >{{ $t("swap") }}
           </el-button>
         </ApproveButton>
+      </el-col>
+      <el-col class="swap-price">
+        <h4 v-if="price">{{ $t("price") }} : {{ price }}</h4>
       </el-col>
       <el-col class="swap-add">
         <el-button @click="watchToken" v-if="this.watchCoin" class="btn-link">{{
@@ -110,7 +113,10 @@ export default {
     bsc: "bsc",
     wBlance: "wBlance",
     pbpAddr(state) {
-      return state.bsc.ctrs.pbp.address;
+      if (state.bsc) {
+        return state.bsc.ctrs.pbp.address;
+      }
+      return "";
     },
     watchCoin() {
       if (this.from.addr && this.to.addr != "") {
@@ -147,9 +153,24 @@ export default {
       if (this.slipAmount == 20) return true;
       return false;
     },
+    price() {
+      if (
+        this.from.amount &&
+        !this.to.amount.eq(0) &&
+        this.from.addr &&
+        this.to.addr
+      ) {
+        const p = this.from.amount.div(this.to.amount);
+        console.log("this.price", p);
+        return parseInt(p);
+      }
+      return false;
+    },
   }),
   mounted: function () {
     this.load_wlist();
+    console.log(this.bsc);
+    this.from.addr = this.pbpAddr;
   },
   data() {
     return {
@@ -260,6 +281,7 @@ export default {
       try {
         // for fixed output
         let res = "";
+        console.log("swap");
         if (this.from_to == "from") {
           res = await swap.swap(
             this.bsc,
@@ -305,6 +327,8 @@ export default {
         address: this.bsc.ctrs.pbp.address,
         decimals: await this.bsc.ctrs.pbp.decimals(),
       });
+      this.from.addr = this.bsc.ctrs.pbp.address;
+      this.from = Object.assign({}, this.from);
       this.allwlist.push({
         bsymbol: "USDT",
         address: this.bsc.ctrs.usdt.address,

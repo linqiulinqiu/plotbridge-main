@@ -101,10 +101,10 @@ export default {
           package: WalletConnectProvider,
           options: {
             rpc: {
+              //              1: "https://mainnet.infura.io/v3",
               0x38: "https://bsc-dataseed.binance.org",
               0x61: "https://data-seed-prebsc-1-s1.binance.org:8545/",
             },
-            infuraId: "-",
           },
         },
       };
@@ -115,9 +115,8 @@ export default {
           providerOptions,
         });
         const wm_instance = await wmod.connect();
-        console.log("wm_instance", wm_instance);
-        const bsc = await market.connect(commit);
-        console.log("bsc", bsc);
+        const bsc = await market.connect(commit, wm_instance);
+        console.log("bsc===", bsc);
         if (typeof bsc == "string" || !bsc) {
           if (bsc) {
             this.$message.error(`Connect failed: ${bsc}`);

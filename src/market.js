@@ -43,9 +43,10 @@ async function ListenToWCoin(commit) {
 }
 
 
-async function connect(commit) {
+async function connect(commit,provider) {
     try {
-        bsc = await pbwallet.connect(true)
+        console.log('instance', provider)
+        bsc = await pbwallet.connect(provider)
     } catch (e) {
         return e.message
     }
