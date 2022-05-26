@@ -57,7 +57,9 @@
       <el-col class="swap-price">
         <h4 v-if="price">
           {{ $t("price") }} : <span class="font">{{ price.price }}</span>
-          <span class="tokenpair">{{ price.sym[0] }}/{{ price.sym[1] }}</span>
+          <span class="tokenpair">
+            {{ price.symbol[0] }} per {{ price.symbol[1] }}
+          </span>
         </h4>
       </el-col>
       <el-col class="swap-add">
@@ -160,16 +162,10 @@ export default {
       if (
         this.from.addr &&
         this.to.addr &&
-        !this.to.amount.eq(0) &&
-        !this.from.amount.eq(0)
+        !this.from.amount.eq(0) &&
+        !this.to.amount.eq(0)
       ) {
-        const p = parseInt(this.from.amount.div(this.to.amount));
-        console.log(p, this.from.amount, this.to.amount);
-        const symbol = this.pricePair();
-        return {
-          price: p,
-          sym: symbol,
-        };
+        return this.pricePair();
       }
       return false;
     },
@@ -187,12 +183,14 @@ export default {
         lastSet: Date.now(),
         lastEdit: 0,
         addr: "",
+        number: 0,
       },
       to: {
         amount: ethers.BigNumber.from(0),
         lastSet: Date.now(),
         lastEdit: 0,
         addr: "",
+        number: 0,
       },
       swapping: false,
       slipAmount: 100,
@@ -208,9 +206,13 @@ export default {
     },
     from: async function (newa, olda) {
       await this.estimate();
+      this.from.number = await tokens.format(newa.addr, newa.amount);
+      this.to.number = await tokens.format(this.to.addr, this.to.amount);
     },
     to: async function (newa, olda) {
       await this.estimate();
+      this.to.number = await tokens.format(newa.addr, newa.amount);
+      this.from.number = await tokens.format(this.from.addr, this.from.amount);
     },
   },
   methods: {
@@ -368,13 +370,22 @@ export default {
       return list;
     },
     pricePair: function () {
-      let selectArr = []; //[from.symbol,to.symbol]
       const list = this.allwlist;
-      for (let i in list) {
-        if (this.from.addr == list[i].address) selectArr[0] = list[i].bsymbol;
-        if (this.to.addr == list[i].address) selectArr[1] = list[i].bsymbol;
+      let pair = {
+        price: "",
+        symbol: [], //[from.symbol,to.symbol]
+      };
+      if (this.from.addr && this.to.addr) {
+        for (let i in list) {
+          if (this.from.addr == list[i].address)
+            pair.symbol[0] = list[i].bsymbol;
+          if (this.to.addr == list[i].address) pair.symbol[1] = list[i].bsymbol;
+        }
+        if (this.to.amount && this.from.amount) {
+          pair.price = this.from.number / this.to.number;
+        }
       }
-      return selectArr;
+      return pair;
     },
   },
 };
@@ -431,7 +442,7 @@ export default {
   background: #373943;
   border: none;
   position: absolute;
-  top: 20px;
+  top: 0px;
   right: 20px;
   color: #38f2af;
   font-size: 22px;
@@ -456,7 +467,6 @@ export default {
 }
 #swap-exc .el-button .el-icon-bottom::before {
   display: inline-block;
-  /* font-size: 30px; */
 }
 #swapmain .el-input-group__append {
   color: #fff;
