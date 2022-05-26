@@ -109,7 +109,7 @@ export default {
       };
       try {
         const wmod = new Web3Modal({
-          network: "binance",
+          network: "binance-testnet",
           cacheProvider: true,
           providerOptions,
         });
