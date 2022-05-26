@@ -3,11 +3,6 @@ ul li {
     list-style: none;
 }
 
-.flex-aside {
-    position: fixed;
-}
-
-
 .font {
     font-family: 'Courier New', Courier, monospace;
     font-size: 18px;
@@ -21,11 +16,6 @@ ul li {
 .price-input {
     width: 200px;
     margin-right: 10px;
-}
-
-.info-img {
-    width: 90%;
-    min-width: 250px;
 }
 
 .el-select {
@@ -57,7 +47,6 @@ ul li {
 .labels {
     font-size: 16px;
     line-height: 60px;
-    /* padding-left: 20px; */
 }
 
 .el-select-dropdown {
@@ -92,7 +81,6 @@ ul li {
     border-bottom-color: #373943
 }
 
-/* 输入数字*/
 .amount-input {
     width: 200px;
     font-family: 'Courier New', Courier, monospace;
@@ -143,13 +131,9 @@ ul li {
     width: 120px;
 }
 
-
 .el-tab-pane {
     padding: 30px 30px;
 }
-
-
-
 .el-tabs>.el-tabs__header .el-tabs__item.is-active {
     color: #fff;
     border: none;
@@ -164,7 +148,6 @@ ul li {
     padding: 0;
 }
 
-
 .el-icon-info:before {
     font-size: xx-large;
 }
@@ -173,19 +156,15 @@ ul li {
     padding: 0px;
 }
 
-
 .el-button:hover {
     color: #668b66;
 }
-
-
 
 .el-dialog {
     background-color: #373943;
     color: #fff;
 }
 
-/* .el-dialog .el-card{} */
 .el-dialog__header .el-dialog__title {
     color: #fff;
 }
