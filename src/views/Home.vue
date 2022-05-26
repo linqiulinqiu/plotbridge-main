@@ -47,6 +47,7 @@ export default {
   /* width: 100%; */
   background: url("../assets/image/banner.jpg") center no-repeat;
   background-size: cover;
+  background-attachment: fixed;
   position: relative;
 }
 

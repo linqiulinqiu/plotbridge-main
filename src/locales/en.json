@@ -81,6 +81,10 @@
     "home-title":"Welcome to the PlotBridge beta version",
     "home-news":[
         {
+            "ts":"2022-05-26",
+            "msg":"In accordance with the PBP issuance programme, the project owner today purchased 289k PBP for burning and destruction from the bridge's 30% proceeds of 0.24441 BNB."
+        },
+        {
             "ts":"2022-05-13",
             "msg":"The destruction reward starts.The destruction includes burning Wcoins and destroying PBT.After the operation is completed,a certain proportion of PBP coin will be obtained."
         },
