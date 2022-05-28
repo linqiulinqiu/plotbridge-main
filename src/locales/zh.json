@@ -52,7 +52,7 @@
     "dep-minFee":"最小存款手续费",
     "dep-addr":"获取{bcoin}的存款地址",
     "dep-rebind":"该类型地址已经绑定了，请刷新页面后查看。",
-    "dp-xcc":"存取XCC,赢取奖励",
+    "dp-xcc":"过桥存入XCC,赢取PBP奖励",
 
 
     "earn":"盈利",
