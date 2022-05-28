@@ -46,6 +46,11 @@ export default {
         },
         {
           index: "2",
+          link: "/Doc/Activities",
+          value: this.$t("activities"),
+        },
+        {
+          index: "2",
           link: "/Doc/GuideforBridge",
           value: this.$t("guide-bridge"),
         },

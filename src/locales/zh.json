@@ -7,6 +7,7 @@
     "add-to-wallet":"添加{coin}到钱包",
     "add-lp":"添加{0}流动性",
     "add":"添加",
+    "activities":"活动",
 
     "balance":"余额",
     "bridge":"桥梁",
@@ -51,6 +52,8 @@
     "dep-minFee":"最小存款手续费",
     "dep-addr":"获取{bcoin}的存款地址",
     "dep-rebind":"该类型地址已经绑定了，请刷新页面后查看。",
+    "dp-xcc":"存取XCC,赢取奖励",
+
 
     "earn":"盈利",
     "earned":"已赚取：",
@@ -148,6 +151,7 @@
     "purchase":"可购买",
     "p-end":"预售结束",
     "pair-info":"{0}交易对信息",
+    "pb-events":"Plotbridge的活动",
 
 
 

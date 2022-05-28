@@ -12,6 +12,8 @@ import GuideforMarket from "@/components/document/GuideforMarket"
 import GuideforWallet from "@/components/document/GuideforWallet"
 import GuideforBridge from "@/components/document/GuideforBridge"
 import Introduction from "@/components/document/Introduction"
+import Activities from "@/components/document/Activities"
+
 import MintPBT from "@/components/market/MintPBT"
 import Presale from "@/views/Presale"
 
@@ -64,6 +66,11 @@ const routes = [{
         path: '/Doc/Introduction',
         component: Introduction,
         name: "Introduction"
+    },
+      {
+        path: "/Doc/Activities",
+        component: Activities,
+        name:"Activities"
       },
       {
         path: '/Doc/RoadMap',

@@ -6,6 +6,7 @@
     "add-to-wallet":"Add {coin} to wallet",
     "add-lp":"Add {0} LP",
     "add":"Add",
+    "activities":"Activities",
 
     "balance":"Balance",
     "bridge":"Bridge",
@@ -52,6 +53,7 @@
     "data":"Loading...",
     "destroy":"Destroy NFT",
     "dep-rebind":"Unable to rebind deposit address,please refresh the page.",
+    "dp-xcc":"Deposite XCC coin, and win the reward",
 
     "earn":"Earn",
     "earned":"Earned：",
@@ -150,6 +152,7 @@
     "purchase":"Avaliable for purchase",
     "p-end":"Presale ended",
     "pair-info":"{0} Pair Info",
+    "pb-events":"Plotbridge Activities",
    
     "redeem":"Upgrade",
     "rd-info":"Tokens in previous version of PlotBridge can be upgraded here.",
