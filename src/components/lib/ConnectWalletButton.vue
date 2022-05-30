@@ -101,7 +101,7 @@ export default {
           package: WalletConnectProvider,
           options: {
             rpc: {
-              // 0x38: "https://bsc-dataseed.binance.org",
+              0x38: "https://bsc-dataseed.binance.org",
               0x61: "https://data-seed-prebsc-1-s3.binance.org:8545/",
             },
           },
@@ -109,7 +109,7 @@ export default {
       };
       try {
         const wmod = new Web3Modal({
-          network: "binance-testnet",
+          network: "binance",
           cacheProvider: false,
           providerOptions,
         });
