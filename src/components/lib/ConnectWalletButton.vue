@@ -101,7 +101,7 @@ export default {
           package: WalletConnectProvider,
           options: {
             rpc: {
-              0x38: "https://bsc-dataseed.binance.org",
+              // 0x38: "https://bsc-dataseed.binance.org",
               0x61: "https://data-seed-prebsc-1-s3.binance.org:8545/",
             },
           },
@@ -109,13 +109,12 @@ export default {
       };
       try {
         const wmod = new Web3Modal({
-          network: "binance",
+          network: "binance-testnet",
           cacheProvider: false,
           providerOptions,
         });
         const wm_instance = await wmod.connect();
         const bsc = await market.connect(commit, wm_instance);
-        // console.log("bsc===", bsc);
         if (typeof bsc == "string" || !bsc) {
           if (bsc) {
             this.$message.error(`Connect failed: ${bsc}`);

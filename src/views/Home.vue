@@ -44,8 +44,10 @@ export default {
 #home {
   color: #fff;
   height: 85vh;
-  /* width: 100%; */
-  background: url("../../public/image/banner.jpg") center no-repeat;
+  background-attachment: fixed;
+  background-image: url("../../public/image/banner.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
   background-size: cover;
   position: relative;
 }

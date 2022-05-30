@@ -279,6 +279,7 @@ export default {
       const id = this.current.pbtId;
       const obj = this;
       try {
+        console.log("clearADdr params", id, cointy);
         const res = await market.clearAddr(id, cointy);
         await market.waitEventDone(res, async function (evt) {
           obj.clear_loading = false;
