@@ -1,9 +1,7 @@
 <template>
   <el-col>
     <el-container v-if="baddr">
-      <el-aside width="280px">
-        <Mynft :myList="myList" :curNFT="this.curNFT" :pageSize="3" />
-      </el-aside>
+      <Mynft :myList="myList" :curNFT="this.curNFT" :pageSize="3" />
       <el-main>
         <el-col :span="23" class="mkMain">
           <MarketMain

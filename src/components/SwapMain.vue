@@ -256,7 +256,7 @@ export default {
           shouldEstimate = false;
         }
         if (shouldEstimate) {
-          console.log('estimate:', from_amount, to_amount)
+          console.log("estimate:", from_amount, to_amount);
           try {
             const est = await swap.estimate(
               this.bsc,
@@ -290,8 +290,16 @@ export default {
         // for fixed output
         let res = "";
         if (this.from_to == "from") {
-          const minreq = this.to.amount.sub(this.to.amount.mul(this.slipAmount).div(100))
-          console.log("swap", this.from.addr, this.to.addr, this.from.amount, minreq);
+          const minreq = this.to.amount.sub(
+            this.to.amount.mul(this.slipAmount).div(100)
+          );
+          console.log(
+            "swap",
+            this.from.addr,
+            this.to.addr,
+            this.from.amount,
+            minreq
+          );
           res = await swap.swap(
             this.bsc,
             this.from.addr,
@@ -301,8 +309,16 @@ export default {
             120
           );
         } else if (this.from_to == "to") {
-          const maxpay = this.from.amount.add(this.from.amount.mul(this.slipAmount).div(100))
-          console.log("swapfo", this.from.addr, this.to.addr, maxpay, this.to.amount);
+          const maxpay = this.from.amount.add(
+            this.from.amount.mul(this.slipAmount).div(100)
+          );
+          console.log(
+            "swapfo",
+            this.from.addr,
+            this.to.addr,
+            maxpay,
+            this.to.amount
+          );
           res = await swap.swapfo(
             this.bsc,
             this.from.addr,

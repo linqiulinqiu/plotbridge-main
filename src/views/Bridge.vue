@@ -1,25 +1,20 @@
 <template>
   <el-col id="Bridge">
     <el-container v-if="baddr">
-      <el-aside width="280px">
-        <Mynft :myList="myList" :pageSize="3" :curNFT="this.curNFT" />
-      </el-aside>
+      <Mynft :myList="myList" :pageSize="3" :curNFT="this.curNFT" />
       <el-main>
         <el-col :lg="{ span: 24, offset: 0 }">
           <BridgeMain :curNFT="curNFT" />
         </el-col>
       </el-main>
-      <el-aside
-        width="150px"
+      <SelectCoin
         id="coin_select"
         style="float: right; background: #25272e"
         v-if="Object.keys(myList).length > 0"
-      >
-        <SelectCoin />
-      </el-aside>
+      />
     </el-container>
     <el-col v-else class="info">
-      <h2> {{ $t("look-info") }}</h2>
+      <h2>{{ $t("look-info") }}</h2>
     </el-col>
   </el-col>
 </template>
@@ -29,6 +24,7 @@ import Mynft from "../components/content/Mynft.vue";
 import BridgeMain from "../components/BridgeMain.vue";
 import SelectCoin from "../components/bridge/SelectCoin.vue";
 import { mapState } from "vuex";
+import FoldButton from "../components/lib/FoldButton.vue";
 
 export default {
   name: "Bridge",
@@ -36,6 +32,10 @@ export default {
     Mynft,
     BridgeMain,
     SelectCoin,
+    FoldButton,
+  },
+  data() {
+    return {};
   },
   computed: mapState({
     myList: "myList",
@@ -55,3 +55,8 @@ export default {
   }),
 };
 </script>
+<style>
+.fold {
+  height: 10px;
+}
+</style>

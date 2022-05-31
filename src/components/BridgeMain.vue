@@ -39,7 +39,7 @@
             </el-col>
           </el-col>
 
-          <el-col :lg="{ span: 17 }">
+          <el-col :lg="{ span: 17 }" :span="24">
             <el-tabs>
               <el-tab-pane :label="$t('deposit')"
                 ><Deposit :curNFT="this.curNFT" :coinInfo="coinInfo"

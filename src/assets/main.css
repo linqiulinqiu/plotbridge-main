@@ -118,7 +118,7 @@ ul li {
 
 .el-tabs__item {
     height: 70px;
-    width: 120px;
+    width: 105px;
     font-size: 24px;
     font-weight: 700;
     padding: 0px;
@@ -128,12 +128,13 @@ ul li {
 
 .el-tabs__active-bar {
     background-color: #fff;
-    width: 120px;
+    width: 100px;
 }
 
 .el-tab-pane {
     padding: 30px 30px;
 }
+
 .el-tabs>.el-tabs__header .el-tabs__item.is-active {
     color: #fff;
     border: none;

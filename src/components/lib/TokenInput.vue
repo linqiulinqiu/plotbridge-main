@@ -28,7 +28,6 @@
 <script>
 import debounce from "lodash/debounce";
 import tokens from "../../tokens";
-import { ethers } from "ethers";
 
 export default {
   name: "TokenInput",
