@@ -49,9 +49,9 @@ export default {
       } else {
         this.checking = true;
         let minReq = this.minReq;
-        if (isNaN(minReq)) minReq = 0;
+        if (!minReq || isNaN(minReq)) minReq = 0;
         const allow = await tokens.allowance(this.token, this.spender);
-        if (allow && allow.gte(this.minReq)) {
+        if (allow && allow.gte(minReq)) {
           this.needApprove = false;
         } else {
           this.needApprove = true;

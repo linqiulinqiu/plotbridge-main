@@ -1,23 +1,37 @@
 <template>
-  <el-col id="selectCoin">
-    <p>{{ $t("select-coin") }}</p>
-    <ul>
-      <li
-        v-for="item in this.coinMap"
-        :key="item.symbol"
-        @click="changeCoin(item)"
-        class="coinTypes"
-        :class="{ isselect: item.index == addclass }"
-      >
-        {{ item.name }}
-      </li>
-    </ul>
-  </el-col>
+  <el-aside id="selectCoin" :width="foldStyle.width">
+    <el-col v-if="!foldStyle.isFold">
+      <p>{{ $t("select-coin") }}</p>
+      <ul>
+        <li
+          v-for="item in this.coinMap"
+          :key="item.symbol"
+          @click="changeCoin(item)"
+          class="coinTypes"
+          :class="{ isselect: item.index == addclass }"
+        >
+          {{ item.name }}
+        </li>
+      </ul>
+    </el-col>
+    <el-col class="b-fold">
+      <FoldButton
+        v-model="foldStyle"
+        :openWidth="'100px'"
+        @fold="fold($event)"
+        style="right: 0"
+      />
+    </el-col>
+  </el-aside>
 </template>
 <script>
 import { mapState } from "vuex";
 import market from "../../market";
+import FoldButton from "../lib/FoldButton.vue";
 export default {
+  components: {
+    FoldButton,
+  },
   computed: mapState({
     current: "current",
     addclass: function (state) {
@@ -30,6 +44,10 @@ export default {
   data() {
     return {
       coinMap: {},
+      foldStyle: {
+        width: "100px",
+        isFold: false,
+      },
     };
   },
   methods: {
@@ -38,6 +56,9 @@ export default {
     },
     loadcoin: function () {
       this.coinMap = market.loadCoinlist();
+    },
+    fold: function ($event) {
+      // console.log("fold function", $event);
     },
   },
 };
@@ -48,9 +69,14 @@ export default {
   font-size: 14px;
   font-weight: 600;
   color: #fff;
+  position: relative;
 }
 #selectCoin > p {
   color: #fff;
+}
+.b-fold {
+  position: relative;
+  margin-bottom: 30px;
 }
 .isselect {
   border: #38f2af 1px solid !important;

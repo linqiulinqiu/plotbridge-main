@@ -1,50 +1,58 @@
 <template>
-  <el-col id="mynft">
-    <el-col class="my-title">
-      {{ $t("my-nfts") }}
-      <el-button
-        @click="getMintfee"
-        size="small"
-        class="btn"
-        v-if="bsc.addr"
-        type="primary"
-        :loading="open_loading"
-        >{{ $t("mintPBT") }}
-      </el-button>
-    </el-col>
-    <el-col>
-      <el-col v-if="Object.keys(this.myList).length > 0" class="nftarea">
-        <el-col class="nftlist">
-          <MylistPage
-            v-bind:nftlist="nftlist"
-            v-bind:open="openNFT"
-            v-bind:current="current"
-          />
+  <el-aside :width="asideStyle.width" id="mynft">
+    <FoldButton
+      v-model="asideStyle"
+      :openWidth="'250px'"
+      @fold="fold($event)"
+      style="top: 0px"
+    />
+    <el-col v-if="!this.asideStyle.isFold">
+      <el-col class="my-title">
+        {{ $t("my-nfts") }}
+        <el-button
+          @click="getMintfee"
+          size="small"
+          class="btn"
+          v-if="bsc.addr"
+          type="primary"
+          :loading="open_loading"
+          >{{ $t("mintPBT") }}
+        </el-button>
+      </el-col>
+      <el-col>
+        <el-col v-if="Object.keys(this.myList).length > 0" class="nftarea">
+          <el-col class="nftlist">
+            <MylistPage
+              v-bind:nftlist="nftlist"
+              v-bind:open="openNFT"
+              v-bind:current="current"
+            />
+          </el-col>
+          <el-col class="btn-bar">
+            <el-pagination
+              background
+              :total="Object.keys(this.myList).length"
+              layout="prev,pager,next"
+              @current-change="handleCurrentChange"
+              :current-page="this.pageNum"
+              :page-size="this.pageSize"
+            ></el-pagination>
+          </el-col>
         </el-col>
-        <el-col class="btn-bar">
-          <el-pagination
-            background
-            :total="Object.keys(this.myList).length"
-            layout="prev,pager,next"
-            @current-change="handleCurrentChange"
-            :current-page="this.pageNum"
-            :page-size="this.pageSize"
-          ></el-pagination>
+        <el-col v-else-if="loadDone.includes('p')" class="content">
+          <el-col>
+            {{ $t("no-nft") }}
+          </el-col>
+        </el-col>
+        <el-col v-else>
+          {{ $t("data") }}
         </el-col>
       </el-col>
-      <el-col v-else-if="loadDone.includes('p')" class="content">
-        <el-col>
-          {{ $t("no-nft") }}
-        </el-col>
+      <el-col class="bottom-box" v-if="isMarket">
+        <router-link class="bottom" :to="this.market"
+          >{{ $t("to-market") }}
+        </router-link>
       </el-col>
-      <el-col v-else>
-      {{$t('data')}}
-      </el-col>
-    </el-col>
-    <el-col class="bottom-box" v-if="isMarket">
-      <router-link class="bottom" :to="this.market"
-        >{{ $t("to-market") }}
-      </router-link>
     </el-col>
     <el-dialog :visible.sync="mintVisible">
       <el-card>
@@ -55,7 +63,7 @@
         />
       </el-card>
     </el-dialog>
-  </el-col>
+  </el-aside>
 </template>
 
 <script>
@@ -63,12 +71,14 @@ import { mapState } from "vuex";
 import NFTinfo from "./nftpanel/NFTinfo.vue";
 import MintPBT from "../market/MintPBT.vue";
 import market from "../../market";
+import FoldButton from "../lib/FoldButton.vue";
 
 export default {
   name: "Mynft",
   components: {
     NFTinfo,
     MintPBT,
+    FoldButton,
   },
   props: ["myList", "pageSize", "curNFT"],
   computed: mapState({
@@ -94,6 +104,7 @@ export default {
   }),
   data() {
     return {
+      asideStyle: { width: "250px", isFold: false },
       pageNum: 1,
       open_loading: false,
       market: "/Market",
@@ -127,6 +138,9 @@ export default {
     handleCurrentChange(newPage) {
       this.pageNum = newPage;
     },
+    fold: function ($event) {
+      // console.log("fold function", $event);
+    },
   },
 };
 </script>
@@ -139,6 +153,7 @@ export default {
   padding-bottom: 20px;
   font-size: 18px;
   font-weight: 600;
+  position: relative;
 }
 .load {
   padding: 50px;

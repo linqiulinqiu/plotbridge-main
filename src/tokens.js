@@ -98,7 +98,7 @@ async function parseToken(ctraddr, val) {
         val = val.toString()
     }
     const info = await tokenInfo(ctraddr)
-    return ethers.utils.parseUnits(val, info.decimals)
+    return ethers.utils.parseUnits(val, await info.decimals)
 }
 
 async function balance(ctraddr, owner) {

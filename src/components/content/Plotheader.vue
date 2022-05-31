@@ -37,24 +37,7 @@
         </el-menu>
       </el-col>
       <el-col id="connect" :lg="3" :md="5" :sm="4" :xs="5">
-        <el-button
-          v-if="!baddr"
-          @click="connect_wallet"
-          class="connect"
-          :loading="connect_loading"
-          >{{ $t("connect") }}</el-button
-        >
-        <span v-else style="color: #fff" class="baddr font">
-          <el-tooltip effect="light" placement="bottom">
-            <span slot="content" class="font">
-              {{ $t("bsc") }}: {{ baddr }}
-            </span>
-            <el-button class="font">
-              {{ baddr.substr(0, 6) + "..." + baddr.substr(-4, 4) }}
-              <span v-if="testnet">{{ testnet }}</span>
-            </el-button>
-          </el-tooltip>
-        </span>
+        <ConnectButton />
       </el-col>
       <el-col id="changelang" :lg="3" :md="5" :sm="5" :xs="5">
         <el-select v-model="lang">
@@ -67,45 +50,11 @@
         </el-select>
       </el-col>
     </el-row>
-    <el-dialog
-      :visible.sync="connect_faild"
-      :title="this.$t('con-failed')"
-      :center="false"
-      :span="10"
-    >
-      <el-card>
-        <h4>{{ $t("con-f1") }}</h4>
-        <p>{{ $t("con-f2") }}</p>
-        <p>
-          {{ $t("con-f3") }}
-        </p>
-        <span>
-          <a
-            href="https://chrome.google.com/webstore/search/metamask"
-            target="_blank"
-          >
-            Chrome
-          </a>
-          <br />
-          <a
-            href="https://chrome.google.com/webstore/search/metamask"
-            target="_blank"
-            >Brave</a
-          >
-          <br />
-          <a
-            href="https://addons.mozilla.org/firefox/addon/ether-metamask"
-            target="_blank"
-          >
-            Firefox
-          </a>
-        </span>
-      </el-card>
-    </el-dialog>
   </div>
 </template>
 
 <script>
+import ConnectButton from "../lib/ConnectWalletButton.vue";
 import { mapState } from "vuex";
 import market from "../../market";
 import keeper from "../../keeper";
@@ -139,6 +88,9 @@ function tags(path) {
 }
 export default {
   name: "Plotheader",
+  components: {
+    ConnectButton,
+  },
   computed: mapState({
     baddr: "baddr",
     myList: "myList",
@@ -180,37 +132,17 @@ export default {
   },
   data() {
     return {
-      connect_loading: false,
       langs: [
         { value: "en", label: "English" },
         { value: "zh", label: "简体中文" },
       ],
       lang: i18n.locale,
       versions: versions(),
-      connect_faild: false,
     };
   },
   methods: {
     selectTag: function (key) {
       this.$store.commit("setCurrentPbtId", false);
-    },
-
-    connect_wallet: async function () {
-      this.connect_loading = true;
-      const commit = this.$store.commit;
-      const bsc = await market.connect(commit);
-      if (typeof bsc == "string" || !bsc) {
-        if (bsc) {
-          this.$message.error(`Connect failed: ${bsc}`);
-        } else {
-          this.connect_faild = true;
-        }
-        this.connect_loading = false;
-      } else {
-        commit("setBaddr", bsc.addr);
-        keeper.startKeeper(bsc, commit);
-        this.connect_loading = false;
-      }
     },
   },
 };
@@ -284,7 +216,7 @@ export default {
 }
 #menu .el-menu--horizontal > .el-menu-item {
   height: 90px;
-  width: 14.28%;
+  width: 16%;
   font-size: 15px;
   font-weight: 700;
   padding: 15px 0px;

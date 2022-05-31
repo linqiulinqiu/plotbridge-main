@@ -1,6 +1,6 @@
 <template>
   <el-col id="swapmain">
-    <el-col v-if="'addr' in this.bsc">
+    <el-col v-if="bsc.addr">
       <el-col id="swapTitle">
         <h3>{{ $t("s-swap") }}</h3>
         <p>{{ $t("s-swap1") }}</p>
@@ -14,90 +14,60 @@
         </el-tooltip>
       </el-col>
       <el-col class="swap-input">
-        <p>
-          From<span class="clearfix" v-if="from_balance"
-            >{{ $t("balance") }}: {{ this.from_balance }}</span
-          >
-        </p>
-        <el-input
-          v-model="from_amount"
-          class="amount-ipt"
-          clearable
-          maxlength="20"
-        >
-          <el-button
-            slot="append"
-            v-if="from_balance > 0"
-            type="primary"
-            @click="from_all"
-            >{{ $t("all") }}</el-button
-          >
-        </el-input>
-        <el-select v-model="from_coin" :placeholder="this.$t('select')">
-          <el-option
-            v-for="w in allwlist"
-            :key="w.address"
-            :label="w.bsymbol"
-            :value="w.address"
-            :disabled="w.address == to_coin"
-          >
-          </el-option>
-        </el-select>
+        <TokenInput
+          title="From"
+          :coinList="allwlist"
+          :banCoin="to.addr"
+          v-model="from"
+        />
       </el-col>
       <el-col id="swap-exc">
         <el-button
           circle
-          icon="el-icon-bottom"
+          :icon="'el-icon-' + up_down"
           size="large"
-          @click="order_swap"
+          @click="orderSwap"
           :disabled="change_dis"
         ></el-button>
       </el-col>
       <el-col class="swap-input">
-        <p>
-          To<span class="clearfix" v-if="to_balance"
-            >{{ $t("balance") }}: {{ this.to_balance }}</span
-          >
-        </p>
-        <el-input
-          v-model="to_amount"
-          class="amount-ipt"
-          clearable
-          maxlength="20"
-        ></el-input>
-        <el-select v-model="to_coin" :placeholder="this.$t('select')">
-          <el-option
-            v-for="w in allwlist"
-            :key="w.address"
-            :label="w.bsymbol"
-            :value="w.address"
-            :disabled="w.address == from_coin"
-          >
-          </el-option>
-        </el-select>
+        <TokenInput
+          title="To"
+          :coinList="allwlist"
+          :banCoin="from.addr"
+          v-model="to"
+        />
       </el-col>
-      <el-col class="swap-btn" v-if="this.to_amount > 0">
+      <el-col class="swap-btn">
         <ApproveButton
           :bsc="this.bsc"
-          :token="this.from_coin"
+          :token="this.from.addr"
           :spender="this.bsc.ctrs.router.address"
-          :min-req="this.from_val"
+          :min-req="this.from.amount"
         >
           <el-button
-            v-if="from_coin != to_coin"
-            @click="swap"
+            v-if="from.addr != to.addr"
+            @click.prevent="swap"
             :loading="swapping"
             type="primary"
             >{{ $t("swap") }}
           </el-button>
         </ApproveButton>
       </el-col>
+      <el-col class="swap-price">
+        <h4 v-if="price">
+          {{ $t("price") }} : <span class="font">{{ price.price }}</span>
+          <span class="tokenpair">
+            {{ price.symbol[0] }} per {{ price.symbol[1] }}
+          </span>
+        </h4>
+      </el-col>
       <el-col class="swap-add">
         <el-button @click="watchToken" v-if="this.watchCoin" class="btn-link">{{
           $t("add-to-wallet", { coin: this.watchCoin.bsymbol })
         }}</el-button>
         <span v-if="watchBcoin">
-          <LinkButton :token="from_coin" :onlyLp="false" />
+          <LinkButton :token="from.addr" :onlyLp="false" />
         </span>
       </el-col>
     </el-col>
@@ -129,7 +99,6 @@
 </template>
 <script>
 import { ethers } from "ethers";
-import debounce from "lodash/debounce";
 import { mapState } from "vuex";
 import ApproveButton from "./lib/ApproveButton.vue";
 import pbwallet from "pbwallet";
@@ -137,24 +106,29 @@ import tokens from "../tokens";
 import swap from "../swap";
 import market from "../market";
 import LinkButton from "./lib/LinkButton.vue";
+import TokenInput from "./lib/TokenInput.vue";
 export default {
   name: "SwapMain",
   components: {
     ApproveButton,
     LinkButton,
+    TokenInput,
   },
   computed: mapState({
     bsc: "bsc",
     wBlance: "wBlance",
     pbpAddr(state) {
-      return state.bsc.ctrs.pbp.address;
+      if (state.bsc) {
+        return state.bsc.ctrs.pbp.address;
+      }
+      return "";
     },
     watchCoin() {
-      if (this.from_coin && this.from_coin != "") {
+      if (this.from.addr && this.to.addr != "") {
         for (let i in this.allwlist) {
           if (
             this.allwlist[i].address == this.pbpAddr &&
-            this.from_coin == this.pbpAddr
+            this.from.addr == this.pbpAddr
           ) {
             return this.allwlist[i];
           }
@@ -165,9 +139,9 @@ export default {
     },
     watchBcoin() {
       const list = this.watchlist();
-      if (this.from_coin && this.from_coin != "") {
+      if (this.from.addr && this.from.addr != "") {
         for (let i in list) {
-          if (this.from_coin == list[i].address) {
+          if (this.from.addr == list[i].address) {
             return list[i];
           }
         }
@@ -175,7 +149,7 @@ export default {
       return false;
     },
     change_dis() {
-      if (this.from_coin != "" && this.to_coin != "") {
+      if (this.from.addr != "" && this.to.addr != "") {
         return false;
       }
       return true;
@@ -184,131 +158,182 @@ export default {
       if (this.slipAmount == 20) return true;
       return false;
     },
+    price() {
+      if (
+        this.from.addr &&
+        this.to.addr &&
+        !this.from.amount.eq(0) &&
+        !this.to.amount.eq(0)
+      ) {
+        return this.pricePair();
+      }
+      return false;
+    },
   }),
   mounted: function () {
     this.load_wlist();
+    console.log(this.bsc);
+    this.from.addr = this.pbpAddr;
   },
-
   data() {
     return {
       allwlist: [],
-      BNBaddr: ethers.constants.AddressZero,
-      from_balance: false,
-      from_amount: "",
-      from_val: 0,
-      from_coin: "",
-      from_ctr: false,
+      from: {
+        amount: ethers.BigNumber.from(0),
+        lastSet: Date.now(),
+        lastEdit: 0,
+        addr: "",
+        number: 0,
+      },
+      to: {
+        amount: ethers.BigNumber.from(0),
+        lastSet: Date.now(),
+        lastEdit: 0,
+        addr: "",
+        number: 0,
+      },
       swapping: false,
-      to_balance: false,
-      to_amount: "",
-      to_val: 0,
-      to_coin: "",
       slipAmount: 100,
       dia_slip: false,
       slippage: [20, 50, 100, 200],
+      from_to: false,
+      up_down: "bottom",
     };
   },
   watch: {
     slipAmount: function (newnum, oldnum) {
       this.slipAmount = newnum;
     },
-    from_amount: debounce(async function (newa, olda) {
-      await this.update_amounts();
-    }, 500),
-    from_coin: debounce(async function (newc, oldc) {
-      await this.update_balance(true, false);
-      await this.update_amounts();
-    }, 500),
-    to_coin: debounce(async function (newc, oldc) {
-      await this.update_balance(false, true);
-      await this.update_amounts();
-    }, 500),
+    from: async function (newa, olda) {
+      await this.estimate();
+      this.from.number = await tokens.format(newa.addr, newa.amount);
+      this.to.number = await tokens.format(this.to.addr, this.to.amount);
+    },
+    to: async function (newa, olda) {
+      await this.estimate();
+      this.to.number = await tokens.format(newa.addr, newa.amount);
+      this.from.number = await tokens.format(this.from.addr, this.from.amount);
+    },
   },
   methods: {
+    orderSwap: function () {
+      const from = this.from;
+      const to = this.to;
+      to.lastSet = Date.now();
+      from.lastSet = Date.now();
+      this.from = to;
+      this.to = from;
+    },
     watchToken: async function () {
       for (let i in this.allwlist) {
         const item = this.allwlist[i];
-        if (item.address == this.from_coin) {
+        if (item.address == this.from.addr) {
           const coin = item.bsymbol.toLowerCase();
           await market.watchToken(coin);
         }
       }
     },
-    order_swap: function () {
-      const old_from_coin = this.from_coin;
-      this.from_coin = this.to_coin;
-      this.to_coin = old_from_coin;
-    },
-    update_amounts: async function () {
-      let to_val = ethers.BigNumber.from(0);
-      if (this.from_amount == "") {
-        this.to_amount = "";
-      } else if (this.from_coin != "") {
-        this.from_val = await tokens.parse(this.from_coin, this.from_amount);
-        if (this.from_coin != "" && this.to_coin != "" && this.from_val.gt(0)) {
+    estimate: async function () {
+      const from = this.from;
+      const to = this.to;
+      let from_amount = false;
+      let to_amount = false;
+      let shouldEstimate = true;
+      if (from.addr && to.addr) {
+        if (from.lastEdit > to.lastEdit && from.lastEdit > to.lastSet) {
+          if (!from.amount || from.amount.eq(0)) {
+            shouldEstimate = false;
+          }
+          from_amount = from.amount;
+          this.from_to = "from";
+        } else if (to.lastEdit > from.lastEdit && to.lastEdit > from.lastSet) {
+          if (!to.amount || to.amount.eq(0)) {
+            shouldEstimate = false;
+          }
+          to_amount = to.amount;
+          this.from_to = "to";
+        } else {
+          shouldEstimate = false;
+        }
+        if (shouldEstimate) {
+          console.log("estimate:", from_amount, to_amount);
           try {
             const est = await swap.estimate(
               this.bsc,
-              this.from_coin,
-              this.to_coin,
-              this.from_val
+              from.addr,
+              to.addr,
+              from_amount,
+              to_amount
             );
-            to_val = est;
+            if (from_amount) {
+              const to = Object.assign({}, this.to);
+              to.amount = est;
+              to.lastSet = Date.now();
+              this.to = to;
+            } else {
+              const from = Object.assign({}, this.from);
+              from.amount = est;
+              from.lastSet = Date.now();
+              this.from = from;
+            }
           } catch (e) {
-            console.log("estimate failed", e);
+            console.log("update amount err", e);
           }
         }
-        this.to_val = to_val;
-        this.to_amount = await tokens.format(this.to_coin, to_val);
       }
-    },
-    update_balance: async function (from, to) {
-      if (from) {
-        const from_balance = await tokens.balance(this.from_coin);
-        this.from_balance = await tokens.format(this.from_coin, from_balance);
-      }
-      if (to) {
-        const to_balance = await tokens.balance(this.to_coin);
-        this.to_balance = await tokens.format(this.to_coin, to_balance);
-      }
-    },
-    from_all: function () {
-      this.from_amount = this.from_balance;
     },
     swap: async function () {
       this.swapping = true;
-      const minreq = this.to_val.sub(this.to_val.mul(this.slipAmount).div(100));
+
       const obj = this;
       try {
-        const receipt = await swap.swap(
-          this.bsc,
-          this.from_coin,
-          this.to_coin,
-          this.from_val,
-          minreq,
-          120
-        );
-        const commit = this.$store.commit;
-        await market.waitEventDone(receipt, async function (evt) {
+        // for fixed output
+        let res = "";
+        if (this.from_to == "from") {
+          const minreq = this.to.amount.sub(
+            this.to.amount.mul(this.slipAmount).div(100)
+          );
+          console.log(
+            "swap",
+            this.from.addr,
+            this.to.addr,
+            this.from.amount,
+            minreq
+          );
+          res = await swap.swap(
+            this.bsc,
+            this.from.addr,
+            this.to.addr,
+            this.from.amount,
+            minreq,
+            120
+          );
+        } else if (this.from_to == "to") {
+          const maxpay = this.from.amount.add(
+            this.from.amount.mul(this.slipAmount).div(100)
+          );
+          console.log(
+            "swapfo",
+            this.from.addr,
+            this.to.addr,
+            maxpay,
+            this.to.amount
+          );
+          res = await swap.swapfo(
+            this.bsc,
+            this.from.addr,
+            this.to.addr,
+            this.to.amount,
+            maxpay,
+            120
+          );
+        }
+        await market.waitEventDone(res, async function (evt) {
           obj.swapping = false;
-          obj.from_amount = "";
-          obj.to_amount = "";
-          await obj.update_balance(true, true);
-          for (let i in obj.wBlance) {
-            for (let k in obj.allwlist) {
-              const swapinfo = obj.allwlist[k];
-              if ("index" in swapinfo) {
-                if (
-                  obj.from_coin == swapinfo.address ||
-                  obj.to_coin == swapinfo.address
-                ) {
-                  if (i == swapinfo.index) {
-                    await market.ListenToWCoin(commit);
-                  }
-                }
-              }
-            }
-          }
+          obj.from.amount = ethers.BigNumber.from(0);
+          obj.to.amount = ethers.BigNumber.from(0);
+          obj.from = Object.assign({}, obj.from);
+          obj.to = Object.assign({}, obj.to);
         });
       } catch (e) {
         console.log("err", e);
@@ -327,6 +352,8 @@ export default {
         address: this.bsc.ctrs.pbp.address,
         decimals: await this.bsc.ctrs.pbp.decimals(),
       });
+      this.from.addr = this.bsc.ctrs.pbp.address;
+      this.from = Object.assign({}, this.from);
       this.allwlist.push({
         bsymbol: "USDT",
         address: this.bsc.ctrs.usdt.address,
@@ -358,10 +385,31 @@ export default {
       }
       return list;
     },
+    pricePair: function () {
+      const list = this.allwlist;
+      let pair = {
+        price: "",
+        symbol: [], //[from.symbol,to.symbol]
+      };
+      if (this.from.addr && this.to.addr) {
+        for (let i in list) {
+          if (this.from.addr == list[i].address)
+            pair.symbol[0] = list[i].bsymbol;
+          if (this.to.addr == list[i].address) pair.symbol[1] = list[i].bsymbol;
+        }
+        if (this.to.amount && this.from.amount) {
+          pair.price = this.from.number / this.to.number;
+        }
+      }
+      return pair;
+    },
   },
 };
 </script>
 <style scoped>
+.tokenpair {
+  margin-left: 15px;
+}
 .btn-link.el-button {
   background: rgba(43, 44, 51, 0.8);
   color: #38f2af;
@@ -410,7 +458,7 @@ export default {
   background: #373943;
   border: none;
   position: absolute;
-  top: 20px;
+  top: 0px;
   right: 20px;
   color: #38f2af;
   font-size: 22px;
@@ -419,9 +467,6 @@ export default {
   color: #fff;
 }
 
-.clearfix {
-  margin-left: 10px;
-}
 #swap-exc {
   height: 50px;
   text-align: center;
@@ -438,7 +483,6 @@ export default {
 }
 #swap-exc .el-button .el-icon-bottom::before {
   display: inline-block;
-  /* font-size: 30px; */
 }
 #swapmain .el-input-group__append {
   color: #fff;
@@ -447,21 +491,7 @@ export default {
 #swapmain .el-input-group__append:hover {
   color: #38f2af;
 }
-.amount-ipt.el-input {
-  width: 70%;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  min-width: 200px;
-}
-#swapmain .el-select {
-  width: 160px;
-}
-.swap-input {
-  padding: 30px 30px;
-  border-radius: 20px;
-  margin-top: 25px;
-  background-color: rgba(43, 44, 51, 0.8);
-}
+
 .swap-btn {
   text-align: center;
   margin: 20px auto;
