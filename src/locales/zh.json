@@ -81,6 +81,10 @@
     "home-title":"PlotBridge beta 版已上线，欢迎使用",
     "home-news":[
         {
+            "ts":"2022-05-27",
+            "msg":"过桥存入XCC，赢取PBP奖励。详情请看 https://www.plotbridge.io/zh-cn/activities/crosspb/"
+        },
+        {
             "ts":"2022-05-13",
             "msg":"销毁奖励开始，销毁包括燃烧W币和销毁PBT，操作完成后，将获得一定比例的PBP币"
         },

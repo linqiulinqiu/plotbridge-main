@@ -128,6 +128,7 @@ export default {
           this.connect_loading = false;
         }
       } catch (e) {
+        this.connect_loading = false;
         console.log("connect wallet err", e);
       }
     },
