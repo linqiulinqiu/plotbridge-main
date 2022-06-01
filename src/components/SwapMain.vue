@@ -130,6 +130,7 @@ export default {
             this.allwlist[i].address == this.pbpAddr &&
             this.from.addr == this.pbpAddr
           ) {
+            console.log("watchcoin", this.allwlist[i]);
             return this.allwlist[i];
           }
         }

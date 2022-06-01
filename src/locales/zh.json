@@ -81,6 +81,10 @@
     "home-title":"PlotBridge beta 版已上线，欢迎使用",
     "home-news":[
         {
+            "ts":"2022-05-31",
+            "msg":"我们已经支持了移动钱包，beta测试中。"
+        },
+        {
             "ts":"2022-05-27",
             "msg":"过桥存入XCC，赢取PBP奖励。详情请看 https://www.plotbridge.io/zh-cn/activities/crosspb/"
         },

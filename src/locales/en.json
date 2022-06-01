@@ -81,6 +81,10 @@
     "home-title":"Welcome to the PlotBridge beta version",
     "home-news":[
         {
+            "ts":"2022-05-31",
+            "msg":"Mobile wallet is provided. Beta testing."
+        },
+        {
             "ts":"2022-05-27",
             "msg":"Deposit XCC into Plotbridge and win the PBP rewards.Details please see  https://www.plotbridge.io/activities/crosspb/"
         },
