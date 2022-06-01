@@ -82,7 +82,7 @@
     "home-news":[
         {
             "ts":"2022-05-31",
-            "msg":"Mobile wallet is provided. Beta testing."
+            "msg":"We have provided a preliminary support for mobile wallet (with WalletConnect)."
         },
         {
             "ts":"2022-05-27",

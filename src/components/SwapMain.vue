@@ -124,7 +124,7 @@ export default {
       return "";
     },
     watchCoin() {
-      if (this.from.addr && this.to.addr != "") {
+      if (this.from.addr) {
         for (let i in this.allwlist) {
           if (
             this.allwlist[i].address == this.pbpAddr &&
