@@ -81,6 +81,10 @@
     "home-title":"PlotBridge beta 版已上线，欢迎使用",
     "home-news":[
         {
+            "ts":"2022-06-02",
+            "msg":"关于活动——“存储XCC，获取奖励”，我们准备了一个简单的网页让参与者可以去查寻排名与数据。网址：https://xcc-mint.plotbridge.io"
+        },
+        {
             "ts":"2022-05-31",
             "msg":"我们初步支持了移动钱包连接。"
         },

@@ -81,12 +81,16 @@
     "home-title":"Welcome to the PlotBridge beta version",
     "home-news":[
         {
+            "ts":"2022-06-02",
+            "msg":"We have made a simple tool for XCC Deposit Activity participants to browse their score and ranking, at: https://xcc-mints.plotbridge.io"
+        },
+        {
             "ts":"2022-05-31",
             "msg":"We have provided a preliminary support for mobile wallet (with WalletConnect)."
         },
         {
             "ts":"2022-05-27",
-            "msg":"Deposit XCC into Plotbridge and win the PBP rewards.Details please see  https://www.plotbridge.io/activities/crosspb/"
+            "msg":"Deposit XCC into Plotbridge and win the PBP rewards. Details please see  https://www.plotbridge.io/activities/crosspb/"
         },
         {
             "ts":"2022-05-13",
