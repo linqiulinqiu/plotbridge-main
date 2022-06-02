@@ -1,8 +1,8 @@
 <template>
   <el-col type="flex">
     <el-col
-      :lg="{ span: 8, offset: 1 }"
-      :md="{ span: 9, offset: 1 }"
+      :lg="{ span: 9, offset: 1 }"
+      :md="{ span: 15, offset: 0 }"
       :sm="14"
       :xs="18"
     >
@@ -20,7 +20,7 @@
         <p v-else>{{ $t("no-desc") }}</p>
       </el-col>
     </el-col>
-    <el-col :lg="{ span: 10, offset: 1 }" :md="{ span: 11, offset: 1 }">
+    <el-col :lg="{ span: 5, offset: 5 }" :md="{ span: 7, offset: 0 }">
       <el-col v-if="market">
         <el-col v-if="market.seller == '-self'">
           <InfoMySale :curNFT="this.curNFT" :clearPbtId="this.clearPbtId" />
@@ -92,7 +92,8 @@ export default {
 };
 </script>
 <style scoped>
-.info-img{
+.info-img {
   border-radius: 15px;
+  max-width: 380px;
 }
 </style>

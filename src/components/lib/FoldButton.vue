@@ -15,7 +15,7 @@ export default {
   props: ["astyle", "openWidth"],
   data() {
     return {
-      btnIcon: "el-icon-s-fold",
+      btnIcon: "el-icon-caret-left",
     };
   },
   mounted() {},
@@ -29,13 +29,13 @@ export default {
       //     platform.match(/Android/i) ||
       //     platform.match(/iPhone/i)
       //   ) {
-      if (this.btnIcon == "el-icon-s-fold") {
-        this.btnIcon = "el-icon-s-unfold";
+      if (this.btnIcon == "el-icon-caret-left") {
+        this.btnIcon = "el-icon-caret-right";
         this.astyle.width = this.openWidth;
         this.astyle.isFold = false;
         this.$emit("fold", this.astyle);
-      } else if (this.btnIcon == "el-icon-s-unfold") {
-        this.btnIcon = "el-icon-s-fold";
+      } else if (this.btnIcon == "el-icon-caret-right") {
+        this.btnIcon = "el-icon-caret-left";
         this.astyle.width = "30px";
         this.astyle.isFold = true;
         this.$emit("fold", this.astyle);
@@ -54,6 +54,7 @@ export default {
   color: #38f2af;
   background-color: #25272e;
   border: 1px solid #38f2af;
+  opacity: 0.8;
   position: absolute;
   top: 0px;
 }

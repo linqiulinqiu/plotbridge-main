@@ -84,9 +84,21 @@
     "home-title":"PlotBridge beta 版已上线，欢迎使用",
     "home-news":[
         {
+            "ts":"2022-06-02",
+            "msg":"关于活动——“存储XCC，获取奖励”，我们准备了一个简单的网页让参与者可以去查寻排名与数据。网址：https://xcc-mint.plotbridge.io"
+        },
+        {
+            "ts":"2022-05-31",
+            "msg":"我们初步支持了移动钱包连接。"
+        },
+        {
+            "ts":"2022-05-27",
+            "msg":"过桥存入XCC，赢取PBP奖励。详情请看 https://www.plotbridge.io/zh-cn/activities/crosspb/"
+        },
+       {
             "ts":"2022-05-26",
             "msg":"按照PBP发行方案，项目方于今日将桥30%的收益 0.24441 BNB 购买了 289k PBP 进行 燃烧销毁。"
-        },
+       },
         {
             "ts":"2022-05-13",
             "msg":"销毁奖励开始，销毁包括燃烧W币和销毁PBT，操作完成后，将获得一定比例的PBP币"

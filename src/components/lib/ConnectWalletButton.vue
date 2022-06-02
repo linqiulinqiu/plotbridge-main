@@ -11,7 +11,7 @@
     <span v-else style="color: #fff" class="baddr font">
       <el-tooltip effect="light" placement="bottom">
         <span slot="content" class="font"> {{ $t("bsc") }}:{{ baddr }} </span>
-        <el-button class="font">
+        <el-button class="font" @click="disconnect">
           {{ addr }}
           <span v-if="testnet">{{ testnet }}</span>
         </el-button>
@@ -58,6 +58,7 @@
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import market from "../../market";
+import pbw from "pbwallet";
 import keeper from "../../keeper";
 import { mapState } from "vuex";
 export default {
@@ -96,40 +97,57 @@ export default {
     connect_wallet: async function () {
       this.connect_loading = true;
       const commit = this.$store.commit;
-      const providerOptions = {
-        walletconnect: {
-          package: WalletConnectProvider,
-          options: {
-            rpc: {
-              0x38: "https://bsc-dataseed.binance.org",
-              0x61: "https://data-seed-prebsc-1-s3.binance.org:8545/",
+      let bsc = {};
+      if (typeof window.ethereum !== "undefined") {
+        try {
+          bsc = await market.connect(commit, false);
+          console.log("connect wallet with metaMask:", bsc);
+        } catch (error) {
+          console.log("connect wallet with metaMask err:", error);
+        }
+      } else {
+        const providerOptions = {
+          walletconnect: {
+            package: WalletConnectProvider,
+            options: {
+              rpc: {
+                0x38: "https://bsc-dataseed.binance.org",
+                0x61: "https://data-seed-prebsc-1-s3.binance.org:8545/",
+              },
             },
           },
-        },
-      };
-      try {
-        const wmod = new Web3Modal({
-          network: "binance",
-          cacheProvider: false,
-          providerOptions,
-        });
-        const wm_instance = await wmod.connect();
-        const bsc = await market.connect(commit, wm_instance);
-        if (typeof bsc == "string" || !bsc) {
-          if (bsc) {
-            this.$message.error(`Connect failed: ${bsc}`);
-          } else {
-            this.connect_faild = true;
-          }
+        };
+        try {
+          const wmod = new Web3Modal({
+            network: "binance",
+            cacheProvider: false,
+            providerOptions,
+          });
+          const wm_instance = await wmod.connect();
+          bsc = await market.connect(commit, wm_instance);
+          console.log("connect wallet", bsc);
+        } catch (e) {
           this.connect_loading = false;
-        } else {
-          commit("setBaddr", bsc.addr);
-          keeper.startKeeper(bsc, commit);
-          this.connect_loading = false;
+          console.log("connect wallet err", e);
         }
-      } catch (e) {
-        console.log("connect wallet err", e);
       }
+      if (typeof bsc == "string" || !bsc) {
+        if (bsc) {
+          this.$message.error(`Connect failed: ${bsc}`);
+        } else {
+          this.connect_faild = true;
+        }
+        this.connect_loading = false;
+      }
+      commit("setBaddr", bsc.addr);
+      keeper.startKeeper(bsc, commit);
+      this.connect_loading = false;
+      console.log("bsc.addr", bsc.addr);
+    },
+    disconnect: async function () {
+      await pbw.disconnect();
+      this.$store.commit("setBsc", {});
+      this.$store.commit("setBaddr", false);
     },
   },
 };

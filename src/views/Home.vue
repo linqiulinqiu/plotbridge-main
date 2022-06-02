@@ -48,8 +48,7 @@ export default {
 }
 #home {
   color: #fff;
-  height: 85vh;
-  /* background-attachment: fixed; */
+  height: calc(100vh-190px);
   background-image: url("../../public/image/banner.jpg");
   background-repeat: no-repeat;
   background-position: center;

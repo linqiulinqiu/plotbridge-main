@@ -124,12 +124,13 @@ export default {
       return "";
     },
     watchCoin() {
-      if (this.from.addr && this.to.addr != "") {
+      if (this.from.addr) {
         for (let i in this.allwlist) {
           if (
             this.allwlist[i].address == this.pbpAddr &&
             this.from.addr == this.pbpAddr
           ) {
+            console.log("watchcoin", this.allwlist[i]);
             return this.allwlist[i];
           }
         }
