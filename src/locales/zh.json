@@ -7,6 +7,7 @@
     "add-to-wallet":"添加{coin}到钱包",
     "add-lp":"添加{0}流动性",
     "add":"添加",
+    "activities":"活动",
 
     "balance":"余额",
     "bridge":"桥梁",
@@ -51,6 +52,8 @@
     "dep-minFee":"最小存款手续费",
     "dep-addr":"获取{bcoin}的存款地址",
     "dep-rebind":"该类型地址已经绑定了，请刷新页面后查看。",
+    "dp-xcc":"过桥存入XCC,赢取PBP奖励",
+
 
     "earn":"盈利",
     "earned":"已赚取：",
@@ -92,6 +95,10 @@
             "ts":"2022-05-27",
             "msg":"过桥存入XCC，赢取PBP奖励。详情请看 https://www.plotbridge.io/zh-cn/activities/crosspb/"
         },
+       {
+            "ts":"2022-05-26",
+            "msg":"按照PBP发行方案，项目方于今日将桥30%的收益 0.24441 BNB 购买了 289k PBP 进行 燃烧销毁。"
+       },
         {
             "ts":"2022-05-13",
             "msg":"销毁奖励开始，销毁包括燃烧W币和销毁PBT，操作完成后，将获得一定比例的PBP币"
@@ -156,6 +163,7 @@
     "purchase":"可购买",
     "p-end":"预售结束",
     "pair-info":"{0}交易对信息",
+    "pb-events":"Plotbridge的活动",
 
 
 
