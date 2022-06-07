@@ -50,22 +50,22 @@ export default {
           value: this.$t("activities"),
         },
         {
-          index: "2",
+          index: "3",
           link: "/Doc/GuideforBridge",
           value: this.$t("guide-bridge"),
         },
         {
-          index: "3",
+          index: "4",
           link: "/Doc/GuideforMarket",
           value: this.$t("guide-market"),
         },
         {
-          index: "4",
+          index: "5",
           link: "/Doc/GuideforWallet",
           value: this.$t("guide-wallet"),
         },
         {
-          index: "5",
+          index: "6",
           link: "/Doc/Contact",
           value: this.$t("contact"),
         },

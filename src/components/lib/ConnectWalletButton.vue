@@ -133,16 +133,16 @@ export default {
       }
       if (typeof bsc == "string" || !bsc) {
         if (bsc) {
-          this.$message.error(`Connect failed: ${bsc}`);
+          this.$message.error(this.$t("relink-wallet"));
         } else {
           this.connect_faild = true;
         }
         this.connect_loading = false;
+      } else {
+        commit("setBaddr", bsc.addr);
+        keeper.startKeeper(bsc, commit);
+        this.connect_loading = false;
       }
-      commit("setBaddr", bsc.addr);
-      keeper.startKeeper(bsc, commit);
-      this.connect_loading = false;
-      console.log("bsc.addr", bsc.addr);
     },
     disconnect: async function () {
       await pbw.disconnect();
