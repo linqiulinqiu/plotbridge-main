@@ -30,9 +30,11 @@ async function ListenToWCoin(commit) {
     async function updateBalnce() {
         for (let i in coinlist) {
             const ctrname = coinlist[i].ctrname
-            ctr[ctrname] = bsc.ctrs[ctrname]
-            const balance = await ctr[ctrname].balanceOf(bsc.addr)
-            wBalance[i] = await tokens.format(ctr[ctrname].address, balance)
+            if (ctrname in bsc.ctrs) {
+                ctr[ctrname] = bsc.ctrs[ctrname]
+                const balance = await ctr[ctrname].balanceOf(bsc.addr)
+                wBalance[i] = await tokens.format(ctr[ctrname].address, balance)
+            }
         }
         commit('setWBalance', wBalance)
     }

@@ -33,6 +33,7 @@ export default {
     FoldButton,
   },
   computed: mapState({
+    bsc: "bsc",
     current: "current",
     addclass: function (state) {
       if (state.current.coinType) return state.current.coinType;
@@ -55,7 +56,12 @@ export default {
       this.$store.commit("setCurrentCoinType", item.index);
     },
     loadcoin: function () {
-      this.coinMap = market.loadCoinlist();
+      const coinMap = market.loadCoinlist();
+      for (let i in coinMap) {
+        if (coinMap[i].ctrname in this.bsc.ctrs) {
+          this.coinMap[i] = coinMap[i];
+        }
+      }
     },
     fold: function ($event) {
       // console.log("fold function", $event);
