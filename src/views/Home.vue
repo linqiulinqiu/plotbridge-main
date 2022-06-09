@@ -8,15 +8,17 @@
       :xs="{ span: 18, offset: 1 }"
     >
       <h2>{{ $t("home-title") }}</h2>
-      <el-timeline id="news-timeline">
-        <el-timeline-item
-          v-for="item in $t('home-news')"
-          :key="item.msg"
-          :timestamp="item.ts"
-        >
-          <el-card class="card">{{ item.msg }}</el-card>
-        </el-timeline-item>
-      </el-timeline>
+      <el-col class="message">
+        <el-timeline id="news-timeline" class="scrollbar">
+          <el-timeline-item
+            v-for="item in $t('home-news')"
+            :key="item.msg"
+            :timestamp="item.ts"
+          >
+            <el-card class="card">{{ item.msg }}</el-card>
+          </el-timeline-item>
+        </el-timeline>
+      </el-col>
       <p>{{ $t("home-note") }}</p>
     </el-col>
     <el-col :span="5" :offset="1">
@@ -40,6 +42,29 @@ export default {
   margin: 0;
   padding: 0;
 }
+.message {
+  /* background-color: rgba(192, 208, 236, 0.2); */
+  height: calc(100vh - 300px);
+  min-height: 612px;
+  overflow-y: auto;
+  margin: 20px 0px;
+  padding: 10px;
+}
+.message::-webkit-scrollbar {
+  width: 10px;
+  height: calc(100vh - 310px);
+}
+.message::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: rgba(147, 206, 150, 0.5);
+  --webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+.message::-webkit-scrollbar-track {
+  /*滚动条里面轨道 */
+  border-radius: 10px;
+  background: #ededed50;
+  --webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
 .con-card {
   padding-bottom: 20px;
   background-color: rgba(255, 255, 225, 0.1);
@@ -48,17 +73,13 @@ export default {
 }
 #home {
   color: #fff;
-  height: calc(100vh-190px);
+  height: calc(100vh - 170px);
   background-image: url("../../public/image/banner.jpg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
   position: relative;
-}
-
-#news-timeline {
-  margin-top: 50px;
 }
 
 .card {
