@@ -17,7 +17,10 @@ function loadCoinlist() {
     const coinSb = pbwallet.wcoin_list("index")
     const clist = {}
     for (let i in coinSb) {
-        clist[coinSb[i]] = pbwallet.wcoin_info(coinSb[i], "index")
+        const info = pbwallet.wcoin_info(coinSb[i], "index")
+        if (info.ctrname in bsc.ctrs) {
+            clist[coinSb[i]] = info
+        }
     }
     coinlist = clist
     return coinlist

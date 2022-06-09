@@ -59,9 +59,17 @@ export default {
     value: async function (newv, oldv) {
       this.addr = newv.addr;
       if (newv.lastEdit < newv.lastSet) {
-        if (newv.amount && newv.amount.gt(0)) {
-          this.amount = await tokens.format(newv.addr, newv.amount);
+        if (newv.amount) {
+          if (newv.amount.gt(0)) {
+            this.amount = await tokens.format(newv.addr, newv.amount);
+          } else {
+            this.amount = parseInt(newv.amount);
+          }
         }
+      }
+      if (newv.isSwap) {
+        await this.updateBalance();
+        console.log("this.balnce", this.balance, newv.isSwap);
       }
     },
     deep: true,
@@ -71,6 +79,7 @@ export default {
       const info = Object.assign({}, this.value);
       info.amount = await this.updateAmount();
       info.lastEdit = Date.now();
+      info.isSwap = false;
       this.$emit("input", info);
     },
     selChanged: async function () {

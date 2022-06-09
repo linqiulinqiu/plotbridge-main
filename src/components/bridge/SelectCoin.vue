@@ -56,12 +56,7 @@ export default {
       this.$store.commit("setCurrentCoinType", item.index);
     },
     loadcoin: function () {
-      const coinMap = market.loadCoinlist();
-      for (let i in coinMap) {
-        if (coinMap[i].ctrname in this.bsc.ctrs) {
-          this.coinMap[i] = coinMap[i];
-        }
-      }
+      this.coinMap = market.loadCoinlist();
     },
     fold: function ($event) {
       // console.log("fold function", $event);

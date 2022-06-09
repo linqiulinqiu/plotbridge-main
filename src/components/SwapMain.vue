@@ -130,7 +130,6 @@ export default {
             this.allwlist[i].address == this.pbpAddr &&
             this.from.addr == this.pbpAddr
           ) {
-            console.log("watchcoin", this.allwlist[i]);
             return this.allwlist[i];
           }
         }
@@ -173,7 +172,6 @@ export default {
   }),
   mounted: function () {
     this.load_wlist();
-    console.log(this.bsc);
     this.from.addr = this.pbpAddr;
   },
   data() {
@@ -185,6 +183,7 @@ export default {
         lastEdit: 0,
         addr: "",
         number: 0,
+        isSwap: false,
       },
       to: {
         amount: ethers.BigNumber.from(0),
@@ -192,6 +191,7 @@ export default {
         lastEdit: 0,
         addr: "",
         number: 0,
+        isSwap: false,
       },
       swapping: false,
       slipAmount: 100,
@@ -285,7 +285,6 @@ export default {
     },
     swap: async function () {
       this.swapping = true;
-
       const obj = this;
       try {
         // for fixed output
@@ -293,13 +292,6 @@ export default {
         if (this.from_to == "from") {
           const minreq = this.to.amount.sub(
             this.to.amount.mul(this.slipAmount).div(100)
-          );
-          console.log(
-            "swap",
-            this.from.addr,
-            this.to.addr,
-            this.from.amount,
-            minreq
           );
           res = await swap.swap(
             this.bsc,
@@ -312,13 +304,6 @@ export default {
         } else if (this.from_to == "to") {
           const maxpay = this.from.amount.add(
             this.from.amount.mul(this.slipAmount).div(100)
-          );
-          console.log(
-            "swapfo",
-            this.from.addr,
-            this.to.addr,
-            maxpay,
-            this.to.amount
           );
           res = await swap.swapfo(
             this.bsc,
@@ -333,6 +318,8 @@ export default {
           obj.swapping = false;
           obj.from.amount = ethers.BigNumber.from(0);
           obj.to.amount = ethers.BigNumber.from(0);
+          obj.from.isSwap = true;
+          obj.to.isSwap = true;
           obj.from = Object.assign({}, obj.from);
           obj.to = Object.assign({}, obj.to);
         });
@@ -342,7 +329,6 @@ export default {
       }
     },
     load_wlist: async function () {
-      const wsymbols = pbwallet.wcoin_list("bsymbol");
       this.allwlist.push({
         bsymbol: "BNB",
         address: ethers.constants.AddressZero,
@@ -365,8 +351,9 @@ export default {
         address: this.bsc.ctrs.busd.address,
         decimals: await this.bsc.ctrs.usdt.decimals(),
       });
-      for (let i in wsymbols) {
-        this.allwlist.push(pbwallet.wcoin_info(wsymbols[i], "bsymbol"));
+      const list = market.loadCoinlist();
+      for (let i in list) {
+        this.allwlist.push(list[i]);
       }
     },
     watchlist: function () {
