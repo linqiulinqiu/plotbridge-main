@@ -1,7 +1,13 @@
 <template>
   <div class="content">
     <el-container>
-      <el-aside width="300px">
+      <el-aside :width="asideStyle.width">
+        <FoldButton
+          v-model="asideStyle"
+          :openWidth="'250px'"
+          @fold="fold($event)"
+          style="z-index: 99"
+        />
         <el-col>
           <el-menu
             :router="true"
@@ -33,9 +39,13 @@ function menuItem() {
   const mode = location.hash.substr(1, location.hash.length - 1);
   return mode;
 }
+import FoldButton from "../components/lib/FoldButton.vue";
 
 export default {
   name: "Doc",
+  components: {
+    FoldButton,
+  },
   computed: {
     menuLink() {
       return [
@@ -74,12 +84,16 @@ export default {
   },
   data() {
     return {
+      asideStyle: { width: "250px", isFold: false },
       menuIndex: menuItem(),
     };
   },
   methods: {
     handleSelect: function (key, keyPath) {
       this.menuIndex = key;
+    },
+    fold: function ($event) {
+      // console.log("fold function", $event);
     },
   },
 };
@@ -95,9 +109,13 @@ export default {
   display: flex;
   color: #ffffff;
   font-size: 14px;
+  position: relative;
 }
 .el-main {
-  /* height: calc(100vh); */
   width: 100vw;
+}
+.el-menu .el-menu-item {
+  padding-left: 40px !important;
+  overflow: hidden;
 }
 </style>

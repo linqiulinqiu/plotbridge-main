@@ -29,19 +29,18 @@ export default {
       //     platform.match(/Android/i) ||
       //     platform.match(/iPhone/i)
       //   ) {
-      if (this.btnIcon == "el-icon-caret-left") {
-        this.btnIcon = "el-icon-caret-right";
-        this.astyle.width = this.openWidth;
-        this.astyle.isFold = false;
-        this.$emit("fold", this.astyle);
-      } else if (this.btnIcon == "el-icon-caret-right") {
+
+      if (this.btnIcon == "el-icon-caret-right") {
         this.btnIcon = "el-icon-caret-left";
         this.astyle.width = "30px";
         this.astyle.isFold = true;
         this.$emit("fold", this.astyle);
+      } else if (this.btnIcon == "el-icon-caret-left") {
+        this.btnIcon = "el-icon-caret-right";
+        this.astyle.width = this.openWidth;
+        this.astyle.isFold = false;
+        this.$emit("fold", this.astyle);
       }
-      //   }
-      console.log("icon", this.astyle);
     },
   },
 };
