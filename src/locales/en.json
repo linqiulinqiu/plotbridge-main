@@ -55,6 +55,7 @@
     "destroy":"Destroy NFT",
     "dep-rebind":"Unable to rebind deposit address,please refresh the page.",
     "dp-xcc":"Deposite XCC coin into Plotbridge, and win the reward of PBP",
+    "destroy-tips":"Before destroying, please make sure that no access and other related operations are performed within five minutes. </br>After destruction, all access addresses bound to this NFT will be destroyed.</br>Please confirm whether to destroy this NFT?",
 
     "earn":"Earn",
     "earned":"Earned：",

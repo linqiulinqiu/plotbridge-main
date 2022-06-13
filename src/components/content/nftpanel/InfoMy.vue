@@ -3,7 +3,7 @@
     <el-col id="destroy">
       <p>
         {{ $t("destroy") }} :
-        <el-button @click="burnPBT" type="primary" :loading="burn_loading">{{
+        <el-button @click="destroy" type="primary" :loading="burn_loading">{{
           $t("destroy")
         }}</el-button>
       </p>
@@ -61,6 +61,19 @@
         }}</el-button>
       </el-col>
     </el-col>
+    <el-dialog
+      :visible.sync="destroy_dialog"
+      width="40%"
+      :title="$t('destroy')"
+    >
+      <p v-html="$t('destroy-tips')" class="font-color"></p>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelBurn">{{ $t("cancel") }}</el-button>
+        <el-button @click="burnPBT" :loading="destroy_loading">{{
+          $t("sure")
+        }}</el-button>
+      </span>
+    </el-dialog>
   </el-col>
 </template>
 <script>
@@ -78,18 +91,36 @@ export default {
       send_loading: false,
       set_loading: false,
       burn_loading: false,
+      destroy_loading: false,
+      destroy_dialog: false,
     };
   },
   methods: {
-    burnPBT: async function () {
+    destroy: function () {
+      this.destroy_dialog = true;
       this.burn_loading = true;
+    },
+    cancelBurn: function () {
+      this.destroy_dialog = false;
+      this.burn_loading = false;
+    },
+    burnPBT: async function () {
+      this.destroy_loading = true;
       const id = this.curNFT.id;
-      const res = await market.burnNFT(id);
-      const obj = this;
-      await market.waitEventDone(res, function (evt) {
-        obj.burn_loading = false;
-        obj.$store.commit("setCurrentPbtId", false);
-      });
+      try {
+        const res = await market.burnNFT(id);
+        const obj = this;
+        await market.waitEventDone(res, function (evt) {
+          obj.destroy_loading = false;
+          obj.destroy_dialog = false;
+          obj.burn_loading = false;
+          obj.$store.commit("setCurrentPbtId", false);
+        });
+      } catch (e) {
+        console.log("burnPBT err", e);
+        this.burn_loading = false;
+        this.destroy_loading = false;
+      }
     },
     send: async function () {
       this.send_loading = true;
@@ -147,5 +178,9 @@ export default {
 }
 #infoMy {
   font-size: 18px;
+}
+p.font-color {
+  color: #fff;
+  font-size: 16px;
 }
 </style>
