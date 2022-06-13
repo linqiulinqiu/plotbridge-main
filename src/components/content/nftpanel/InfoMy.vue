@@ -69,8 +69,8 @@
       <p v-html="$t('destroy-tips')" class="font-color"></p>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelBurn">{{ $t("cancel") }}</el-button>
-        <el-button @click="burnPBT" :loading="destroy_loading">{{
-          $t("sure")
+        <el-button @click="burnPBT" type="primary" :loading="destroy_loading">{{
+          $t("destroy")
         }}</el-button>
       </span>
     </el-dialog>
@@ -98,14 +98,13 @@ export default {
   methods: {
     destroy: function () {
       this.destroy_dialog = true;
-      this.burn_loading = true;
     },
     cancelBurn: function () {
       this.destroy_dialog = false;
-      this.burn_loading = false;
     },
     burnPBT: async function () {
       this.destroy_loading = true;
+      this.burn_loading = true;
       const id = this.curNFT.id;
       try {
         const res = await market.burnNFT(id);
