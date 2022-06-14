@@ -7,7 +7,7 @@
       <p>
         {{ $t("destroy") }} :
         <el-button
-          @click="this.destroy_dialog = true"
+          @click="destroy_dialog = true"
           type="primary"
           :loading="burn_loading"
           >{{ $t("destroy") }}</el-button
@@ -94,7 +94,7 @@
     >
       <p v-html="$t('destroy-tips')" class="font-color"></p>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="this.destroy_dialog = false">
+        <el-button @click="destroy_dialog = false">
           {{ $t("cancel") }}
         </el-button>
         <el-button @click="burnPBT" type="primary" :loading="destroy_loading">{{

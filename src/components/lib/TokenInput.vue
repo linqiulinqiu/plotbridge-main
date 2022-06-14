@@ -69,7 +69,6 @@ export default {
       }
       if (newv.isSwap) {
         await this.updateBalance();
-        console.log("this.balnce", this.balance, newv.isSwap);
       }
     },
     deep: true,
@@ -108,6 +107,7 @@ export default {
     updateBalance: async function () {
       const coinBalance = await tokens.balance(this.addr);
       this.balance = await tokens.format(this.addr, coinBalance);
+      console.log("Balance is update", this.balance, this.value.isSwap);
     },
     max: function () {
       this.amount = this.balance;
