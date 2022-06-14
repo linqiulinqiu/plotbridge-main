@@ -124,6 +124,9 @@
 
     "inbsc":"在你的BSC钱包中",
     "input-addr":"在下面输入你的取款地址：",
+    "input-price":"输入价格",
+    "input-desc":"输入描述",
+    "input-waddr":"输入你的钱包地址",
     "id":"编号",
     "img":"一切皆有可能。",
     "insufficient-mint-balance":"当前余额不够铸造PBT. 请确保在当前连接的钱包中，至少有 {price} {token}",
@@ -206,6 +209,8 @@
     "tips-waddr":"您已绑定了此币种的取款地址(另一个PBT)，不建议再绑定其他地址了",
     "total-staked":"总质押",
     "token-info":"{0} 代币信息",
+    "transfer":"转移",
+    "transfernft":"发送NFT到另一个地址",
 
     "withdraw":"取款",
     "w-rate":"取款费率",

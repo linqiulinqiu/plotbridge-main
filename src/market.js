@@ -335,6 +335,15 @@ async function burnNFT(id) {
     const res = await bsc.ctrs.pbt.burn(pbtId)
     return res
 }
+async function transferPBT(fromaddr, toaddr, pbtid) {
+    const id = ethers.BigNumber.from(pbtid)
+    try {
+        const res =await bsc.ctrs.pbt.transferFrom(fromaddr, toaddr, id)
+        return res
+    } catch (e) {
+        console.log("transfer error",e)
+    }
+}
 export default {
     connect: connect,
     checkAllowance: checkAllowance,
@@ -359,5 +368,6 @@ export default {
     getfees: getfees,
     getmintfee: getmintfee,
     loadCoinlist: loadCoinlist,
-    ListenToWCoin:ListenToWCoin
+    ListenToWCoin: ListenToWCoin,
+    transferPBT:transferPBT
 }

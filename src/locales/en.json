@@ -123,7 +123,9 @@
 
     "inbsc":"In your BSC wallet",
     "input-addr":"Input your withdrawal address below",
+    "input-price":"Input the price",
     "input-desc":"Input the description",
+    "input-waddr":"Input your wallet address",
     "insufficient-mint-balance":"Insufficient balance for mint. Make sure you have at least {price} {token} in wallet currently connected",
     "id":"Id",
     "img":"Anything is possible.",
@@ -200,6 +202,8 @@
     "tips-waddr":"When an account is bound to multiple addresses of multiple wallets, the money may be randomly sent to one of them. Please pay attention to check.",
     "total-staked":"Total staked",
     "token-info":"{0} Token Info",
+    "transfer":"Transfer",
+    "transfernft":"Transfer NFT to another address",
 
     "withdraw":"Withdraw",
     "w-rate":"Withdraw rate",
