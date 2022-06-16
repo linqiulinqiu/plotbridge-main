@@ -213,9 +213,9 @@ export default {
       up_down: "bottom",
       slipNum: {
         max: false,
-        maxBig: false,
+        maxBig: "",
         min: false,
-        minBig: false,
+        minBig: "",
       },
     };
   },
@@ -256,10 +256,11 @@ export default {
           const maxNum = this.from.amount.add(
             this.from.amount.mul(this.slipAmount).div(10000)
           );
-          this.maxNum.maxBig = maxNum;
+          this.slipNum.maxBig = maxNum;
           this.slipNum.max = await tokens.format(this.from.addr, maxNum);
         }
       }
+      console.log("slipNumber", this.slipNum);
     },
     orderSwap: function () {
       const from = this.from;
@@ -335,10 +336,13 @@ export default {
         let res = "";
         if (this.from_to == "from") {
           const minreq = this.slipNum.minBig;
-          // this.to.amount.sub(
-          //   this.to.amount.mul(this.slipAmount).div(100)
-          // );
-          console.log("minreq", minreq, this.slipAmount);
+          console.log(
+            "minreq params : ",
+            this.from.addr,
+            this.to.addr,
+            this.from.amount,
+            minreq
+          );
           res = await swap.swap(
             this.bsc,
             this.from.addr,
@@ -349,10 +353,13 @@ export default {
           );
         } else if (this.from_to == "to") {
           const maxpay = this.slipNum.maxBig;
-          // this.from.amount.add(
-          //   this.from.amount.mul(this.slipAmount).div(100)
-          // );
-          console.log("maxpay", maxpay, this.slipAmount);
+          console.log(
+            "maxpay",
+            this.from.addr,
+            this.to.addr,
+            this.to.amount,
+            maxpay
+          );
           res = await swap.swapfo(
             this.bsc,
             this.from.addr,
