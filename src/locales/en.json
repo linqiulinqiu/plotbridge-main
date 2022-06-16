@@ -187,7 +187,7 @@
     "set-sell-info":"Set price and description",
     "swap":"Swap",
     "s-swap":"Simple Swap",
-    "s-swap1":"Trade common tokens (powered by PancakeSwap)",
+    "s-swap1":"Trade common tokens (transactions are implemented by PancakeSwap and are shown for reference only)",
     "stake":"Earn",
     "staking":"Staking",
     "set-s-amount":"Set Stake Amount",

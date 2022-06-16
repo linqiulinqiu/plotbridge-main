@@ -190,7 +190,7 @@
     "set-sell-info":"设置价格与描述",
     "swap":"交易",
     "s-swap":"快速交易",
-    "s-swap1":"交易常用代币",
+    "s-swap1":"交易常用代币(交易由PancakeSwap实现，显示数据仅供参考)",
     "setting":"设置",
     "slippage":"滑动容限",
     "slip-tip":"如果价格的不利变化超过此百分比，您的交易将恢复。",
