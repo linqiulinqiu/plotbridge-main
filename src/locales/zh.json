@@ -48,7 +48,7 @@
     "doc":"文档",
     "data":"加载中......",
     "destroy":"销毁NFT",
-    "dep-limit":"单次存款建议限额为：",
+    "dep-limit":"单次存款建议限额为",
     "dep-rate":"存款费率",
     "dep-minFee":"最小存款手续费",
     "dep-addr":"获取{bcoin}的存款地址",
@@ -215,7 +215,7 @@
     "withdraw":"取款",
     "w-rate":"取款费率",
     "w-minFee":"最小取款手续费",
-    "w-limit":"单次取款建议限额为：",
+    "w-limit":"单次取款建议限额为",
     "w-addr":"取出的{bcoin}将会发送到以下的地址"
 
 }

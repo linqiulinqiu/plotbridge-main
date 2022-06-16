@@ -2,10 +2,10 @@
   <el-col id="fee">
     <el-popover placement="right" trigger="click" title="fees">
       <p>
-        {{ $t("dep-limit") }}{{ this.depAmount }}<br />
+        {{ $t("dep-limit") }} : {{ this.depAmount }}<br />
         {{ $t("w-limit") }}：{{ this.wAmount }}<br />
         {{ $t("beyond-limit") }}<br />
-        {{ $t("dep-rate") }}{{ this.dFeeRate / 100 }}%，{{
+        {{ $t("dep-rate") }}: {{ this.dFeeRate / 100 }}%，{{
           $t("dep-minFee")
         }}：{{ this.dFee }}{{ this.coinInfo.symbol }}
         <br />
@@ -13,7 +13,7 @@
           this.wFee
         }}{{ this.coinInfo.symbol }}
         <br />
-        rebindFee:{{ this.reBindfee.amount }} {{ this.reBindfee.symbol }}
+        <!-- rebindFee:{{ this.reBindfee.amount }} {{ this.reBindfee.symbol }} -->
       </p>
       <el-button
         circle

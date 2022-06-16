@@ -54,8 +54,21 @@
           </el-button>
         </ApproveButton>
       </el-col>
-      <el-col class="swap-price">
-        <h4 v-if="price">
+      <el-col class="swap-price" v-if="price">
+        <h4>
+          <span
+            >最大付出：
+            <span>{{ slipNum.max }}</span>
+            <span>{{ price.symbol[0] }}</span>
+          </span>
+          <span style="margin-left: 50px"
+            >最小收到：
+            <span>{{ slipNum.min }}</span>
+            <span>{{ price.symbol[1] }}</span>
+            <span></span>
+          </span>
+        </h4>
+        <h4>
           {{ $t("price") }} : <span class="font">{{ price.price }}</span>
           <span class="tokenpair">
             {{ price.symbol[0] }} per {{ price.symbol[1] }}
@@ -199,24 +212,44 @@ export default {
       slippage: [20, 50, 100, 200],
       from_to: false,
       up_down: "bottom",
+      slipNum: {
+        max: false,
+        min: false,
+      },
     };
   },
   watch: {
-    slipAmount: function (newnum, oldnum) {
+    slipAmount: async function (newnum, oldnum) {
       this.slipAmount = newnum;
+      await this.slipNumber();
     },
     from: async function (newa, olda) {
       await this.estimate();
       this.from.number = await tokens.format(newa.addr, newa.amount);
       this.to.number = await tokens.format(this.to.addr, this.to.amount);
+      await this.slipNumber();
     },
     to: async function (newa, olda) {
       await this.estimate();
       this.to.number = await tokens.format(newa.addr, newa.amount);
       this.from.number = await tokens.format(this.from.addr, this.from.amount);
+      await this.slipNumber();
     },
   },
   methods: {
+    slipNumber: async function () {
+      if (this.from.amount && this.to.amount) {
+        const minNum = this.to.amount.sub(
+          this.to.amount.mul(this.slipAmount).div(100)
+        );
+        this.slipNum.min = await tokens.format(this.to.addr, minNum);
+        const maxNum = this.from.amount.add(
+          this.from.amount.mul(this.slipAmount).div(100)
+        );
+        this.slipNum.max = await tokens.format(this.from.addr, maxNum);
+      }
+      // return number;
+    },
     orderSwap: function () {
       const from = this.from;
       const to = this.to;
@@ -290,9 +323,11 @@ export default {
         // for fixed output
         let res = "";
         if (this.from_to == "from") {
-          const minreq = this.to.amount.sub(
-            this.to.amount.mul(this.slipAmount).div(100)
-          );
+          const minreq = this.slipNum.min;
+          // this.to.amount.sub(
+          //   this.to.amount.mul(this.slipAmount).div(100)
+          // );
+          console.log("minreq", minreq, this.slipAmount);
           res = await swap.swap(
             this.bsc,
             this.from.addr,
@@ -302,9 +337,11 @@ export default {
             120
           );
         } else if (this.from_to == "to") {
-          const maxpay = this.from.amount.add(
-            this.from.amount.mul(this.slipAmount).div(100)
-          );
+          const maxpay = this.slipNum.max;
+          // this.from.amount.add(
+          //   this.from.amount.mul(this.slipAmount).div(100)
+          // );
+          console.log("maxpay", maxpay, this.slipAmount);
           res = await swap.swapfo(
             this.bsc,
             this.from.addr,

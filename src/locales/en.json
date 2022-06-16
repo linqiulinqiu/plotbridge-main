@@ -48,7 +48,7 @@
     "desc":"description",
     "dep-rate":"Deposit rate",
     "dep-minFee":"Min deposit fee",
-    "dep-limit":"The recommended limit for a single deposit is :",
+    "dep-limit":"The recommended limit for a single deposit is",
     "dep-addr":"Get deposit address for {bcoin}",
     "doc":"Doc",
     "data":"Loading...",
@@ -208,6 +208,6 @@
     "withdraw":"Withdraw",
     "w-rate":"Withdraw rate",
     "w-minFee":"Min withdraw fee",
-    "w-limit":"The recommended limit for a single withdraw is：",
+    "w-limit":"The recommended limit for a single withdraw is",
     "w-addr":"Withdraw {bcoin} will be send to this address"
 }
