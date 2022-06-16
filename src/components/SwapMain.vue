@@ -59,12 +59,12 @@
           <span
             >最大付出：
             <span>{{ slipNum.max }}</span>
-            <span>{{ price.symbol[0] }}</span>
+            <span class="tokenpair">{{ price.symbol[0] }}</span>
           </span>
           <span style="margin-left: 50px"
             >最小收到：
             <span>{{ slipNum.min }}</span>
-            <span>{{ price.symbol[1] }}</span>
+            <span class="tokenpair">{{ price.symbol[1] }}</span>
             <span></span>
           </span>
         </h4>
