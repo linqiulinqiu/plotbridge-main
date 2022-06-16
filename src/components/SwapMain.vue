@@ -56,13 +56,13 @@
       </el-col>
       <el-col class="swap-price" v-if="price">
         <h4>
-          <span
-            >最大付出：
+          <span v-if="slipNum.max">
+            {{ $t("slip-max") }}：
             <span>{{ slipNum.max }}</span>
             <span class="tokenpair">{{ price.symbol[0] }}</span>
           </span>
-          <span style="margin-left: 50px"
-            >最小收到：
+          <span v-if="slipNum.min">
+            {{ $t("slip-min") }}：
             <span>{{ slipNum.min }}</span>
             <span class="tokenpair">{{ price.symbol[1] }}</span>
             <span></span>
@@ -114,7 +114,6 @@
 import { ethers } from "ethers";
 import { mapState } from "vuex";
 import ApproveButton from "./lib/ApproveButton.vue";
-import pbwallet from "pbwallet";
 import tokens from "../tokens";
 import swap from "../swap";
 import market from "../market";
@@ -238,21 +237,25 @@ export default {
   },
   methods: {
     slipNumber: async function () {
+      this.slipNum.max = false;
+      this.slipNum.min = false;
       if (this.from.amount && this.to.amount) {
-        const minNum = this.to.amount.sub(
-          this.to.amount.mul(this.slipAmount).div(10000)
-        );
-        if (minNum.lte(0)) {
-          this.slipNum.min = 0;
-        } else {
-          this.slipNum.min = await tokens.format(this.to.addr, minNum);
+        if (this.from_to == "to") {
+          const minNum = this.to.amount.sub(
+            this.to.amount.mul(this.slipAmount).div(10000)
+          );
+          if (minNum.lte(0)) {
+            this.slipNum.min = 0;
+          } else {
+            this.slipNum.min = await tokens.format(this.to.addr, minNum);
+          }
+        } else if (this.from_to == "from") {
+          const maxNum = this.from.amount.add(
+            this.from.amount.mul(this.slipAmount).div(10000)
+          );
+          this.slipNum.max = await tokens.format(this.from.addr, maxNum);
         }
-        const maxNum = this.from.amount.add(
-          this.from.amount.mul(this.slipAmount).div(10000)
-        );
-        this.slipNum.max = await tokens.format(this.from.addr, maxNum);
       }
-      // return number;
     },
     orderSwap: function () {
       const from = this.from;

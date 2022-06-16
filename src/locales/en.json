@@ -191,6 +191,8 @@
     "stake":"Earn",
     "slip-fail":"Your transaction may fail",
     "slip-tip":"If the adverse price change exceeds this percentage, your transaction will resume",
+    "slip-max":"Max pay",
+    "slip-min":"Min receive",
     "staking":"Staking",
     "set-s-amount":"Set Stake Amount",
     "stage":"Stage",

@@ -195,6 +195,8 @@
     "slippage":"滑动容限",
     "slip-tip":"如果价格的不利变化超过此百分比，您的交易将恢复。",
     "slip-fail":"您的交易可能失败",
+    "slip-max":"最大支出",
+    "slip-min":"最小收到",
     "select":"请选择",
     "stake":"质押",
     "staking":"质押中",
