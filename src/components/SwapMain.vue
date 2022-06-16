@@ -213,7 +213,9 @@ export default {
       up_down: "bottom",
       slipNum: {
         max: false,
+        maxBig: false,
         min: false,
+        minBig: false,
       },
     };
   },
@@ -240,19 +242,21 @@ export default {
       this.slipNum.max = false;
       this.slipNum.min = false;
       if (this.from.amount && this.to.amount) {
-        if (this.from_to == "to") {
+        if (this.from_to == "from") {
           const minNum = this.to.amount.sub(
             this.to.amount.mul(this.slipAmount).div(10000)
           );
+          this.slipNum.minBig = minNum;
           if (minNum.lte(0)) {
             this.slipNum.min = 0;
           } else {
             this.slipNum.min = await tokens.format(this.to.addr, minNum);
           }
-        } else if (this.from_to == "from") {
+        } else if (this.from_to == "to") {
           const maxNum = this.from.amount.add(
             this.from.amount.mul(this.slipAmount).div(10000)
           );
+          this.maxNum.maxBig = maxNum;
           this.slipNum.max = await tokens.format(this.from.addr, maxNum);
         }
       }
@@ -330,7 +334,7 @@ export default {
         // for fixed output
         let res = "";
         if (this.from_to == "from") {
-          const minreq = this.slipNum.min;
+          const minreq = this.slipNum.minBig;
           // this.to.amount.sub(
           //   this.to.amount.mul(this.slipAmount).div(100)
           // );
@@ -344,7 +348,7 @@ export default {
             120
           );
         } else if (this.from_to == "to") {
-          const maxpay = this.slipNum.max;
+          const maxpay = this.slipNum.maxBig;
           // this.from.amount.add(
           //   this.from.amount.mul(this.slipAmount).div(100)
           // );

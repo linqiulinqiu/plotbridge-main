@@ -119,7 +119,7 @@ export default {
         };
         try {
           const wmod = new Web3Modal({
-            network: "binance",
+            network: "binance-testnet",
             cacheProvider: false,
             providerOptions,
           });
@@ -144,11 +144,6 @@ export default {
         this.connect_loading = false;
       }
     },
-    // disconnect: async function () {
-    //   await pbw.disconnect();
-    //   this.$store.commit("setBsc", {});
-    //   this.$store.commit("setBaddr", false);
-    // },
   },
 };
 </script>
