@@ -240,7 +240,7 @@ export default {
     slipNumber: async function () {
       if (this.from.amount && this.to.amount) {
         const minNum = this.to.amount.sub(
-          this.to.amount.mul(this.slipAmount).div(100)
+          this.to.amount.mul(this.slipAmount).div(10000)
         );
         if (minNum.lte(0)) {
           this.slipNum.min = 0;
@@ -248,7 +248,7 @@ export default {
           this.slipNum.min = await tokens.format(this.to.addr, minNum);
         }
         const maxNum = this.from.amount.add(
-          this.from.amount.mul(this.slipAmount).div(100)
+          this.from.amount.mul(this.slipAmount).div(10000)
         );
         this.slipNum.max = await tokens.format(this.from.addr, maxNum);
       }
