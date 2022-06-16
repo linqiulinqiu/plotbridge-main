@@ -189,6 +189,7 @@
     "s-swap":"Simple Swap",
     "s-swap1":"Trade common tokens (transactions are implemented by PancakeSwap and are shown for reference only)",
     "stake":"Earn",
+    "slip-fail":"Your transaction may fail",
     "staking":"Staking",
     "set-s-amount":"Set Stake Amount",
     "stage":"Stage",

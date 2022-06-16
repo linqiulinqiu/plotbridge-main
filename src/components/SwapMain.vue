@@ -242,7 +242,11 @@ export default {
         const minNum = this.to.amount.sub(
           this.to.amount.mul(this.slipAmount).div(100)
         );
-        this.slipNum.min = await tokens.format(this.to.addr, minNum);
+        if (minNum.lte(0)) {
+          this.slipNum.min = 0;
+        } else {
+          this.slipNum.min = await tokens.format(this.to.addr, minNum);
+        }
         const maxNum = this.from.amount.add(
           this.from.amount.mul(this.slipAmount).div(100)
         );
