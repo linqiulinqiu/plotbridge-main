@@ -55,7 +55,7 @@ export default {
         // input change, not by set from upper level
         await this.inputChanged();
       }
-    }, 500),
+    }, 1000),
     value: async function (newv, oldv) {
       this.addr = newv.addr;
       if (newv.lastEdit < newv.lastSet) {
