@@ -2,11 +2,14 @@
   <el-col>
     <el-col>
       <div v-if="selling_count > 0">
-        <ul>
-          <li class="marketlist" v-for="nft in this.mklist" :key="nft.id">
-            <SellingItem :info="nft" @click.native="openNFT(nft)" />
-          </li>
-        </ul>
+        <el-col class="mklist">
+          <ul class="scrollbar">
+            <li class="marketlist" v-for="nft in this.mklist" :key="nft.id">
+              <SellingItem :info="nft" @click.native="openNFT(nft)" />
+            </li>
+          </ul>
+        </el-col>
+
         <el-col :lg="{ sapn: 4, offset: 15 }" :span="8">
           <el-pagination
             background
@@ -20,7 +23,7 @@
       </div>
       <div v-else>
         <p v-if="loadDone.includes('m')">{{ $t("no-selling") }}</p>
-        <p v-else>{{$t('data')}}</p>
+        <p v-else>{{ $t("data") }}</p>
       </div>
     </el-col>
   </el-col>
@@ -63,6 +66,10 @@ export default {
 };
 </script>
 <style>
+.mklist {
+  height: 430px;
+  overflow: auto;
+}
 .el-pagination {
   background-color: #373943;
 }

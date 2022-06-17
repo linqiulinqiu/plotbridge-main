@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <el-col>
+    <el-card>
       <label for="_price" class="labels">{{ $t("change-price") }}</label>
       <p>
         <el-input
@@ -45,7 +45,7 @@
           $t("cancel")
         }}</el-button>
       </p>
-    </el-col>
+    </el-card>
   </el-col>
 </template>
 <script>
@@ -57,15 +57,15 @@ export default {
   props: ["clearPbtId", "curNFT"],
   computed: mapState({ bcoin: "bcoin", current: "current" }),
   data() {
-      let price = ''
-      let desc = ''
-      let ptn = 'BNB'
-    if('market' in this.curNFT){
-        price = this.curNFT.market.price
-        desc = this.curNFT.market.desc
-        if(this.curNFT.market.ptName){
-            ptn = this.curNFT.market.ptName
-        }
+    let price = "";
+    let desc = "";
+    let ptn = "BNB";
+    if ("market" in this.curNFT) {
+      price = this.curNFT.market.price;
+      desc = this.curNFT.market.desc;
+      if (this.curNFT.market.ptName) {
+        ptn = this.curNFT.market.ptName;
+      }
     }
     return {
       nftPrice: price,
@@ -118,5 +118,11 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
+.el-card {
+  background-color: #373943;
+  color: #fff;
+  border-radius: 20px;
+  border: 1px solid #373943;
+}
 </style>

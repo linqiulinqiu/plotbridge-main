@@ -33,6 +33,7 @@ export default {
     FoldButton,
   },
   computed: mapState({
+    bsc: "bsc",
     current: "current",
     addclass: function (state) {
       if (state.current.coinType) return state.current.coinType;

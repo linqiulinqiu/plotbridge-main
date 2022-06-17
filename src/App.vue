@@ -5,7 +5,10 @@
         <el-header style="height: 90px">
           <Plotheader />
         </el-header>
-        <el-main style="padding: 0px;min-height: calc(100vh - 190px)">
+        <el-main
+          class="scrollbar"
+          style="padding: 0px; min-height: calc(100vh - 190px)"
+        >
           <router-view :key="$route.fullPath"></router-view>
         </el-main>
         <el-footer style="height: 100px">
@@ -32,13 +35,30 @@ export default {
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");
-@import  './assets/base.css';
+@import "./assets/base.css";
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Oswald", sans-serif;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: rgba(147, 206, 150, 0.5);
+  --webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-track {
+  /*滚动条里面轨道 */
+  border-radius: 10px;
+  background: #ededed0a;
+  --webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
 #app {
   min-height: 800px;
   color: #ffffff;
@@ -64,6 +84,7 @@ export default {
   background-color: #2b2c33;
   /* height: calc(100vh); */
   min-height: 820px;
+  overflow: auto;
 }
 
 body > .el-container {

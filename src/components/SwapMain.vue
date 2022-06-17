@@ -54,8 +54,21 @@
           </el-button>
         </ApproveButton>
       </el-col>
-      <el-col class="swap-price">
-        <h4 v-if="price">
+      <el-col class="swap-price" v-if="price">
+        <h4>
+          <span v-if="slipNum.max">
+            {{ $t("slip-max") }}：
+            <span>{{ slipNum.max }}</span>
+            <span class="tokenpair">{{ price.symbol[0] }}</span>
+          </span>
+          <span v-if="slipNum.min">
+            {{ $t("slip-min") }}：
+            <span>{{ slipNum.min }}</span>
+            <span class="tokenpair">{{ price.symbol[1] }}</span>
+            <span></span>
+          </span>
+        </h4>
+        <h4>
           {{ $t("price") }} : <span class="font">{{ price.price }}</span>
           <span class="tokenpair">
             {{ price.symbol[0] }} per {{ price.symbol[1] }}
@@ -101,7 +114,6 @@
 import { ethers } from "ethers";
 import { mapState } from "vuex";
 import ApproveButton from "./lib/ApproveButton.vue";
-import pbwallet from "pbwallet";
 import tokens from "../tokens";
 import swap from "../swap";
 import market from "../market";
@@ -130,7 +142,6 @@ export default {
             this.allwlist[i].address == this.pbpAddr &&
             this.from.addr == this.pbpAddr
           ) {
-            console.log("watchcoin", this.allwlist[i]);
             return this.allwlist[i];
           }
         }
@@ -173,7 +184,6 @@ export default {
   }),
   mounted: function () {
     this.load_wlist();
-    console.log(this.bsc);
     this.from.addr = this.pbpAddr;
   },
   data() {
@@ -185,6 +195,7 @@ export default {
         lastEdit: 0,
         addr: "",
         number: 0,
+        isSwap: false,
       },
       to: {
         amount: ethers.BigNumber.from(0),
@@ -192,6 +203,7 @@ export default {
         lastEdit: 0,
         addr: "",
         number: 0,
+        isSwap: false,
       },
       swapping: false,
       slipAmount: 100,
@@ -199,24 +211,57 @@ export default {
       slippage: [20, 50, 100, 200],
       from_to: false,
       up_down: "bottom",
+      slipNum: {
+        max: false,
+        maxBig: "",
+        min: false,
+        minBig: "",
+      },
     };
   },
   watch: {
-    slipAmount: function (newnum, oldnum) {
+    slipAmount: async function (newnum, oldnum) {
       this.slipAmount = newnum;
+      await this.slipNumber();
     },
     from: async function (newa, olda) {
       await this.estimate();
       this.from.number = await tokens.format(newa.addr, newa.amount);
       this.to.number = await tokens.format(this.to.addr, this.to.amount);
+      await this.slipNumber();
     },
     to: async function (newa, olda) {
       await this.estimate();
       this.to.number = await tokens.format(newa.addr, newa.amount);
       this.from.number = await tokens.format(this.from.addr, this.from.amount);
+      await this.slipNumber();
     },
   },
   methods: {
+    slipNumber: async function () {
+      this.slipNum.max = false;
+      this.slipNum.min = false;
+      if (this.from.amount && this.to.amount) {
+        if (this.from_to == "from") {
+          const minNum = this.to.amount.sub(
+            this.to.amount.mul(this.slipAmount).div(10000)
+          );
+          this.slipNum.minBig = minNum;
+          if (minNum.lte(0)) {
+            this.slipNum.min = 0;
+          } else {
+            this.slipNum.min = await tokens.format(this.to.addr, minNum);
+          }
+        } else if (this.from_to == "to") {
+          const maxNum = this.from.amount.add(
+            this.from.amount.mul(this.slipAmount).div(10000)
+          );
+          this.slipNum.maxBig = maxNum;
+          this.slipNum.max = await tokens.format(this.from.addr, maxNum);
+        }
+      }
+      console.log("slipNumber", this.slipNum);
+    },
     orderSwap: function () {
       const from = this.from;
       const to = this.to;
@@ -285,17 +330,14 @@ export default {
     },
     swap: async function () {
       this.swapping = true;
-
       const obj = this;
       try {
         // for fixed output
         let res = "";
         if (this.from_to == "from") {
-          const minreq = this.to.amount.sub(
-            this.to.amount.mul(this.slipAmount).div(100)
-          );
+          const minreq = this.slipNum.minBig;
           console.log(
-            "swap",
+            "minreq params : ",
             this.from.addr,
             this.to.addr,
             this.from.amount,
@@ -310,15 +352,13 @@ export default {
             120
           );
         } else if (this.from_to == "to") {
-          const maxpay = this.from.amount.add(
-            this.from.amount.mul(this.slipAmount).div(100)
-          );
+          const maxpay = this.slipNum.maxBig;
           console.log(
-            "swapfo",
+            "maxpay",
             this.from.addr,
             this.to.addr,
-            maxpay,
-            this.to.amount
+            this.to.amount,
+            maxpay
           );
           res = await swap.swapfo(
             this.bsc,
@@ -333,6 +373,8 @@ export default {
           obj.swapping = false;
           obj.from.amount = ethers.BigNumber.from(0);
           obj.to.amount = ethers.BigNumber.from(0);
+          obj.from.isSwap = true;
+          obj.to.isSwap = true;
           obj.from = Object.assign({}, obj.from);
           obj.to = Object.assign({}, obj.to);
         });
@@ -342,7 +384,6 @@ export default {
       }
     },
     load_wlist: async function () {
-      const wsymbols = pbwallet.wcoin_list("bsymbol");
       this.allwlist.push({
         bsymbol: "BNB",
         address: ethers.constants.AddressZero,
@@ -365,8 +406,9 @@ export default {
         address: this.bsc.ctrs.busd.address,
         decimals: await this.bsc.ctrs.usdt.decimals(),
       });
-      for (let i in wsymbols) {
-        this.allwlist.push(pbwallet.wcoin_info(wsymbols[i], "bsymbol"));
+      const list = market.loadCoinlist();
+      for (let i in list) {
+        this.allwlist.push(list[i]);
       }
     },
     watchlist: function () {

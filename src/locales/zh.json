@@ -48,12 +48,13 @@
     "doc":"文档",
     "data":"加载中......",
     "destroy":"销毁NFT",
-    "dep-limit":"单次存款建议限额为：",
+    "dep-limit":"单次存款建议限额为",
     "dep-rate":"存款费率",
     "dep-minFee":"最小存款手续费",
     "dep-addr":"获取{bcoin}的存款地址",
     "dep-rebind":"该类型地址已经绑定了，请刷新页面后查看。",
     "dp-xcc":"过桥存入XCC,赢取PBP奖励",
+    "destroy-tips":"在销毁之前，请确定在五分钟之内没有进行存取等相关操作。</br>销毁后，此NFT所绑定的存取款地址都会失效。</br>请确认是否销毁此NFT？",
 
 
     "earn":"盈利",
@@ -123,6 +124,9 @@
 
     "inbsc":"在你的BSC钱包中",
     "input-addr":"在下面输入你的取款地址：",
+    "input-price":"输入价格",
+    "input-desc":"输入描述",
+    "input-waddr":"输入你的钱包地址",
     "id":"编号",
     "img":"一切皆有可能。",
     "insufficient-mint-balance":"当前余额不够铸造PBT. 请确保在当前连接的钱包中，至少有 {price} {token}",
@@ -186,11 +190,13 @@
     "set-sell-info":"设置价格与描述",
     "swap":"交易",
     "s-swap":"快速交易",
-    "s-swap1":"交易常用代币",
+    "s-swap1":"交易常用代币(交易由PancakeSwap实现，显示数据仅供参考)",
     "setting":"设置",
     "slippage":"滑动容限",
     "slip-tip":"如果价格的不利变化超过此百分比，您的交易将恢复。",
     "slip-fail":"您的交易可能失败",
+    "slip-max":"最大支出",
+    "slip-min":"最小收到",
     "select":"请选择",
     "stake":"质押",
     "staking":"质押中",
@@ -205,11 +211,13 @@
     "tips-waddr":"您已绑定了此币种的取款地址(另一个PBT)，不建议再绑定其他地址了",
     "total-staked":"总质押",
     "token-info":"{0} 代币信息",
+    "transfer":"转移",
+    "transfernft":"发送NFT到另一个地址",
 
     "withdraw":"取款",
     "w-rate":"取款费率",
     "w-minFee":"最小取款手续费",
-    "w-limit":"单次取款建议限额为：",
+    "w-limit":"单次取款建议限额为",
     "w-addr":"取出的{bcoin}将会发送到以下的地址"
 
 }

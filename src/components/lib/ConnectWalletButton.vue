@@ -11,7 +11,7 @@
     <span v-else style="color: #fff" class="baddr font">
       <el-tooltip effect="light" placement="bottom">
         <span slot="content" class="font"> {{ $t("bsc") }}:{{ baddr }} </span>
-        <el-button class="font" @click="disconnect">
+        <el-button class="font">
           {{ addr }}
           <span v-if="testnet">{{ testnet }}</span>
         </el-button>
@@ -119,7 +119,7 @@ export default {
         };
         try {
           const wmod = new Web3Modal({
-            network: "binance",
+            network: "binance-testnet",
             cacheProvider: false,
             providerOptions,
           });
@@ -143,11 +143,6 @@ export default {
         keeper.startKeeper(bsc, commit);
         this.connect_loading = false;
       }
-    },
-    disconnect: async function () {
-      await pbw.disconnect();
-      this.$store.commit("setBsc", {});
-      this.$store.commit("setBaddr", false);
     },
   },
 };

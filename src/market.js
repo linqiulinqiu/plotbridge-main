@@ -17,7 +17,10 @@ function loadCoinlist() {
     const coinSb = pbwallet.wcoin_list("index")
     const clist = {}
     for (let i in coinSb) {
-        clist[coinSb[i]] = pbwallet.wcoin_info(coinSb[i], "index")
+        const info = pbwallet.wcoin_info(coinSb[i], "index")
+        if (info.ctrname in bsc.ctrs) {
+            clist[coinSb[i]] = info
+        }
     }
     coinlist = clist
     return coinlist
@@ -30,9 +33,11 @@ async function ListenToWCoin(commit) {
     async function updateBalnce() {
         for (let i in coinlist) {
             const ctrname = coinlist[i].ctrname
-            ctr[ctrname] = bsc.ctrs[ctrname]
-            const balance = await ctr[ctrname].balanceOf(bsc.addr)
-            wBalance[i] = await tokens.format(ctr[ctrname].address, balance)
+            if (ctrname in bsc.ctrs) {
+                ctr[ctrname] = bsc.ctrs[ctrname]
+                const balance = await ctr[ctrname].balanceOf(bsc.addr)
+                wBalance[i] = await tokens.format(ctr[ctrname].address, balance)
+            }
         }
         commit('setWBalance', wBalance)
     }
@@ -330,6 +335,15 @@ async function burnNFT(id) {
     const res = await bsc.ctrs.pbt.burn(pbtId)
     return res
 }
+async function transferPBT(fromaddr, toaddr, pbtid) {
+    const id = ethers.BigNumber.from(pbtid)
+    try {
+        const res =await bsc.ctrs.pbt.transferFrom(fromaddr, toaddr, id)
+        return res
+    } catch (e) {
+        console.log("transfer error",e)
+    }
+}
 export default {
     connect: connect,
     checkAllowance: checkAllowance,
@@ -354,5 +368,6 @@ export default {
     getfees: getfees,
     getmintfee: getmintfee,
     loadCoinlist: loadCoinlist,
-    ListenToWCoin:ListenToWCoin
+    ListenToWCoin: ListenToWCoin,
+    transferPBT:transferPBT
 }
