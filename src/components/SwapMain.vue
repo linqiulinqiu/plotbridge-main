@@ -227,13 +227,13 @@ export default {
     from: async function (newa, olda) {
       await this.estimate();
       this.from.number = await tokens.format(newa.addr, newa.amount);
-      this.to.number = await tokens.format(this.to.addr, this.to.amount);
+      // console.log("watch in FROM", newa, this.to);
       await this.slipNumber();
     },
     to: async function (newa, olda) {
       await this.estimate();
       this.to.number = await tokens.format(newa.addr, newa.amount);
-      this.from.number = await tokens.format(this.from.addr, this.from.amount);
+      // console.log("watch in TO", this.from, newa);
       await this.slipNumber();
     },
   },
@@ -260,15 +260,25 @@ export default {
           this.slipNum.max = await tokens.format(this.from.addr, maxNum);
         }
       }
-      console.log("slipNumber", this.slipNum);
     },
-    orderSwap: function () {
-      const from = this.from;
-      const to = this.to;
-      to.lastSet = Date.now();
-      from.lastSet = Date.now();
-      this.from = to;
-      this.to = from;
+    orderSwap: async function () {
+      const from = this.to;
+      const to = this.from;
+      if (this.from_to == "from") {
+        const time = from.lastSet;
+        from.lastSet = 0;
+        to.lastSet = time;
+        this.from_to = "to";
+      } else if (this.from_to == "to") {
+        const time = to.lastSet;
+        to.lastSet = 0;
+        from.lastSet = time;
+        this.from_to = "from";
+      } else {
+        return false;
+      }
+      this.from = from;
+      this.to = to;
     },
     watchToken: async function () {
       for (let i in this.allwlist) {
@@ -302,7 +312,6 @@ export default {
           shouldEstimate = false;
         }
         if (shouldEstimate) {
-          console.log("estimate:", from_amount, to_amount);
           try {
             const est = await swap.estimate(
               this.bsc,
@@ -312,15 +321,21 @@ export default {
               to_amount
             );
             if (from_amount) {
-              const to = Object.assign({}, this.to);
-              to.amount = est;
-              to.lastSet = Date.now();
-              this.to = to;
+              if (from.lastEdit > to.lastEdit) {
+                const to = Object.assign({}, this.to);
+                to.amount = est;
+                to.lastSet = Date.now();
+                to.number = await tokens.format(to.addr, to.amount);
+                this.to = to;
+              }
             } else {
-              const from = Object.assign({}, this.from);
-              from.amount = est;
-              from.lastSet = Date.now();
-              this.from = from;
+              if (to.lastEdit > from.lastEdit) {
+                const from = Object.assign({}, this.from);
+                from.amount = est;
+                from.lastSet = Date.now();
+                from.number = await tokens.format(from.addr, from.amount);
+                this.from = from;
+              }
             }
           } catch (e) {
             console.log("update amount err", e);
