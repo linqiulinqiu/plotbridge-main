@@ -6,8 +6,8 @@ import moment from 'moment'
 Vue.use(VueI18n)
 function localLang() {
     let lang_local = navigator.language || navigator.userLanguage
-    if(lang_local != 'en' || lang_local != "zh")lang_local = "en"
     lang_local = lang_local.substr(0, 2)
+    if(lang_local != 'en' && lang_local != "zh")lang_local = "en"
     return lang_local
 }
 const LKEY = 'localeLang'
