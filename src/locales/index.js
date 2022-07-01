@@ -4,9 +4,14 @@ import VueI18n from 'vue-i18n'
 import moment from 'moment'
 
 Vue.use(VueI18n)
-
+function localLang() {
+    let lang_local = navigator.language || navigator.userLanguage
+    lang_local = lang_local.substr(0, 2)
+    if(lang_local != 'en' && lang_local != "zh")lang_local = "en"
+    return lang_local
+}
 const LKEY = 'localeLang'
-const DEFAULT_LANG = 'en'
+const DEFAULT_LANG = localLang()
 const locales = {
     en: require('./en.json'),
     zh: require('./zh.json')
@@ -20,7 +25,8 @@ export const i18n = new VueI18n({
 
 export const setup = function (lang) {
     if (lang === undefined) {
-        lang = window.localStorage.getItem(LKEY)
+        // lang = window.localStorage.getItem(LKEY)
+        lang = localLang()
         if (locales[lang] === undefined) {
             lang = DEFAULT_LANG
         }
