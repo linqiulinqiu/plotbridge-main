@@ -295,11 +295,11 @@ export default {
       const id = this.current.pbtId;
       const addr = this.wAddr.toString();
       try {
-        let rebind = false;
-        if (this.withdrawAddr != false) {
-          rebind = true;
-        }
-        const res = await market.bindAddr(addr, id, cointy, rebind);
+        // let rebind = false;
+        // if (this.withdrawAddr != false) {
+        //   rebind = true;
+        // }
+        const res = await market.bindAddr(addr, id, cointy);
         if (res == false) {
           this.bind_loading = false;
           this.$message(this.$t("correct-amount"));
@@ -307,6 +307,7 @@ export default {
         const obj = this;
         await market.waitEventDone(res, async function (evt) {
           obj.bind_loading = false;
+          obj.bind_dialog = false;
         });
       } catch (e) {
         this.bind_loading = false;
