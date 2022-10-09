@@ -55,7 +55,7 @@ export default {
       this.wFee = fees.withdrawFee;
       this.dFee = fees.depositFee;
       this.dFeeRate = fees.depositFeeRate;
-      this.reBindfee = await market.reBindFee();
+      // this.reBindfee = await market.reBindFee();
     },
   },
 };

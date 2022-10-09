@@ -43,8 +43,8 @@ export default {
   padding: 0;
 }
 .message {
-  height: calc(100vh - 300px);
-  min-height: 612px;
+  /* height: calc(100vh - 300px); */
+  height: 510px;
   overflow: auto;
   margin: 20px 0px;
   padding: 10px;
@@ -80,6 +80,8 @@ export default {
   background-size: cover;
   background-attachment: fixed;
   position: relative;
+  padding: 30px;
+  box-sizing: border-box;
 }
 
 .card {

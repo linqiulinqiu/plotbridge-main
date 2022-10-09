@@ -4,10 +4,10 @@
       <el-main>
         <el-col
           class="swap-main"
-          :lg="{ span: 10, offset: 7 }"
-          :md="{ span: 12, offset: 6 }"
-          :sm="{ span: 16, offset: 4 }"
-          :xs="{ span: 22, offset: 1 }"
+          :lg="{ span: 12, offset: 6 }"
+          :md="{ span: 16, offset: 4 }"
+          :sm="{ span: 20, offset: 2 }"
+          :xs="{ span: 24, offset: 0 }"
         >
           <SwapMain v-if="working" />
           <h2 v-else style="text-align: center">{{ $t("not-start") }}</h2>
@@ -43,7 +43,7 @@ export default {
   border-radius: 20px;
   padding: 50px;
   box-sizing: border-box;
-  margin-top: 100px;
+  margin-top: 30px;
 }
 #swap .el-main {
   min-height: 830px;

@@ -17,6 +17,7 @@
             @current-change="handleXccPaegChange"
             :current-page="this.xccpageNum"
             :page-size="4"
+            :pager-count="5"
             layout="prev,pager,next"
           ></el-pagination>
         </el-col>

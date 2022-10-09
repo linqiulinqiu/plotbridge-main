@@ -55,25 +55,33 @@
         </ApproveButton>
       </el-col>
       <el-col class="swap-price" v-if="price">
-        <h4>
+        <h5>
           <span v-if="slipNum.max">
             {{ $t("slip-max") }}：
-            <span>{{ slipNum.max }}</span>
+            <span class="color-m font">{{ slipNum.max }}</span>
             <span class="tokenpair">{{ price.symbol[0] }}</span>
           </span>
           <span v-if="slipNum.min">
             {{ $t("slip-min") }}：
-            <span>{{ slipNum.min }}</span>
+            <span class="color-m font">{{ slipNum.min }}</span>
             <span class="tokenpair">{{ price.symbol[1] }}</span>
-            <span></span>
+            <span></span> 
           </span>
-        </h4>
-        <h4>
-          {{ $t("price") }} : <span class="font">{{ price.price }}</span>
-          <span class="tokenpair">
-            {{ price.symbol[0] }} per {{ price.symbol[1] }}
-          </span>
-        </h4>
+        </h5>
+        <h5>
+          <el-col class="price-style" :xs="8"> {{ $t("price") }} : </el-col>
+          <el-col :span="20" :xs="24">
+            <span class="font">{{ price.price.forward }}</span>
+            <span class="tokenpair">
+              {{ price.symbol[0] }} per {{ price.symbol[1] }}
+            </span>
+            <br />
+            <span class="font">{{ price.price.reverse }}</span>
+            <span class="tokenpair">
+              {{ price.symbol[1] }} per {{ price.symbol[0] }}
+            </span>
+          </el-col>
+        </h5>
       </el-col>
       <el-col class="swap-add">
         <el-button @click="watchToken" v-if="this.watchCoin" class="btn-link">{{
@@ -446,8 +454,8 @@ export default {
     pricePair: function () {
       const list = this.allwlist;
       let pair = {
-        price: "",
-        symbol: [], //[from.symbol,to.symbol]
+        symbol: [],
+        price: { forward: "", reverse: "" }, //[from.symbol,to.symbol]
       };
       if (this.from.addr && this.to.addr) {
         for (let i in list) {
@@ -456,7 +464,8 @@ export default {
           if (this.to.addr == list[i].address) pair.symbol[1] = list[i].bsymbol;
         }
         if (this.to.amount && this.from.amount) {
-          pair.price = this.from.number / this.to.number;
+          pair.price.forward = this.from.number / this.to.number;
+          pair.price.reverse = this.to.number / this.from.number;
         }
       }
       return pair;
@@ -465,6 +474,10 @@ export default {
 };
 </script>
 <style scoped>
+.price-style {
+  width: 6.5%;
+  min-width: 50px;
+}
 .tokenpair {
   margin-left: 15px;
 }

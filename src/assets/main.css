@@ -9,6 +9,14 @@ ul li {
     font-weight: 500;
 }
 
+.color-p {
+    color: #68bb68
+}
+
+.color-m {
+    color: #38F2AF;
+}
+
 .minifont {
     font-size: 14px;
 }
@@ -186,5 +194,37 @@ ul li {
 
 .info {
     text-align: center;
-    margin-top: 300px;
+    margin-top: 250px;
+}
+
+.el-collapse {
+    border: none;
+    padding: 15px;
+    background: #373943;
+    color: #fff;
+    border-radius: 20px;
+}
+
+.el-collapse .el-collapse-item__header {
+    display: flex;
+    align-items: center;
+    height: 100px;
+    line-height: 30px;
+    background-color: #373943;
+    color: #fff;
+    cursor: pointer;
+    border-bottom: 1px solid #909399;
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-bottom-color 0.3s;
+    outline: 0;
+}
+
+.el-collapse .el-collapse-item__wrap {
+    will-change: height;
+    background-color: #373943;
+    padding: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-bottom: 1px solid #909399;
 }

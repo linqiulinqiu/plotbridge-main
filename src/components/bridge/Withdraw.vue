@@ -307,7 +307,6 @@ export default {
         const obj = this;
         await market.waitEventDone(res, async function (evt) {
           obj.bind_loading = false;
-          obj.bind_dialog = false;
         });
       } catch (e) {
         this.bind_loading = false;

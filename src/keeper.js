@@ -22,9 +22,18 @@ function copyObj(src, dest) {
     return dest
 }
 
-function fix_uri(uri) {
+// gid -- gateway id
+function fix_uri(uri, gid) {
+    const gateways = [
+        'https://cf-ipfs.com/ipfs/',
+        'https://dweb.link/ipfs/',
+        'https://nftstorage.link/ipfs/',
+        'https://infura-ipfs.io/ipfs/'
+    ]
     if (uri.startsWith('ipfs:')) {
-        return uri.replace('ipfs://', 'https://ipfs.io/ipfs/')
+        while (gid >= gateways.length) gid -= gateways.length
+        // console.log("fix_uri",gid,gateways[gid], uri)
+        return uri.replace('ipfs://', gateways[gid])
     } else {
         return uri
     }
@@ -40,15 +49,18 @@ function n2str(n) {
 async function nftBriefInfo(id) {
     const uri = await bsc.ctrs.pbt.tokenURI(parseInt(id))
     let meta = {}
+    let gid = 0
     try {
-        const metaData = await fetch(fix_uri(uri))
+        const metaData = await fetch(fix_uri(uri, gid))
         const img = await metaData.json()
         meta = metaData
-        meta.image = await fix_uri(String(img.image))
+        meta.image = await fix_uri(String(img.image),gid)
         meta.loading = false
     } catch (e) {
+        gid++
         meta.loading = true
         meta.image = false
+
         console.log("brief-info err", e, meta)
     }
 
@@ -76,7 +88,8 @@ async function loadPbxs(pbtid) {
             withdrawAddr: String(withAddr)
         }
         for (let k in addrInfo) {
-            if (addrInfo[k].substr(3, 6) == "1qqqqq") {
+            const pre_length = winfo.prefix.length
+            if (addrInfo[k].substr(pre_length, 6) == '1qqqqq') {
                 addrInfo[k] = false
             }
         }

@@ -24,7 +24,6 @@ import Mynft from "../components/content/Mynft.vue";
 import BridgeMain from "../components/BridgeMain.vue";
 import SelectCoin from "../components/bridge/SelectCoin.vue";
 import { mapState } from "vuex";
-import FoldButton from "../components/lib/FoldButton.vue";
 
 export default {
   name: "Bridge",
@@ -32,7 +31,6 @@ export default {
     Mynft,
     BridgeMain,
     SelectCoin,
-    FoldButton,
   },
   data() {
     return {};

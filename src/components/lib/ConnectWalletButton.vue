@@ -98,6 +98,7 @@ export default {
       this.connect_loading = true;
       const commit = this.$store.commit;
       let bsc = {};
+      console.log("window", window.ethereum);
       if (typeof window.ethereum !== "undefined") {
         try {
           bsc = await market.connect(commit, false);

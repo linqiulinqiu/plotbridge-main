@@ -1,5 +1,5 @@
 <template>
-  <el-aside id="selectCoin" :width="foldStyle.width">
+  <el-aside id="selectCoin" :width="foldStyle.width" style="padding: 10px">
     <el-col v-if="!foldStyle.isFold">
       <p>{{ $t("select-coin") }}</p>
       <ul>
@@ -17,7 +17,7 @@
     <el-col class="b-fold">
       <FoldButton
         v-model="foldStyle"
-        :openWidth="'100px'"
+        :openWidth="'120px'"
         @fold="fold($event)"
         style="right: 0"
       />
@@ -46,7 +46,7 @@ export default {
     return {
       coinMap: {},
       foldStyle: {
-        width: "100px",
+        width: "120px",
         isFold: false,
       },
     };
@@ -66,7 +66,6 @@ export default {
 </script>
 <style>
 #selectCoin {
-  padding: 20px 5px;
   font-size: 14px;
   font-weight: 600;
   color: #fff;
@@ -78,6 +77,7 @@ export default {
 .b-fold {
   position: relative;
   margin-bottom: 30px;
+  left: 10px;
 }
 .isselect {
   border: #38f2af 1px solid !important;

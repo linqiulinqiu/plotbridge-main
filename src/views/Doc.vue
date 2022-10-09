@@ -1,15 +1,17 @@
 <template>
   <div class="content">
     <el-container>
-      <el-aside :width="asideStyle.width">
+      <el-aside :width="asideStyle.width" id="menu-aside">
         <FoldButton
           v-model="asideStyle"
           :openWidth="'250px'"
           @fold="fold($event)"
           style="z-index: 99"
+          class="f-btn"
         />
-        <el-col>
+        <el-col v-if="!asideStyle.isFold">
           <el-menu
+            id="doc-menu"
             :router="true"
             :default-active="this.menuIndex"
             text-color="#fff"
@@ -52,7 +54,7 @@ export default {
         {
           index: "1",
           link: "/Doc/Introduction",
-          value: this.$t("intoduction"),
+          value: this.$t("intruction"),
         },
         {
           index: "2",
@@ -111,11 +113,16 @@ export default {
   font-size: 14px;
   position: relative;
 }
+.f-btn {
+  left: 0px;
+}
 .el-main {
   width: 100vw;
 }
+#doc-menu {
+  padding-top: 50px;
+}
 .el-menu .el-menu-item {
-  padding-left: 40px !important;
-  overflow: hidden;
+  padding-left: 60px !important;
 }
 </style>

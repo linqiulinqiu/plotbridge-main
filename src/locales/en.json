@@ -28,6 +28,7 @@
     "change-waddr":"Change withdraw address",
     "clear-waddr":"Clear withdraw address",
     "correct-amount":"Please enter the correct amount",
+    "correct-waddr":"Please enter the correct wallet address",
     "correct-addr":"Please confirm that the withdrawal address is the collection address of your wallet and that the address is correct.",
     "copy":"Copy to clipboard",
     "copy-ok":"The address has been copied to the clipboard!",
@@ -63,7 +64,9 @@
     
     "function":"Function",
     "force-w":"Force withdraw",
-    
+    "force-claim":"Force claim",
+   
+    "game":"Game",
     "get":"You will get：",
     "getaddr":"No address for this type of deposit,please contract us with discord or telegram. ",
     "guide-bridge":"How to run Bridge",
@@ -129,9 +132,9 @@
     "insufficient-mint-balance":"Insufficient balance for mint. Make sure you have at least {price} {token} in wallet currently connected",
     "id":"Id",
     "img":"Anything is possible.",
-    "intoduction":"Intoduction",
+    "intruction":"Intruction",
     "into-all":["Who are we?","What problem we met?","What does PlotBridge do?","Advantage for users?","Risk and our resolution","What we pay and earn"],
-    "intoduction1":"PlotBridge is a gateway/bridge between various plot-based blockchain networks (PoST networks like Chia, Chives, etc.) and mature smart blockchain networks (Binance Smart Chain, etc.) It can be used to wrap native coins like Chia(XCH), Chives(XCC) into corresponding tokens like WXCH, WXCC, and, course, unwrap tokens back into corresponding native coins.<br>Currently supported smart chains:<br>- Binance Smart Chain (BSC)</br>Currently supported coins:<br>",
+    "intruction1":"PlotBridge is a gateway/bridge between various plot-based blockchain networks (PoST networks like Chia, Chives, etc.) and mature smart blockchain networks (Binance Smart Chain, etc.) It can be used to wrap native coins like Chia(XCH), Chives(XCC) into corresponding tokens like WXCH, WXCC, and, course, unwrap tokens back into corresponding native coins.<br>Currently supported smart chains:<br>- Binance Smart Chain (BSC)</br>Currently supported coins:<br>",
 
     "look-info":"Please connect wallet",
     "loading":"Loading ...",
@@ -198,6 +201,8 @@
     "stage":"Stage",
     "stake-start":"Staking reward start time",
     "sure":"Sure",
+    "stake-pool":"Stake Pools",
+    "stake-for":"Stake tokens to earn.",
 
 
     "to-market":"Go to the market",    
