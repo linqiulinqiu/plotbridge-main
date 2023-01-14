@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from "@/views/Home"
 import Bridge from "@/views/Bridge"
 import Market from "@/views/Market"
+import PBPToken from "@/views/PBPToken"
 import Swap from "@/views/Swap"
 import Stake from "@/views/Stake"
 import Doc from "@/views/Doc"
@@ -51,6 +52,10 @@ const routes = [{
     path: '/Stake',
     name: 'Stake',
     component: Stake,
+  },{
+    path: '/PBPToken',
+    name: 'PBPToken',
+    component: PBPToken,
   },
   {
     path: '/Presale',

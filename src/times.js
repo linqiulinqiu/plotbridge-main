@@ -3,7 +3,7 @@ const Vue = require('vue').default
 
 function formatRelTS(ts){
     if(typeof(ts)!='number'){
-        ts = ts.toNumber()
+        ts = Number(ts)
     }
     const m = moment.unix(ts)
     return m.fromNow()
@@ -11,7 +11,7 @@ function formatRelTS(ts){
 
 function formatDuration(secs, suffix){
     if(typeof(secs)!='number'){
-        secs = secs.toNumber()
+        secs = Number(secs)
     }
     const d = moment.duration(secs, 'seconds')
     return d.humanize(suffix)

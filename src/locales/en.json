@@ -28,6 +28,7 @@
     "change-waddr":"Change withdraw address",
     "clear-waddr":"Clear withdraw address",
     "correct-amount":"Please enter the correct amount",
+    "correct-waddr":"Please enter the correct wallet address",
     "correct-addr":"Please confirm that the withdrawal address is the collection address of your wallet and that the address is correct.",
     "copy":"Copy to clipboard",
     "copy-ok":"The address has been copied to the clipboard!",
@@ -60,10 +61,13 @@
     "earn":"Earn",
     "earned":"Earned：",
     "ending":"Ending time",
+    "exchange":"Exchange rate",
     
     "function":"Function",
     "force-w":"Force withdraw",
-    
+    "force-claim":"Force claim",
+   
+    "game":"Game",
     "get":"You will get：",
     "getaddr":"No address for this type of deposit,please contract us with discord or telegram. ",
     "guide-bridge":"How to run Bridge",
@@ -85,6 +89,10 @@
     "home-title":"Welcome to the PlotBridge beta version",
     "home-news":[
         {
+            "ts":"2023-01-13",
+            "msg":"Happy New Year! We just released the annual revamp of our website and have added support for two new coins: HDDcoin and Flax, looking forward to your participation."
+        },
+        {
             "ts":"2022-06-02",
             "msg":"We have made a simple tool for XCC Deposit Activity participants to browse their score and ranking, at: https://xcc-mints.plotbridge.io"
         },
@@ -98,11 +106,11 @@
         },
         {
             "ts":"2022-05-26",
-            "msg":"In accordance with the PBP issuance programme, the project owner today purchased 289k PBP for burning and destruction from the bridge's 30% proceeds of 0.24441 BNB."
+            "msg":"We executed the first monthly PBP buy-back-and-burn today: buy and burnt 289k PBP with 0.24441 BNB."
         },
         {
             "ts":"2022-05-13",
-            "msg":"The destruction reward starts.The destruction includes burning Wcoin and destroying PBT.After the operation is completed,a certain proportion of PBP coin will be obtained."
+            "msg":"The burning reward starts. User can receive PBP reward when burning WXCH, WXCC and NFT token PBT. The reward amount is related to reward pool balance and burning token amount."
         },
         {
             "ts":"2022-05-06",
@@ -129,12 +137,13 @@
     "insufficient-mint-balance":"Insufficient balance for mint. Make sure you have at least {price} {token} in wallet currently connected",
     "id":"Id",
     "img":"Anything is possible.",
-    "intoduction":"Intoduction",
+    "intruction":"Intruction",
     "into-all":["Who are we?","What problem we met?","What does PlotBridge do?","Advantage for users?","Risk and our resolution","What we pay and earn"],
-    "intoduction1":"PlotBridge is a gateway/bridge between various plot-based blockchain networks (PoST networks like Chia, Chives, etc.) and mature smart blockchain networks (Binance Smart Chain, etc.) It can be used to wrap native coins like Chia(XCH), Chives(XCC) into corresponding tokens like WXCH, WXCC, and, course, unwrap tokens back into corresponding native coins.<br>Currently supported smart chains:<br>- Binance Smart Chain (BSC)</br>Currently supported coins:<br>",
+    "intruction1":"PlotBridge is a gateway/bridge between various plot-based blockchain networks (PoST networks like Chia, Chives, etc.) and mature smart blockchain networks (Binance Smart Chain, etc.) It can be used to wrap native coins like Chia(XCH), Chives(XCC) into corresponding tokens like WXCH, WXCC, and, course, unwrap tokens back into corresponding native coins.<br>Currently supported smart chains:<br>- Binance Smart Chain (BSC)</br>Currently supported coins:<br>",
 
     "look-info":"Please connect wallet",
     "loading":"Loading ...",
+    "locked":"Locking,please wait {time} or force withdraw",
     "lock-time":"Locking time",
     "locked1":"Locked, please wait {time} for unlock ,",
     "locked2":"Or force unlock by give up all earned reward in this pool and recalculate the lock time",
@@ -160,7 +169,36 @@
     "or":"OR",
     "openNFT":"Please select a nft first",
     "onSale":"On Sale",
-    
+
+    "pbp-info-msgs":[
+        "Reducing the cost of providing liquidity for tokens such as WXCH on DeFi exchange.",
+        "Provide a simple way to reward community liquidity providers for tokens such as WXCH, higher liquidity trading pairs may improving the experience of using PlotBridge." ,
+        "Provide a simple way to reward PlotBridge contributors and participants.",
+        "To be used for project governance in the future"
+    ],
+    "pbp-issue-rule":"Issuance Rule",
+    "pbp-issue-rule-msgs":[
+        "Total: 1,000,000,000 PBP",
+        "Decimals: 9",
+        "Official Liquidity Pair: 20 BNB-30,000,000 PBP LP on PancakeSwap",
+        "Token Allocation Ratio: 36% liquidity bonus, 14% initial liquidity provision, 8.5% community, 15.5% team, 18% new projects, 4% each PBT and Wcion destructionj bonus",
+        "Token lock: pre-sale funds, community pre-reward funds, initial liquidity provision funds are unlocked from the very beginning, liquidity reward funds are unlocked on a daily basis, team income and community funds are unlocked on a weekly basis, new project funds are unlocked on demand (with the starting point of not generating a concentrated sell-off), PBT and Wcion burning reward are unlocked on a weekly basis.",
+        "Liquidity Incentive Funds: in 5 phases, with each phase issuance of 72,000,000 PBP, with each phase issuance of:",
+        "-- 800,000 PBP issues daily from day 0 to 90 for 90 days,",
+        "-- 400,000 PBP issues daily from day 90 to 270 for 180 days,",
+        "-- 200,000 PBP issues daily from day 270 to 630 for 360 days,",
+        "-- 100,000 PBP issues daily from day 630 to 1350 for 720 days,",
+        "-- 50,000 PBP issues daily from day 1350 to 2790 for 1440 days"
+    ],
+    "pbp-issue-status":"PBP Issuance Status",
+    "pbp-price-support":"Price Support",
+    "pbp-price-support-msgs":[
+        "The team provides the initial liquidity of PBP and ensures a long term locking",
+        "30% of the gross profit of the PlotBridge project are used to buy and burn PBP monthly",
+        "The team will develop other new projects to further enhance the value of the PBP"
+    ],
+    "pbp-role":"Role of PBP",
+
     "price":"Price",
     "price-tips":"Price is Empty",
     "presale":"Presale",
@@ -176,6 +214,7 @@
     "road-map":"RoadMap",
     "retreat":"Retreat from market",
     "remainder":"Remainder",
+    "redeem-done":"The tokens upgrade is over. Please contact us if you need anything.",
     "redeem-notice":"No upgradable tokens",
     "redeem-notice1":"Upgrade function will online soon",
 
@@ -198,12 +237,14 @@
     "stage":"Stage",
     "stake-start":"Staking reward start time",
     "sure":"Sure",
+    "stake-pool":"Stake Pools",
+    "stake-for":"Stake tokens to earn.",
 
 
     "to-market":"Go to the market",    
     "tips-amount1":"The amount is too small, you won't receive anything.",
     "tips-amount2":"The amount is too much, and you don't have enough balance",
-    "tips-waddr":"When an account is bound to multiple addresses of multiple wallets, the money may be randomly sent to one of them. Please pay attention to check.",
+    "tips-waddr":"When an account is bound to multiple addresses of multiple wallets, the coin may be randomly sent to one of them. Please pay attention to check.",
     "total-staked":"Total staked",
     "token-info":"{0} Token Info",
     "transfer":"Transfer",

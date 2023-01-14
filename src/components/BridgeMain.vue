@@ -12,17 +12,19 @@
     </el-col>
     <el-col v-else>
       <el-col v-if="!current.pbtId">
-        <h3>{{ $t("openNFT") }}</h3>
+        <h3 class="info">{{ $t("openNFT") }}</h3>
       </el-col>
       <el-col v-else>
         <el-col v-if="!current.coinType">
-          <h3>{{ $t("select-coin") }}</h3>
+          <h3 class="info">{{ $t("select-coin") }}</h3>
         </el-col>
         <el-col v-else>
           <el-col id="balance" :lg="12">
             {{ this.$t("balance") }}：
-            <span class="font">
-              {{ WBalance[coinInfo.index] }}
+
+            <span v-if="!curBalance" class="el-icon-loading"> </span>
+            <span class="font" v-else>
+              {{ curBalance }}
             </span>
             <span class="minifont"> {{ coinInfo.bsymbol }}</span>
             <el-tooltip
@@ -40,15 +42,28 @@
           </el-col>
 
           <el-col :lg="{ span: 17 }" :span="24">
-            <el-tabs>
+            <el-tabs id="tabs" class="min-height">
               <el-tab-pane :label="$t('deposit')"
                 ><Deposit :curNFT="this.curNFT" :coinInfo="coinInfo"
               /></el-tab-pane>
               <el-tab-pane :label="$t('withdraw')">
-                <Withdraw :curNFT="this.curNFT" :coinInfo="coinInfo" />
+                <Withdraw
+                  :curNFT="this.curNFT"
+                  :coinInfo="coinInfo"
+                  :coinMap="coinMap"
+                />
               </el-tab-pane>
               <el-tab-pane :label="$t('redeem')">
-                <Redeem :bsc="this.bsc" :coinInfo="coinInfo" />
+                <el-col v-if="done">
+                  <h3>
+                    {{ $t("redeem-done") }}
+                    <router-link
+                      to="/Doc/Contact"
+                      class="el-icon-right"
+                    ></router-link>
+                  </h3>
+                </el-col>
+                <Redeem v-else :bsc="this.bsc" :coinInfo="coinInfo" />
               </el-tab-pane>
             </el-tabs>
           </el-col>
@@ -89,9 +104,22 @@ export default {
       if (info) return info;
       return "-";
     },
+    coinMap: function () {
+      return market.loadCoinlist();
+    },
+    curBalance: function (state) {
+      const index = this.coinInfo.index;
+      if (index in this.WBalance) {
+        const balance = this.WBalance[index];
+        return balance;
+      }
+      return false;
+    },
   }),
   data() {
-    return {};
+    return {
+      done: true,
+    };
   },
   methods: {
     addToken: async function () {

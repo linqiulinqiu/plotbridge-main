@@ -5,10 +5,7 @@
         <el-header style="height: 90px">
           <Plotheader />
         </el-header>
-        <el-main
-          class="scrollbar"
-          style="padding: 0px; min-height: calc(100vh - 190px)"
-        >
+        <el-main id="main-container" class="scrollbar" style="padding: 0px">
           <router-view :key="$route.fullPath"></router-view>
         </el-main>
         <el-footer style="height: 100px">
@@ -60,7 +57,6 @@ export default {
 }
 
 #app {
-  min-height: 800px;
   color: #ffffff;
 }
 .el-header {
@@ -71,7 +67,6 @@ export default {
   user-select: none;
 }
 .el-footer {
-  /* width: 100%; */
   background-color: #25272e;
   text-align: center;
   line-height: 35px;
@@ -82,9 +77,13 @@ export default {
 
 .el-main {
   background-color: #2b2c33;
-  /* height: calc(100vh); */
-  min-height: 820px;
+  /* height: calc(100vh - 180px); */
+  /* min-height: 670px; */
   overflow: auto;
+}
+#main-container {
+  height: calc(100vh-180px);
+  min-height: 660px;
 }
 
 body > .el-container {

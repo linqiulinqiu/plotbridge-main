@@ -20,9 +20,8 @@
           </p>
           <el-col class="follow">
             <el-col class="withdraw-addr">
-              <span class="font">
-                {{ this.withdrawAddr }}
-              </span>
+              <span class="font"> {{ this.withdrawAddr }} </span>
+              <LinkIcon :url="addrLink"></LinkIcon>
               <el-button
                 style="float: right"
                 icon="el-icon-edit"
@@ -51,8 +50,8 @@
               {{ this.coinInfo.bsymbol }}，
               <el-button
                 type="primary"
-                :loading="w_loading"
-                :disabled="w_disabled"
+                :loading="coinBtn_state.wloading"
+                :disabled="coinBtn_state.wdisabled"
                 @click="withdraw"
                 >{{ $t("withdraw") }}
               </el-button>
@@ -99,8 +98,8 @@
           ></el-input>
           <el-button
             type="primary"
-            @click="bindWaddr"
-            :loading="bind_loading"
+            @click="bindWaddr('bloading1')"
+            :loading="coinBtn_state.bloading1"
             >{{ $t("bind") }}</el-button
           >
         </el-col>
@@ -121,7 +120,7 @@
             icon="el-icon-delete"
             @click="clearAddr"
             size="small"
-            :loading="clear_loading"
+            :loading="coinBtn_state['cloading']"
           >
             {{ $t("clear-waddr") }}
           </el-button>
@@ -133,7 +132,11 @@
             clearable
             suffix-icon="el-icon-edit"
           ></el-input>
-          <el-button type="primary" @click="bindWaddr" :loading="bind_loading">
+          <el-button
+            type="primary"
+            @click="bindWaddr('bloading2')"
+            :loading="coinBtn_state.bloading2"
+          >
             {{ $t("bind-waddr") }}
           </el-button>
           <el-button @click="bind_dialog = false">{{ $t("cancel") }}</el-button>
@@ -147,16 +150,26 @@ import { mapState } from "vuex";
 import market from "../../market";
 import BridgeFee from "./BridgeFee.vue";
 import debounce from "lodash/debounce";
+import LinkIcon from "../lib/LinIcon.vue";
 
 export default {
   components: {
     BridgeFee,
+    LinkIcon,
   },
-  props: ["curNFT", "coinInfo"],
+  props: ["curNFT", "coinInfo", "coinMap"],
   computed: mapState({
     baddr: "baddr",
     WBalance: "WBalance",
     current: "current",
+    addrLink() {
+      const url =
+        "https://alltheblocks.net/" +
+        this.coinInfo.name.toLowerCase() +
+        "/address/" +
+        this.withdrawAddr;
+      return url;
+    },
     withdrawAddr(state) {
       const pbxs = this.curNFT.pbxs;
       const cointy = this.current.coinType;
@@ -187,25 +200,26 @@ export default {
       const pbxs = this.curNFT && "pbxs" in this.curNFT;
       return pbxs;
     },
+    coinBtn_state(state) {
+      return this.btn_state[state.current.coinType];
+    },
   }),
   data() {
     return {
       hasPbx: false,
-      w_disabled: true,
-      w_loading: false,
-      clear_loading: false,
-      bind_loading: false,
       wAmount: "",
       getwAmount: "",
       tips_amount: false,
       wAddr: "",
       bind_dialog: false,
+      btn_state: this.btn_states(),
     };
   },
   watch: {
-    current: async function () {
+    current: async function (newt) {
       this.wAmount = "";
       this.getwAmount = "";
+      this.wAddr = "";
     },
     deep: true,
     withdrawAddr: function (newV) {
@@ -227,22 +241,35 @@ export default {
         amount
       );
       if (!after_fee) {
-        this.w_disabled = true;
+        this.coinBtn_state.wdisabled = true;
         this.getwAmount = "";
         this.tips_amount = this.$t("tips-amount1");
       } else if (after_fee == "fund") {
-        this.w_disabled = true;
+        this.coinBtn_state.wdisabled = true;
         this.getwAmount = 0;
         this.tips_amount = this.$t("tips-amount2");
       } else {
         this.getwAmount = after_fee;
         this.tips_amount = false;
-        this.w_disabled = false;
+        this.coinBtn_state.wdisabled = false;
       }
       return after_fee;
     }, 150),
   },
   methods: {
+    btn_states: function () {
+      let btn_state = {};
+      for (let i in this.coinMap) {
+        btn_state[i] = {
+          wdisabled: true,
+          wloading: false,
+          cloading: false,
+          bloading1: false,
+          bloading2: false,
+        };
+      }
+      return btn_state;
+    },
     amount_valid: async function (wAmount) {
       if (!wAmount || isNaN(wAmount)) {
         return false;
@@ -258,59 +285,64 @@ export default {
       return true;
     },
     withdraw: async function () {
-      this.w_loading = true;
+      this.coinBtn_state.wloading = true;
+      const cointy = this.current.coinType;
+      console.log("btn_state.wloading", this.coinBtn_state.wloading);
       if (await this.amount_valid(this.wAmount)) {
         try {
           const obj = this;
           const res = await market.burnWcoin(this.wAmount, this.coinInfo);
           await market.waitEventDone(res, async function (evt) {
-            obj.w_loading = false;
+            console.log("evt in withdraw", evt);
+            const balance = await market.loadBalance(cointy);
+            const wBalance = obj.$store.state.WBalance;
+            wBalance[cointy] = balance;
+            obj.$store.commit("setWBalance", wBalance);
+            obj.coinBtn_state.wloading = false;
             obj.wAmount = "";
           });
         } catch (e) {
           console.log("withdraw errrr", e.message);
-          this.w_loading = false;
+          this.coinBtn_state.wloading = false;
         }
       }
     },
     clearAddr: async function () {
-      this.clear_loading = true;
+      this.coinBtn_state.cloading = true;
       const cointy = this.current.coinType;
       const id = this.current.pbtId;
       const obj = this;
       try {
-        console.log("clearADdr params", id, cointy);
+        console.log("clearADdr params", id, cointy, this.coinBtn_state);
         const res = await market.clearAddr(id, cointy);
         await market.waitEventDone(res, async function (evt) {
-          obj.clear_loading = false;
+          obj.coinBtn_state.cloading = false;
+          obj.bind_dialog = false;
         });
       } catch (e) {
-        this.clear_loading = false;
+        this.coinBtn_state.cloading = false;
         console.log("clear Withdraw Addr err", e.message);
       }
     },
-    bindWaddr: async function () {
-      this.bind_loading = true;
+    bindWaddr: async function (key) {
+      this.coinBtn_state[key] = true;
       const cointy = this.current.coinType;
       const id = this.current.pbtId;
       const addr = this.wAddr.toString();
       try {
-        // let rebind = false;
-        // if (this.withdrawAddr != false) {
-        //   rebind = true;
-        // }
         const res = await market.bindAddr(addr, id, cointy);
+        console.log("res in bindAddr", res, res == false);
         if (res == false) {
-          this.bind_loading = false;
-          this.$message(this.$t("correct-amount"));
+          this.coinBtn_state[key] = false;
+          this.$message(this.$t("correct-waddr"));
+        } else {
+          const obj = this;
+          await market.waitEventDone(res, async function (evt) {
+            // obj.coinBtn_state[key] = false;
+          });
         }
-        const obj = this;
-        await market.waitEventDone(res, async function (evt) {
-          obj.bind_loading = false;
-          obj.bind_dialog = false;
-        });
       } catch (e) {
-        this.bind_loading = false;
+        this.coinBtn_state[key] = false;
         console.log("bind withdraw addr err", e.message);
       }
     },
@@ -318,6 +350,19 @@ export default {
 };
 </script>
 <style>
+.block-link {
+  color: #38f2af;
+  display: inline-block;
+  margin-left: 15px;
+  margin-top: 5px;
+  width: 25px;
+  height: 25px;
+  background-image: url("../../assets/image/external_link.svg");
+}
+.block-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
 .after-amount {
   color: #38f2af;
   margin: 0px 10px;

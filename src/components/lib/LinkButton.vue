@@ -94,7 +94,7 @@ export default {
       };
       if (pair) {
         this.poolInfo = {
-          url: `${swap}/info/pool/${pair}`,
+          url: `${swap}/info/pairs/${pair}`,
           txt: txt,
         };
       } else {

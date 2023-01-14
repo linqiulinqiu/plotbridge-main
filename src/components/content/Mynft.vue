@@ -2,9 +2,10 @@
   <el-aside :width="asideStyle.width" id="mynft">
     <FoldButton
       v-model="asideStyle"
-      :openWidth="'250px'"
+      :openWidth="'290px'"
       @fold="fold($event)"
       style="top: 0px"
+      class="f-btn"
     />
     <el-col v-if="!this.asideStyle.isFold">
       <el-col class="my-title">
@@ -31,11 +32,13 @@
           <el-col class="btn-bar">
             <el-pagination
               background
+              small
               :total="Object.keys(this.myList).length"
               layout="prev,pager,next"
               @current-change="handleCurrentChange"
               :current-page="this.pageNum"
               :page-size="this.pageSize"
+              :pager-count="5"
             ></el-pagination>
           </el-col>
         </el-col>
@@ -104,7 +107,7 @@ export default {
   }),
   data() {
     return {
-      asideStyle: { width: "250px", isFold: false },
+      asideStyle: { width: "290px", isFold: false },
       pageNum: 1,
       open_loading: false,
       market: "/Market",
@@ -155,6 +158,9 @@ export default {
   font-weight: 600;
   position: relative;
 }
+#mynft .f-btn {
+  left: 0px;
+}
 .load {
   padding: 50px;
 }
@@ -195,7 +201,7 @@ i {
 }
 .btn-bar {
   margin: 20px 0;
-  padding: 0 50px;
+  /* padding: 0 0px; */
 }
 .btn-bar .el-pagination {
   background-color: #25272e;

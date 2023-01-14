@@ -1,12 +1,15 @@
 const pbw = require('pbwallet')
 const ethers = require('ethers')
 const tokens = require('./tokens')
+ import market from "./market" 
 var bsc = {}
 var myList = {}
 var mySaleList = {}
 var marketList = {}
+
 const ptInfos = {}
 
+// console.log("coinList",coinlist)
 async function getCoinTypes(pbtid) {
     const cointype = await bsc.ctrs.pbpuzzlehash.pbtCoinTypes(pbtid)
     return cointype
@@ -22,9 +25,18 @@ function copyObj(src, dest) {
     return dest
 }
 
-function fix_uri(uri) {
+// gid -- gateway id
+function fix_uri(uri, gid) {
+    const gateways = [
+        'https://cf-ipfs.com/ipfs/',
+        'https://dweb.link/ipfs/',
+        'https://nftstorage.link/ipfs/',
+        'https://infura-ipfs.io/ipfs/'
+    ]
     if (uri.startsWith('ipfs:')) {
-        return uri.replace('ipfs://', 'https://ipfs.io/ipfs/')
+        while (gid >= gateways.length) gid -= gateways.length
+        // console.log("fix_uri",gid,gateways[gid], uri)
+        return uri.replace('ipfs://', gateways[gid])
     } else {
         return uri
     }
@@ -37,18 +49,28 @@ function n2str(n) {
     return parseInt(n).toString()
 }
 
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
 async function nftBriefInfo(id) {
+    console.log("NFTid = ", id)
+    await sleep(1000)
     const uri = await bsc.ctrs.pbt.tokenURI(parseInt(id))
     let meta = {}
+    let gid = 0
     try {
-        const metaData = await fetch(fix_uri(uri))
+        const metaData = await fetch(fix_uri(uri, gid))
         const img = await metaData.json()
         meta = metaData
-        meta.image = await fix_uri(String(img.image))
+        await sleep(1000)
+        meta.image = await fix_uri(String(img.image),gid)
         meta.loading = false
     } catch (e) {
+        gid++
         meta.loading = true
         meta.image = false
+
         console.log("brief-info err", e, meta)
     }
 
@@ -61,13 +83,14 @@ async function nftBriefInfo(id) {
 }
 
 async function loadPbxs(pbtid) {
-    const cointy = await getCoinTypes(pbtid)
+    await sleep(1000)
     const pbxs = {}
-    const cointyArr = cointy[0].concat(cointy[1])
-    const atArr = Array.from(new Set(cointyArr))
+    const ctrsList = market.loadCoinlist()
+    const atArr = Object.keys(ctrsList)
     for (let i = 0; i < atArr.length; i++) {
         const ct = parseInt(atArr[i])
-        const winfo = pbw.wcoin_info(ct)
+        const winfo = ctrsList[atArr[i]]
+        await sleep(500)
         const xAddress = await bsc.ctrs.pbpuzzlehash.pbtPuzzleHash(pbtid, ct)
         const depAddr = window.ChiaUtils.puzzle_hash_to_address(String(xAddress[0]), winfo.prefix)
         const withAddr = window.ChiaUtils.puzzle_hash_to_address(String(xAddress[1]), winfo.prefix)
@@ -76,7 +99,8 @@ async function loadPbxs(pbtid) {
             withdrawAddr: String(withAddr)
         }
         for (let k in addrInfo) {
-            if (addrInfo[k].substr(3, 6) == "1qqqqq") {
+            const pre_length = winfo.prefix.length
+            if (addrInfo[k].substr(pre_length, 6) == '1qqqqq') {
                 addrInfo[k] = false
             }
         }
@@ -170,7 +194,7 @@ async function updateMarketListItem(id, commit) {
         const info = await nftBriefInfo(id)
         info.market = await loadMarketInfo(id)
         setMarketItem(key, info, commit)
-        console.log("market list")
+        // console.log("market list")
     }
 }
 
@@ -235,24 +259,39 @@ async function initMarketList(bsc, commit) {
 }
 
 
-function startKeeper(_bsc, commit) {
+async function startKeeper(_bsc, commit) {
     copyObj(_bsc, bsc)
-    initMyList(bsc, commit)
-    initMarketList(bsc, commit)
+    await initMyList(bsc, commit)
+    await initMarketList(bsc, commit)
     if (bsc.ctrs.pbt.filters.Transfer) {
         bsc.ctrs.pbt.on(bsc.ctrs.pbt.filters.Transfer, async function (evt) {
             if (evt.event == "Transfer") {
                 if (evt.args.to == bsc.addr) {
+                                        console.log("keeper",evt.event,"info",evt)
                     await addToMyList(evt.args.tokenId, commit)
+                    console.log("keeper",evt.event,"info",evt)
+
                 }
                 if (evt.args.to == bsc.ctrs.pbmarket.address) {
+                                        console.log("keeper",evt.event,"info",evt)
+
                     await addToMarketList(evt.args.tokenId, commit)
+                    console.log("keeper",evt.event,"info",evt)
+
                 }
                 if (evt.args.from == bsc.addr) {
+                                        console.log("keeper",evt.event,"info",evt)
+
                     deleteFromMyList(evt.args.tokenId, commit)
+                    console.log("keeper",evt.event,"info",evt)
+
                 }
                 if (evt.args.from == bsc.ctrs.pbmarket.address) {
+                                        console.log("keeper",evt.event,"info",evt)
+
                     deleteFromMarketList(evt.args.tokenId, commit)
+                    console.log("keeper",evt.event,"info",evt)
+
                 }
             }
         })
@@ -260,24 +299,38 @@ function startKeeper(_bsc, commit) {
     if (bsc.ctrs.pbpuzzlehash.filters.WithdrawPuzzleHashChanged) {
         bsc.ctrs.pbpuzzlehash.on(bsc.ctrs.pbpuzzlehash.filters.WithdrawPuzzleHashChanged, async function (evt) {
             if (evt.event == 'WithdrawPuzzleHashChanged') {
+                                    console.log("keeper",evt.event,"info",evt)
+
                 await updateMyListItem(evt.args.pbtId, commit)
+                console.log("keeper",evt.event,"info",evt)
+
             }
         })
     }
     if (bsc.ctrs.pbpuzzlehash.filters.DepositPuzzleHashChanged) {
         bsc.ctrs.pbpuzzlehash.on(bsc.ctrs.pbpuzzlehash.filters.DepositPuzzleHashChanged, async function (evt) {
             if (evt.event == 'DepositPuzzleHashChanged') {
+                                    console.log("keeper",evt.event,"info",evt)
+
                 await updateMyListItem(evt.args.pbtId, commit)
+                console.log("keeper",evt.event,"info",evt)
+
             }
         })
     }
     if (bsc.ctrs.pbmarket.filters.OnSale) {
         bsc.ctrs.pbmarket.on(bsc.ctrs.pbmarket.filters.OnSale, async function (evt) {
             if (evt.event == "OnSale") {
+                                    console.log("keeper",evt.event,"info",evt)
+
                 await updateMarketListItem(evt.args.tokenId, commit)
+                console.log("keeper",evt.event,"info",evt)
+
             }
         })
     }
 }
 
-exports.startKeeper = startKeeper
+export default {
+    startKeeper:startKeeper
+}

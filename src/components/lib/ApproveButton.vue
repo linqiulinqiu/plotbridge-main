@@ -31,6 +31,7 @@ export default {
     };
   },
   mounted: function () {
+    console.log("ApproveButton params:",this.token,this.spender,this.minReq)
     this.checkAllowance();
   },
   watch: {

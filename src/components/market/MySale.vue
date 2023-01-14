@@ -14,13 +14,14 @@
             @current-change="handleCurPageChange()"
             :current-page="this.mypageNum"
             :page-size="10"
+            :pager-count="5"
             layout="prev,pager,next"
           ></el-pagination>
         </el-col>
       </el-col>
       <el-col v-else>
         <h4 v-if="loadDone.includes('m')">{{ $t("no-mysale") }}</h4>
-        <h4 v-else>{{ $t('data') }}</h4>
+        <h4 v-else>{{ $t("data") }}</h4>
       </el-col>
     </el-col>
   </el-col>

@@ -1,6 +1,6 @@
 {
   "name": "plotbridge-app",
-  "version": "0.2.6",
+  "version": "0.2.8",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -14,7 +14,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "pbwallet": "github:tgarm/pbwallet#0.3.6",
+    "pbwallet": "github:tgarm/pbwallet#0.3.29",
     "pbweb-nftkeeper": "bitbucket:plotnet/pbweb-nftkeeper#0.2.18",
     "pbweb-ui": "bitbucket:plotnet/pbweb-ui#0.1.1",
     "vue": "^2.6.11",
