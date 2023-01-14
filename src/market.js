@@ -8,10 +8,30 @@ import tokens from './tokens'
 // 全局变量设置
 var bsc = {}
 const ptAddrs = {
-    'BNB': ethers.constants.AddressZero,
-    // "USDT": bsc.ctrs.usdt.address
+    'BNB': ethers.constants.AddressZero
 }
 var coinlist = {}
+// var allBcoinList={}
+// function loadBcoinList(bsc) {
+//     // var bcoinList = {}
+//     if (bsc.addr) {
+//         const ctrs = bsc.ctrs
+//         allBcoinList = {
+//             'usdc': ctrs.usdc.addrress,
+//             'usdt': ctrs.usdt.address,
+//             'bnb': ethers.constants.AddressZero,
+//             'pbp':ctrs.pbp.address
+//         }
+//         var list = {}
+//         for (let i in allBcoinList) {
+//             console.log("listssssss",i)
+//             if (i in ctrs) {
+//                 list[i] = allBcoinList[i]
+//             }
+//         }
+//         console.log("list =====", list)
+//     }
+// }
 
 function loadCoinlist() {
     const coinSb = pbwallet.wcoin_list("index")
@@ -26,26 +46,28 @@ function loadCoinlist() {
     return coinlist
 }
 
-async function ListenToWCoin(commit) {
-    const coinlist = loadCoinlist()
-    const wBalance = {}
-    var ctr = {}
-    async function updateBalnce() {
-        for (let i in coinlist) {
-            const ctrname = coinlist[i].ctrname
-            if (ctrname in bsc.ctrs) {
-                ctr[ctrname] = bsc.ctrs[ctrname]
-                const balance = await ctr[ctrname].balanceOf(bsc.addr)
-                wBalance[i] = await tokens.format(ctr[ctrname].address, balance)
-            }
-        }
-        commit('setWBalance', wBalance)
-    }
-    await updateBalnce()
-    for (let i in ctr) {
-        ctr[i].on(ctr[i].filters.Transfer, updateBalnce)
-    }
-}
+
+// async function ListenToWCoin(commit) {
+//     const coinlist = loadCoinlist()
+//     const wBalance = {}
+//     var ctr = {}
+//     // async function updateBalnce() {
+//         for (let i in coinlist) {
+//             const ctrname = coinlist[i].ctrname
+//             if (ctrname in bsc.ctrs) {
+//                 ctr[ctrname] = bsc.ctrs[ctrname]
+//                 const balance = await ctr[ctrname].balanceOf(bsc.addr)
+//                 wBalance[i] = await tokens.format(ctr[ctrname].address, balance)
+//             }
+//         }
+//         commit('setWBalance', wBalance)
+//     // }
+//     // await updateBalnce()
+//     // for (let i in ctr) {
+//         // ctr[i].on(ctr[i].filters.Transfer, updateBalnce)
+//     //     console.log("update wbalance",wBalance)
+//     // }
+// }
 
 
 async function connect(commit,provider) {
@@ -56,12 +78,18 @@ async function connect(commit,provider) {
     }
     if (bsc) {
         commit("setBsc", bsc)
-        await ListenToWCoin(commit)
+        // await ListenToWCoin(commit)
         return bsc
     }
     return false
 }
-
+ async function loadBalance (coinType,) {
+      const info = pbwallet.wcoin_info(coinType);
+      const balance_parse = await tokens.balance(info.address);
+      const balance_format = await tokens.format(info.address, balance_parse);
+      return balance_format;
+     
+ }
 async function getmintfee() {
     const options = {}
     const fee = await bsc.ctrs.pbt.mintFee();
@@ -310,7 +338,7 @@ async function watchToken(ctrname) {
     const dec = await tokens.decimals(ctr.address)
     const symbol = await tokens.symbol(ctr.address)
     const url = window.location.origin + '/image/' + ctrname + '.png'
-    console.log("url", url)
+    // console.log("url", url)
     const options = {
         address: ctr.address,
         symbol: symbol,
@@ -367,6 +395,7 @@ export default {
     getfees: getfees,
     getmintfee: getmintfee,
     loadCoinlist: loadCoinlist,
-    ListenToWCoin: ListenToWCoin,
-    transferPBT:transferPBT
+    // ListenToWCoin: ListenToWCoin,
+    transferPBT: transferPBT,
+    loadBalance:loadBalance,
 }

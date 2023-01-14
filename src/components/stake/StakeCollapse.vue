@@ -87,10 +87,10 @@ export default {
       info.balance = await tokens.format(stakeAddr, info.balance_bn);
       info.lpamount = stakeInfo.lpamount;
       const stakeds = await this.bsc.ctrs.staking.staked(pid, this.bsc.addr);
-      const staked = stakeds[0];
+      // const staked = stakeds[0];
       info.withdraw_wait = Number(stakeds[1]);
       info.withdraw_wait_str = times.formatD(info.withdraw_wait, false);
-      info.farm_amount = await tokens.format(stakeAddr, staked);
+      info.farm_amount = await tokens.format(stakeAddr, stakeds[0]);
       const earnval = await this.bsc.ctrs.staking.earned(pid, this.bsc.addr);
       info.earned_amount = await tokens.format(rewardAddr, earnval);
       const ap = (stakeInfo.reward_speed * 365 * 86400 * 100) / info.lpamount;

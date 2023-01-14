@@ -141,8 +141,8 @@ export default {
         this.connect_loading = false;
       } else {
         commit("setBaddr", bsc.addr);
-        keeper.startKeeper(bsc, commit);
         this.connect_loading = false;
+        await keeper.startKeeper(bsc, commit);
       }
     },
   },

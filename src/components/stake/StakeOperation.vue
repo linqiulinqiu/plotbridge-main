@@ -139,6 +139,7 @@ export default {
       }
     },
     withdraw: async function () {
+      console.log("withdraw amount", this.stakeInfo);
       this.w_loading = true;
       const amount = await tokens.parse(
         this.stakeInfo.stakeAddr,
@@ -148,7 +149,7 @@ export default {
         const obj = this;
         try {
           const receipt = await this.bsc.ctrs.staking.withdraw(
-            this.pid,
+            this.stakeInfo.pid,
             amount
           );
           await market.waitEventDone(receipt, async function (e) {
@@ -159,31 +160,37 @@ export default {
         } catch (e) {
           this.w_loading = false;
         }
+      } else {
+        this.w_loading = false;
+        this.$message(this.$t("amount"));
       }
     },
     force_withdraw: async function () {
-      console.log("force  withdraw");
-      this.force_w_loading = true;
       const amount = await tokens.parse(
         this.stakeInfo.stakeAddr,
         this.withdraw_amount
       );
+      console.log("force", this.withdraw_amount);
       const obj = this;
       if (amount.gt(0)) {
+        this.force_w_loading = true;
         try {
           const receipt = await this.bsc.ctrs.staking.forceWithdraw(
             this.stakeInfo.pid,
             amount
           );
           await market.waitEventDone(receipt, async function (e) {
-            obj.force_w_loading = false;
             // await obj.refresh();
             obj.stk_info = await obj.processInfo(obj.stakeInfo);
+            obj.force_w_loading = false;
+            console.log("force_withdraw msg", e);
           });
         } catch (e) {
           this.force_w_loading = false;
           console.log("force withdraw err", e);
         }
+      } else {
+        this.$message(this.$t("correct-amount"));
       }
     },
     claim: async function () {
@@ -217,6 +224,7 @@ export default {
         });
       } catch (e) {
         this.claim_loading = false;
+        console.log("stake claim err", e);
         if (e == "cancel") {
           // nothing need to do here
         } else if ("data" in e) {

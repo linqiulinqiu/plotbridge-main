@@ -1,7 +1,7 @@
 <template>
   <el-col>
     <el-col>
-      <el-col :span="7">
+      <el-col :span="5">
         <span> {{ stk_info.symbol }}Pool </span>
         <el-button
           @click="refreshInfo"
@@ -10,7 +10,7 @@
           circle
         ></el-button>
       </el-col>
-      <el-col :span="4" v-if="stk_info.locktime > 0">
+      <el-col :span="3">
         <span class="mini-font">{{ $t("lock-time") }}</span>
         <br />
         <span class="num-font">{{ stk_info.locktime }}</span>

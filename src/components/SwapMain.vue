@@ -24,7 +24,7 @@
       <el-col id="swap-exc">
         <el-button
           circle
-          :icon="'el-icon-' + up_down"
+          icon="el-icon-bottom"
           size="large"
           @click="orderSwap"
           :disabled="change_dis"
@@ -65,12 +65,11 @@
             {{ $t("slip-min") }}：
             <span class="color-m font">{{ slipNum.min }}</span>
             <span class="tokenpair">{{ price.symbol[1] }}</span>
-            <span></span> 
           </span>
         </h5>
+        <h5>{{ $t("exchange") }} :</h5>
         <h5>
-          <el-col class="price-style" :xs="8"> {{ $t("price") }} : </el-col>
-          <el-col :span="20" :xs="24">
+          <el-col :span="20" :xs="24" :offset="1">
             <span class="font">{{ price.price.forward }}</span>
             <span class="tokenpair">
               {{ price.symbol[0] }} per {{ price.symbol[1] }}
@@ -217,8 +216,7 @@ export default {
       slipAmount: 100,
       dia_slip: false,
       slippage: [20, 50, 100, 200],
-      from_to: false,
-      up_down: "bottom",
+      from_to: "from",
       slipNum: {
         max: false,
         maxBig: "",
@@ -429,6 +427,13 @@ export default {
         address: this.bsc.ctrs.busd.address,
         decimals: await this.bsc.ctrs.usdt.decimals(),
       });
+      if ("usdc" in this.bsc.ctrs) {
+        this.allwlist.push({
+          bsymbol: "USDC",
+          address: this.bsc.ctrs.usdc.address,
+          decimals: await this.bsc.ctrs.usdc.decimals(),
+        });
+      }
       const list = market.loadCoinlist();
       for (let i in list) {
         this.allwlist.push(list[i]);

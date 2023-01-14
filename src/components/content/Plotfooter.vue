@@ -2,7 +2,7 @@
   <el-col class="copyRight">
     <p>
       <a href="www.plotnetwork.ltd">
-        © 2022 Plot Network Ltd,{{ $t("cpright1") }}
+        © 2021-2023 Plot Network Ltd,{{ $t("cpright1") }}
       </a>
     </p>
   </el-col>
