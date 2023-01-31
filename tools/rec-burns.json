@@ -1,5 +1,5 @@
 {
-  "checkedBlockNumber": 24738393,
+  "checkedBlockNumber": 25252703,
   "burns": [
     {
       "blockNumber": 18134388,
@@ -208,6 +208,32 @@
         }
       ],
       "timestamp": 1672218269
+    },
+    {
+      "blockNumber": 25230123,
+      "blockHash": "0xe4a27358c6a4569d001edbce0dd9dea4f003e66e40f83a1a03b52db65d439514",
+      "transactionIndex": 109,
+      "removed": false,
+      "address": "0x217634d01809d7B9C6348D70A95AE7f5E5179de3",
+      "data": "0x000000000000000000000000000000000000000000000000000056f4d9bd6c2a",
+      "topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x000000000000000000000000feea9cd0da8279ce0f208fdeee2355062621254f",
+        "0x0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "transactionHash": "0x898de34fdd00d3c6baa93b6aafa0bb5bc647812343fdb6ee6449e8d956aad35f",
+      "logIndex": 374,
+      "event": "Transfer",
+      "eventSignature": "Transfer(address,address,uint256)",
+      "args": [
+        "0xFeeA9Cd0Da8279CE0F208fDeee2355062621254f",
+        "0x0000000000000000000000000000000000000000",
+        {
+          "type": "BigNumber",
+          "hex": "0x56f4d9bd6c2a"
+        }
+      ],
+      "timestamp": 1675069640
     }
   ],
   "buys": [
@@ -450,7 +476,37 @@
       "v": 147,
       "creates": null,
       "chainId": 56
+    },
+    {
+      "hash": "0x9c98dca573680bdb426573d49498b97c56717e696d5e7900e1f3d0bc6b2346e5",
+      "type": 0,
+      "accessList": null,
+      "blockHash": "0x250ba7ec9e3f4d921527119dd61809e04c614594a11ebc96871bcb7e2a0ebc77",
+      "blockNumber": 25230063,
+      "transactionIndex": 131,
+      "confirmations": 2378,
+      "from": "0xFeeA9Cd0Da8279CE0F208fDeee2355062621254f",
+      "gasPrice": {
+        "type": "BigNumber",
+        "hex": "0x012a05f200"
+      },
+      "gasLimit": {
+        "type": "BigNumber",
+        "hex": "0x0235cb"
+      },
+      "to": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+      "value": {
+        "type": "BigNumber",
+        "hex": "0x8555560e6ba000"
+      },
+      "nonce": 125,
+      "data": "0x7ff36ab5000000000000000000000000000000000000000000000000000056163df668860000000000000000000000000000000000000000000000000000000000000080000000000000000000000000feea9cd0da8279ce0f208fdeee2355062621254f0000000000000000000000000000000000000000000000000000000063d788820000000000000000000000000000000000000000000000000000000000000002000000000000000000000000bb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c000000000000000000000000217634d01809d7b9c6348d70a95ae7f5e5179de3",
+      "r": "0x420ac6869fc351e74be043ff2c4b36c85c96c39b85829eda63b9249c8abd0407",
+      "s": "0x2a30368f9e3722fa860a1e389a8c7816b1a72c6dbf96025fcfff1eadd9cd4ceb",
+      "v": 147,
+      "creates": null,
+      "chainId": 56
     }
   ],
-  "chainBlockHeight": 24738393
+  "chainBlockHeight": 25252703
 }
