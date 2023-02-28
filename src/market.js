@@ -71,13 +71,30 @@ function loadCoinlist() {
 
 
 async function connect(commit,provider) {
-    try {
-        bsc = await pbwallet.connect(provider, true)
-    } catch (e) {
-        return e.message
+    while(true){
+        try {
+            bsc = await pbwallet.connect(provider, true)
+            break
+        } catch (e) {
+            if('detectedNetwork' in e){
+                const name = e.detectedNetwork.name
+                if(name=='bnb'||name=='bnbt'){
+                    continue
+                }
+            }
+            return e.message
+        }
     }
     if (bsc) {
         commit("setBsc", bsc)
+        if(window.ethereum){
+        window.ethereum.on('accountsChanged', function (accounts) {
+            window.location.reload()
+        });
+          window.ethereum.on('networkChanged', function(networkId){
+            window.location.reload()
+          });
+        }
         // await ListenToWCoin(commit)
         return bsc
     }

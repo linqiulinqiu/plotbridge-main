@@ -339,6 +339,7 @@ export default {
           const obj = this;
           await market.waitEventDone(res, async function (evt) {
             // obj.coinBtn_state[key] = false;
+            console.log("evt--bindAddr", evt);
           });
         }
       } catch (e) {

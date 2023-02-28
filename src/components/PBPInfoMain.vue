@@ -2,7 +2,7 @@
   <el-col>
     <el-col class="token-info">
       <el-col :span="5" :offset="1" :xs="{ offset: 0 }">
-        <h2>{{ $t('pbp-issue-status') }}</h2>
+        <h2>{{ $t("pbp-issue-status") }}</h2>
       </el-col>
       <el-col :span="18">
         <ul>
@@ -25,14 +25,14 @@
           <el-table-column
             width="120"
             prop="time"
-            label="Burn Time"
+            :label="$t('burn-date')"
           ></el-table-column>
-          <el-table-column width="120" label="BNB Amount">
+          <el-table-column width="120" :label="$t('amount') + '(BNB)'">
             <template slot-scope="scope">
               <RichNumber :data="scope.row.bnb"></RichNumber>
             </template>
           </el-table-column>
-          <el-table-column width="160" label="PBP Amount">
+          <el-table-column width="160" :label="$t('amount') + '(PBP)'">
             <template slot-scope="scope">
               <RichNumber :data="scope.row.amount"></RichNumber>
             </template>
