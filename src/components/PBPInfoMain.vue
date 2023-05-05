@@ -7,13 +7,28 @@
       <el-col :span="18">
         <ul>
           <li>
-            合约地址：<a class="font" target="_blank" :href="tokenUrl()">{{
-              pbpAddress
-            }}</a>
+            {{ this.$t("issue-ctr-addr") }}：<a
+              class="font"
+              target="_blank"
+              :href="tokenUrl()"
+              >{{ pbpAddress }}</a
+            >
           </li>
-          <li>当前发行总量：<RichNumber :data="totalSupply"></RichNumber></li>
-          <li>官方销毁总量：<RichNumber :data="totalBurnt"></RichNumber></li>
-          <li>回购消耗BNB：<RichNumber :data="bnbUsed"></RichNumber></li>
+          <li>
+            {{ this.$t("now-issue-sum") }}：<RichNumber
+              :data="totalSupply"
+            ></RichNumber>
+          </li>
+          <li>
+            {{ this.$t("destroy-sum") }}：<RichNumber
+              :data="totalBurnt"
+            ></RichNumber>
+          </li>
+          <li>
+            {{ this.$t("buyback-bnb") }}：<RichNumber
+              :data="bnbUsed"
+            ></RichNumber>
+          </li>
         </ul>
       </el-col>
     </el-col>
