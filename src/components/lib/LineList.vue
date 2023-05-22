@@ -1,7 +1,7 @@
 <template>
   <p>
     <span>
-      <p v-for="li in this.list" :key="li">
+      <p v-for="li in this.list" :key="li.text">
         <a v-if="typeof li == 'object'" :href="li.url" target="_blank">{{
           li.text
         }}</a>

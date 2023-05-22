@@ -60,11 +60,14 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import market from "../../market";
 import pbw from "pbwallet";
 import keeper from "../../keeper";
+import tokens from "../../tokens";
 import { mapState } from "vuex";
 export default {
   name: "ConnectWalletButton",
   computed: mapState({
     baddr: "baddr",
+    bsc: "bsc",
+    tvl: "tvl",
     addr: function (state) {
       if (state.baddr) {
         return state.baddr.substr(0, 6) + "..." + state.baddr.substr(-4, 4);
@@ -94,6 +97,51 @@ export default {
     };
   },
   methods: {
+    loadTvl: async function () {
+      const ctrs = this.bsc.ctrs;
+      const pairAddr = {
+        bnb_pbp: [ctrs.wbnb.address, ctrs.pbp.address],
+        pbp_xcc: [ctrs.wxcc.address, ctrs.pbp.address],
+        pbp_xch: [ctrs.wxch.address, ctrs.pbp.address],
+        bnb_usdt: [ctrs.wbnb.address, ctrs.usdt.address],
+      };
+      const allPair = {
+        bnb_pbp: { addr: "", bal: [] }, //bnb,pbp
+        pbp_xcc: { addr: "", bal: [] }, //xcc,pbp
+        pbp_xch: { addr: "", bal: [] }, // xch ,pbp
+        bnb_usdt: { addr: "", bal: [] }, // BNB, USDT
+      };
+      var pbp_amount_all = 0;
+      for (let key in pairAddr) {
+        for (let ikey in allPair) {
+          if (key == ikey) {
+            const pair = await ctrs.factory.getPair(
+              pairAddr[key][0], //another coin
+              pairAddr[key][1] //pbp coin
+            );
+            allPair[ikey].addr = pair;
+            allPair[ikey].bal[0] = await tokens.format(
+              pairAddr[key][0],
+              await tokens.balance(pairAddr[key][0], pair)
+            );
+            allPair[ikey].bal[1] = await tokens.format(
+              pairAddr[key][1],
+              await tokens.balance(pairAddr[key][1], pair)
+            );
+            if (pairAddr[ikey][1] == ctrs.pbp.address) {
+              pbp_amount_all = pbp_amount_all + Number(allPair[ikey].bal[1]);
+            }
+          }
+        }
+      }
+      const bnb_price = allPair.bnb_usdt.bal[1] / allPair.bnb_usdt.bal[0];
+      const pbp_price =
+        (allPair.bnb_pbp.bal[0] / allPair.bnb_pbp.bal[1]) * bnb_price;
+      const total = parseInt(pbp_price * pbp_amount_all * 2);
+      console.log("total:", total);
+      this.$store.commit("setTvl", total);
+    },
+
     connect_wallet: async function () {
       this.connect_loading = true;
       const commit = this.$store.commit;
@@ -141,6 +189,7 @@ export default {
         this.connect_loading = false;
       } else {
         commit("setBaddr", bsc.addr);
+        await this.loadTvl();
         this.connect_loading = false;
         await keeper.startKeeper(bsc, commit);
       }

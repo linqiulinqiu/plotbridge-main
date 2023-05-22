@@ -278,6 +278,7 @@
   "tips-amount2": "The amount is too much, and you don't have enough balance",
   "tips-waddr": "When an account is bound to multiple addresses of multiple wallets, the coin may be randomly sent to one of them. Please pay attention to check.",
   "total-staked": "Total staked",
+  "total-lock": "Total Value Locked",
   "token-info": "{0} Token Info",
   "transfer": "Transfer",
   "transfernft": "Transfer NFT to another address",

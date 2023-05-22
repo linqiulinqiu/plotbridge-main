@@ -279,6 +279,7 @@
   "tips-amount2": "数额过大，余额不够呢！",
   "tips-waddr": "您已绑定了此币种的取款地址(另一个PBT)，不建议再绑定其他地址了",
   "total-staked": "总质押",
+  "total-lock": "锁定总值",
   "token-info": "{0} 代币信息",
   "transfer": "转移",
   "transfernft": "发送NFT到另一个地址",
