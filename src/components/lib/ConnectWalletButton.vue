@@ -111,7 +111,7 @@ export default {
         pbp_xch: { addr: "", bal: [] }, // xch ,pbp
         bnb_usdt: { addr: "", bal: [] }, // BNB, USDT
       };
-      var pbp_amount_all = 0;
+      var pbp_amount = 0;
       for (let key in pairAddr) {
         for (let ikey in allPair) {
           if (key == ikey) {
@@ -129,19 +129,32 @@ export default {
               await tokens.balance(pairAddr[key][1], pair)
             );
             if (pairAddr[ikey][1] == ctrs.pbp.address) {
-              pbp_amount_all = pbp_amount_all + Number(allPair[ikey].bal[1]);
+              pbp_amount = pbp_amount + Number(allPair[ikey].bal[1]);
             }
           }
         }
       }
       const bnb_price = allPair.bnb_usdt.bal[1] / allPair.bnb_usdt.bal[0];
+
       const pbp_price =
         (allPair.bnb_pbp.bal[0] / allPair.bnb_pbp.bal[1]) * bnb_price;
-      const total = parseInt(pbp_price * pbp_amount_all * 2);
+      const pbp_lp = await this.loadPool();
+      const total = parseInt(pbp_price * pbp_amount * 2 + pbp_lp * pbp_price);
       console.log("total:", total);
       this.$store.commit("setTvl", total);
     },
-
+    loadPool: async function () {
+      const stk = await market.loadStakedPools();
+      var amount = 0;
+      for (let k in stk) {
+        const symbol = await tokens.symbol(stk[k].stakeAddr);
+        if (symbol == "PBP") {
+          amount = amount + Number(stk[k].lpamount);
+        }
+      }
+      // console.log("PBP amount", amount);
+      return amount;
+    },
     connect_wallet: async function () {
       this.connect_loading = true;
       const commit = this.$store.commit;
