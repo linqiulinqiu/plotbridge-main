@@ -1,7 +1,8 @@
 <template>
   <label>
     <span id="whole-part">{{ wholePart }}</span
-    >.<span id="decimal-part">{{ decimalPart }}</span>
+    ><span v-if="this.parts[1]">.</span
+    ><span id="decimal-part">{{ decimalPart }}</span>
   </label>
 </template>
 <script>

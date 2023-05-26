@@ -30,6 +30,7 @@ import swap from "../../swap";
 import tokens from "../../tokens";
 import { ethers } from "ethers";
 import times from "../../times";
+import market from "../../market";
 export default {
   props: ["bsc"],
   components: {
@@ -48,34 +49,8 @@ export default {
   },
   methods: {
     refresh: async function () {
-      const pools = await this.bsc.ctrs.staking.pools();
-      const stk = [];
-      let total_alloc = 0;
-      const now = Math.floor(Date.now() / 1000);
-      const reward_speed_a = await this.bsc.ctrs.pbp.stakeRewardIn(
-        now,
-        now + 1
-      );
-      const reward_speed = parseFloat(
-        await tokens.format(this.bsc.ctrs.pbp.address, reward_speed_a)
-      );
-      for (let i in pools[0]) {
-        const lpamount = await tokens.format(pools[0][i], pools[2][i]);
-        stk.push({
-          stakeAddr: pools[0][i],
-          pid: i,
-          alloc: pools[1][i].toNumber(),
-          lpamount: lpamount,
-          locktime: pools[4][i].toNumber(),
-        });
-        total_alloc += pools[1][i].toNumber();
-      }
-      for (let i in stk) {
-        const price = await swap.price(this.bsc, stk[i].stakeAddr);
-        stk[i].reward_speed =
-          (stk[i].alloc * reward_speed) / price / total_alloc;
-      }
-      this.stakeTokens = stk;
+      this.stakeTokens = await market.loadStakedPools();
+      return this.stakeTokens;
     },
     loadStakeInfo: async function (stakeInfo) {
       let info = {};

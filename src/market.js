@@ -1,418 +1,453 @@
-import {
-    ethers
-} from 'ethers'
+import { ethers } from "ethers";
 
-import pbwallet from 'pbwallet'
-import store from "./store"
-import tokens from './tokens'
+import pbwallet from "pbwallet";
+import store from "./store";
+import tokens from "./tokens";
+import swap from "./swap";
 // 全局变量设置
-var bsc = {}
+var bsc = {};
 const ptAddrs = {
-    'BNB': ethers.constants.AddressZero
-}
-var coinlist = {}
-// var allBcoinList={}
-// function loadBcoinList(bsc) {
-//     // var bcoinList = {}
-//     if (bsc.addr) {
-//         const ctrs = bsc.ctrs
-//         allBcoinList = {
-//             'usdc': ctrs.usdc.addrress,
-//             'usdt': ctrs.usdt.address,
-//             'bnb': ethers.constants.AddressZero,
-//             'pbp':ctrs.pbp.address
-//         }
-//         var list = {}
-//         for (let i in allBcoinList) {
-//             console.log("listssssss",i)
-//             if (i in ctrs) {
-//                 list[i] = allBcoinList[i]
-//             }
-//         }
-//         console.log("list =====", list)
-//     }
-// }
+  BNB: ethers.constants.AddressZero,
+};
+var coinlist = {};
 
 function loadCoinlist() {
-    const coinSb = pbwallet.wcoin_list("index")
-    const clist = {}
-    for (let i in coinSb) {
-        const info = pbwallet.wcoin_info(coinSb[i], "index")
-        if (info.ctrname in bsc.ctrs) {
-            clist[coinSb[i]] = info
-        }
+  const coinSb = pbwallet.wcoin_list("index");
+  const clist = {};
+  for (let i in coinSb) {
+    const info = pbwallet.wcoin_info(coinSb[i], "index");
+    if (info.ctrname in bsc.ctrs) {
+      clist[coinSb[i]] = info;
     }
-    coinlist = clist
-    return coinlist
+  }
+  coinlist = clist;
+  return coinlist;
 }
 
-
-// async function ListenToWCoin(commit) {
-//     const coinlist = loadCoinlist()
-//     const wBalance = {}
-//     var ctr = {}
-//     // async function updateBalnce() {
-//         for (let i in coinlist) {
-//             const ctrname = coinlist[i].ctrname
-//             if (ctrname in bsc.ctrs) {
-//                 ctr[ctrname] = bsc.ctrs[ctrname]
-//                 const balance = await ctr[ctrname].balanceOf(bsc.addr)
-//                 wBalance[i] = await tokens.format(ctr[ctrname].address, balance)
-//             }
-//         }
-//         commit('setWBalance', wBalance)
-//     // }
-//     // await updateBalnce()
-//     // for (let i in ctr) {
-//         // ctr[i].on(ctr[i].filters.Transfer, updateBalnce)
-//     //     console.log("update wbalance",wBalance)
-//     // }
-// }
-
-
-async function connect(commit,provider) {
-    while(true){
-        try {
-            bsc = await pbwallet.connect(provider, true)
-            break
-        } catch (e) {
-            if('detectedNetwork' in e){
-                const name = e.detectedNetwork.name
-                if(name=='bnb'||name=='bnbt'){
-                    continue
-                }
-            }
-            return e.message
+async function connect(commit, provider) {
+  while (true) {
+    try {
+      bsc = await pbwallet.connect(provider, true);
+      break;
+    } catch (e) {
+      if ("detectedNetwork" in e) {
+        const name = e.detectedNetwork.name;
+        if (name == "bnb" || name == "bnbt") {
+          continue;
         }
+      }
+      return e.message;
     }
-    if (bsc) {
-        commit("setBsc", bsc)
-        if(window.ethereum){
-        window.ethereum.on('accountsChanged', function (accounts) {
-            window.location.reload()
-        });
-          window.ethereum.on('networkChanged', function(networkId){
-            window.location.reload()
-          });
-        }
-        // await ListenToWCoin(commit)
-        return bsc
+  }
+  if (bsc) {
+    commit("setBsc", bsc);
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", function (accounts) {
+        window.location.reload();
+      });
+      window.ethereum.on("networkChanged", function (networkId) {
+        window.location.reload();
+      });
     }
-    return false
+    // await ListenToWCoin(commit)
+    return bsc;
+  }
+  return false;
 }
- async function loadBalance (coinType,) {
-      const info = pbwallet.wcoin_info(coinType);
-      const balance_parse = await tokens.balance(info.address);
-      const balance_format = await tokens.format(info.address, balance_parse);
-      return balance_format;
-     
- }
+
+async function loadStakedPools() {
+  const pools = await bsc.ctrs.staking.pools();
+  const stk = [];
+  let total_alloc = 0;
+  const now = Math.floor(Date.now() / 1000);
+  const reward_speed_a = await bsc.ctrs.pbp.stakeRewardIn(now, now + 1);
+  const reward_speed = parseFloat(
+    await tokens.format(bsc.ctrs.pbp.address, reward_speed_a)
+  );
+  for (let i in pools[0]) {
+    const lpamount = await tokens.format(pools[0][i], pools[2][i]);
+    stk.push({
+      stakeAddr: pools[0][i],
+      pid: i,
+      alloc: pools[1][i].toNumber(),
+      lpamount: lpamount,
+      locktime: pools[4][i].toNumber(),
+    });
+    total_alloc += pools[1][i].toNumber();
+  }
+  for (let i in stk) {
+    const price = await swap.price(bsc, stk[i].stakeAddr);
+    stk[i].reward_speed = (stk[i].alloc * reward_speed) / price / total_alloc;
+  }
+  console.log("stk", stk);
+  return stk;
+}
+
+async function loadBalance(coinType) {
+  const info = pbwallet.wcoin_info(coinType);
+  const balance_parse = await tokens.balance(info.address);
+  const balance_format = await tokens.format(info.address, balance_parse);
+  return balance_format;
+}
 async function getmintfee() {
-    const options = {}
-    const fee = await bsc.ctrs.pbt.mintFee();
-    const symbol = await tokens.symbol(fee[0])
-    options.price = await tokens.format(fee[0], fee[1])
-    options.ptName = symbol
-    options.tokenAddr = fee[0]
-    return options
+  const options = {};
+  const fee = await bsc.ctrs.pbt.mintFee();
+  const symbol = await tokens.symbol(fee[0]);
+  options.price = await tokens.format(fee[0], fee[1]);
+  options.ptName = symbol;
+  options.tokenAddr = fee[0];
+  return options;
 }
 async function getMintAbles() {
-    const mintAbles = await bsc.ctrs.pbt.mintables()
-    return mintAbles
+  const mintAbles = await bsc.ctrs.pbt.mintables();
+  return mintAbles;
 }
 async function mintPBT() {
-    const mintfee = await bsc.ctrs.pbt.mintFee()
-    const options = {}
-    if (mintfee[0] == ethers.constants.AddressZero) {
-        options.value = mintfee[1]
-    } else {
-        const ctr = pbwallet.erc20_contract(mintfee[0])
-        const allow = await ctr.allowance(bsc.addr, bsc.ctrs.pbt.address)
-        if (mintfee[1].gt(allow)) {
-            const reciept = await ctr.approve(bsc.ctrs.pbt.address, mintfee[1].mul(10000))
-        }
+  const mintfee = await bsc.ctrs.pbt.mintFee();
+  const options = {};
+  if (mintfee[0] == ethers.constants.AddressZero) {
+    options.value = mintfee[1];
+  } else {
+    const ctr = pbwallet.erc20_contract(mintfee[0]);
+    const allow = await ctr.allowance(bsc.addr, bsc.ctrs.pbt.address);
+    if (mintfee[1].gt(allow)) {
+      const receipt = await ctr.approve(
+        bsc.ctrs.pbt.address,
+        mintfee[1].mul(10000)
+      );
     }
-    const res = await bsc.ctrs.pbt.mint(options)
-    return res
+  }
+  const res = await bsc.ctrs.pbt.mint(options);
+  return res;
 }
 async function burnWcoin(amount, coinInfo) {
-    const ctr = bsc.ctrs[coinInfo.ctrname]
-    amount = await tokens.parse(ctr.address, amount)
-    const wBalance = await tokens.parse(ctr.address, store.state.WBalance[coinInfo.index])
-    if (amount.gt(wBalance)) {
-        return false
-    }
-    const receipt = await ctr.burn(amount)
-    return receipt
+  const ctr = bsc.ctrs[coinInfo.ctrname];
+  amount = await tokens.parse(ctr.address, amount);
+  const wBalance = await tokens.parse(
+    ctr.address,
+    store.state.WBalance[coinInfo.index]
+  );
+  if (amount.gt(wBalance)) {
+    return false;
+  }
+  const receipt = await ctr.burn(amount);
+  return receipt;
 }
 async function waitEventDone(tx, done) {
-    bsc.provider.once(tx.hash, function (evt) {
-        done(tx, evt)
-    })
+  bsc.provider.once(tx.hash, function (evt) {
+    done(tx, evt);
+  });
 }
 async function reBindFee() {
-    const rebindFee = await bsc.ctrs.pbpuzzlehash.rebindFee()
-    const refee = {}
-    refee.symbol = await tokens.symbol(rebindFee[0])
-    refee.amount = await tokens.format(rebindFee[0], rebindFee[1])
-    return refee
+  const rebindFee = await bsc.ctrs.pbpuzzlehash.rebindFee();
+  const refee = {};
+  refee.symbol = await tokens.symbol(rebindFee[0]);
+  refee.amount = await tokens.format(rebindFee[0], rebindFee[1]);
+  return refee;
 }
 async function bindAddr(waddr, pbtId, cointy, rebind) {
-    rebind = false
-    const pbtid = ethers.BigNumber.from(pbtId)
-    const winfo = pbwallet.wcoin_info(cointy)
-    const prefix = winfo.prefix
-    try {
-        if ('ChiaUtils' in window) {
-            if (waddr.substr(0, prefix.length) != prefix) return false
-            const addr = window.ChiaUtils.address_to_puzzle_hash(waddr)
-            let res = {}
-            if (rebind) {
-                const fee = await bsc.ctrs.pbpuzzlehash.rebindFee()
-                if (fee[0] == ethers.constants.AddressZero) { // fee in BNB
-                    res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtid, cointy, addr, {
-                        value: fee[1]
-                    })
-                } else { // erc20 token
-                    const allow = await checkAllowance(fee[0], bsc.ctrs.pbpuzzlehash.address)
-                    if (allow.lt(fee[1])) {
-                        const res = await approveAllow(fee[0], bsc.ctrs.pbpuzzlehash.address)
-                        res.fn = 'approve'
-                        await waitEventDone(res, async function (evt) {
-                            const bind = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtid, cointy, addr, {
-                                value:fee[1]
-                            })
-                            return bind
-                        })
-                    }
-                    res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtid, cointy, addr, {
-                        value: fee[1]
-                    })
-                    return res
-                }
-            } else {
-                res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtid, cointy, addr)
-                console.log("bind res in marketJS",res)
-                return res
+  rebind = false;
+  const pbtid = ethers.BigNumber.from(pbtId);
+  const winfo = pbwallet.wcoin_info(cointy);
+  const prefix = winfo.prefix;
+  try {
+    if ("ChiaUtils" in window) {
+      if (waddr.substr(0, prefix.length) != prefix) return false;
+      const addr = window.ChiaUtils.address_to_puzzle_hash(waddr);
+      let res = {};
+      if (rebind) {
+        const fee = await bsc.ctrs.pbpuzzlehash.rebindFee();
+        if (fee[0] == ethers.constants.AddressZero) {
+          // fee in BNB
+          res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(
+            pbtid,
+            cointy,
+            addr,
+            {
+              value: fee[1],
             }
+          );
+        } else {
+          // erc20 token
+          const allow = await checkAllowance(
+            fee[0],
+            bsc.ctrs.pbpuzzlehash.address
+          );
+          if (allow.lt(fee[1])) {
+            const res = await approveAllow(
+              fee[0],
+              bsc.ctrs.pbpuzzlehash.address
+            );
+            res.fn = "approve";
+            await waitEventDone(res, async function (evt) {
+              const bind = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(
+                pbtid,
+                cointy,
+                addr,
+                {
+                  value: fee[1],
+                }
+              );
+              return bind;
+            });
+          }
+          res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(
+            pbtid,
+            cointy,
+            addr,
+            {
+              value: fee[1],
+            }
+          );
+          return res;
         }
-    } catch (e) {
-        console.log("bindaddr errrrr", e.message)
+      } else {
+        res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(
+          pbtid,
+          cointy,
+          addr
+        );
+        console.log("bind res in marketJS", res);
+        return res;
+      }
     }
+  } catch (e) {
+    console.log("bindaddr errrrr", e.message);
+  }
 }
 async function getBindables(cointy) {
-    const ables = await bsc.ctrs.pbpuzzlehash.bindables(cointy)
-    return ables
+  const ables = await bsc.ctrs.pbpuzzlehash.bindables(cointy);
+  return ables;
 }
 async function getDepAddr(pbtId, cointy) {
-    const ables = await getBindables(cointy)
-    if (parseInt(ables) == 0) {
-        return "nothing"
-    } else {
-        const id = ethers.BigNumber.from(pbtId)
-        const res = await bsc.ctrs.pbpuzzlehash.bindDepositPuzzleHash(id, cointy)
-        return res
-    }
+  const ables = await getBindables(cointy);
+  if (parseInt(ables) == 0) {
+    return "nothing";
+  } else {
+    const id = ethers.BigNumber.from(pbtId);
+    const res = await bsc.ctrs.pbpuzzlehash.bindDepositPuzzleHash(id, cointy);
+    return res;
+  }
 }
 async function clearAddr(pbtid, cointy) {
-    // const fee = await bsc.ctrs.pbpuzzlehash.rebindFee()
-    const pbtId = ethers.BigNumber.from(pbtid)
-    const addr = '0x0000000000000000000000000000000000000000000000000000000000000000'
-    // let res = {}
-    // if (fee[0] == ethers.constants.AddressZero) { // fee in BNB
-    // res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtId, cointy, addr, {
-    //         value: fee[1]
-    //     })
-    // } else { // erc20 token
-    //     const allow = await checkAllowance(fee[0], bsc.ctrs.pbpuzzlehash.address)
-    //     if (allow.lt(fee[1])) {
-    //         const approveRes = await approveAllow(fee[0], bsc.ctrs.pbpuzzlehash.address)
-    //         approveRes.fn = 'approve'
-    //         await waitEventDone(approveRes, async function (evt) {
-    //         const bind = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtId, cointy, addr,{value:fee[1]})
-    //             return bind
-    //         })
-    //         // return approveRes
-    //     }
-    const res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtId, cointy, addr)
-    // }
-    return res
+  // const fee = await bsc.ctrs.pbpuzzlehash.rebindFee()
+  const pbtId = ethers.BigNumber.from(pbtid);
+  const addr =
+    "0x0000000000000000000000000000000000000000000000000000000000000000";
+  // let res = {}
+  // if (fee[0] == ethers.constants.AddressZero) { // fee in BNB
+  // res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtId, cointy, addr, {
+  //         value: fee[1]
+  //     })
+  // } else { // erc20 token
+  //     const allow = await checkAllowance(fee[0], bsc.ctrs.pbpuzzlehash.address)
+  //     if (allow.lt(fee[1])) {
+  //         const approveRes = await approveAllow(fee[0], bsc.ctrs.pbpuzzlehash.address)
+  //         approveRes.fn = 'approve'
+  //         await waitEventDone(approveRes, async function (evt) {
+  //         const bind = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(pbtId, cointy, addr,{value:fee[1]})
+  //             return bind
+  //         })
+  //         // return approveRes
+  //     }
+  const res = await bsc.ctrs.pbpuzzlehash.bindWithdrawPuzzleHash(
+    pbtId,
+    cointy,
+    addr
+  );
+  // }
+  return res;
 }
 async function sendToMarket(id) {
-    const pb = bsc.ctrs.pbt
-    const res = await pb["safeTransferFrom(address,address,uint256)"](bsc.addr, bsc.ctrs.pbmarket.address, id)
-    return res
+  const pb = bsc.ctrs.pbt;
+  const res = await pb["safeTransferFrom(address,address,uint256)"](
+    bsc.addr,
+    bsc.ctrs.pbmarket.address,
+    id
+  );
+  return res;
 }
 async function setSellInfo(id, ptName, price, desc) {
-    let ptAddr = ptAddrs[ptName]
-    if (!ptAddr) {
-        ptAddr = bsc.ctrs[ptName.toLowerCase()].address
-    }
-    const nftPrice = await tokens.parse(ptAddr, price)
-    const res = await bsc.ctrs.pbmarket.onSale(bsc.ctrs.pbt.address, id, ptAddr, nftPrice, desc)
-    return res
+  let ptAddr = ptAddrs[ptName];
+  if (!ptAddr) {
+    ptAddr = bsc.ctrs[ptName.toLowerCase()].address;
+  }
+  const nftPrice = await tokens.parse(ptAddr, price);
+  const res = await bsc.ctrs.pbmarket.onSale(
+    bsc.ctrs.pbt.address,
+    id,
+    ptAddr,
+    nftPrice,
+    desc
+  );
+  return res;
 }
 async function checkAllowance(priceToken, spender) {
-    const ctr = pbwallet.erc20_contract(priceToken)
-    const amount = await ctr.totalSupply()
-    const options = {}
-    if (priceToken == ethers.constants.AddressZero) {
-        options.value = amount
-    } else {
-        try {
-            const allow = await ctr.allowance(bsc.addr, spender)
-            if (allow.gt(amount)) {
-                return false
-            }
-            return allow
-        } catch (e) {
-            console.log("checkAllowance eee", e.message)
-        }
+  const ctr = pbwallet.erc20_contract(priceToken);
+  const amount = await ctr.totalSupply();
+  const options = {};
+  if (priceToken == ethers.constants.AddressZero) {
+    options.value = amount;
+  } else {
+    try {
+      const allow = await ctr.allowance(bsc.addr, spender);
+      if (allow.gt(amount)) {
+        return false;
+      }
+      return allow;
+    } catch (e) {
+      console.log("checkAllowance eee", e.message);
     }
+  }
 }
 async function approveAllow(token, spender) {
-    const ctr = pbwallet.erc20_contract(token)
-    const amount = await ctr.totalSupply()
-    const total = await tokens.format(token, amount)
-    const res = await ctr.approve(spender, amount)
-    res.fn = 'approve'
-    return res
+  const ctr = pbwallet.erc20_contract(token);
+  const amount = await ctr.totalSupply();
+  const total = await tokens.format(token, amount);
+  const res = await ctr.approve(spender, amount);
+  res.fn = "approve";
+  return res;
 }
 async function buyNFT(nft) {
-    const priceToken = nft.market.priceToken
-    const price = await tokens.parse(priceToken, nft.market.price)
-    const id = ethers.BigNumber.from(nft.id)
-    const options = {}
-    if (priceToken == ethers.constants.AddressZero) {
-        options.value = price
-    } else {
-        // check allowance
-        const allow = await checkAllowance(priceToken, bsc.ctrs.pbpuzzlehash.address)
-        if (allow.lt(price)) {
-            const res = await approveAllow(priceToken, bsc.ctrs.pbmarket.address) // TODO: approve can use MAX_UINT256 for infinity
-            res.fn = 'approve'
-            return res
-        }
+  const priceToken = nft.market.priceToken;
+  const price = await tokens.parse(priceToken, nft.market.price);
+  const id = ethers.BigNumber.from(nft.id);
+  const options = {};
+  if (priceToken == ethers.constants.AddressZero) {
+    options.value = price;
+  } else {
+    // check allowance
+    const allow = await checkAllowance(
+      priceToken,
+      bsc.ctrs.pbpuzzlehash.address
+    );
+    if (allow.lt(price)) {
+      const res = await approveAllow(priceToken, bsc.ctrs.pbmarket.address); // TODO: approve can use MAX_UINT256 for infinity
+      res.fn = "approve";
+      return res;
     }
-    const res = await bsc.ctrs.pbmarket.buy(bsc.ctrs.pbt.address, id, options) // TODO: approve can use MAX_UINT256 for infinity
-    res.fn = 'buy'
-    return res
+  }
+  const res = await bsc.ctrs.pbmarket.buy(bsc.ctrs.pbt.address, id, options); // TODO: approve can use MAX_UINT256 for infinity
+  res.fn = "buy";
+  return res;
 }
 async function retreatNFT(id) {
-    const res = await bsc.ctrs.pbmarket.offSale(bsc.ctrs.pbt.address, id)
-    return res
+  const res = await bsc.ctrs.pbmarket.offSale(bsc.ctrs.pbt.address, id);
+  return res;
 }
 async function afterFee(coinInfo, mode, amount) {
-    const ctr = bsc.ctrs[coinInfo.ctrname]
-    const fees = await getfees(coinInfo.ctrname)
-    const nowfee = {}
-    amount = await tokens.parse(ctr.address, amount)
-    if (mode == 'deposit') {
-        nowfee.min = await tokens.parse(ctr.address, fees.depositFee)
-        nowfee.rate = fees.depositFeeRate
-    } else if (mode == 'withdraw') {
-        nowfee.min = await tokens.parse(ctr.address, fees.withdrawFee)
-        nowfee.rate = fees.withdrawFeeRate
-        if (amount.gt(await tokens.parse(ctr.address, store.state.WBalance[coinInfo.index]))) {
-            return "fund"
-        }
-    } else {
-        return "mode"
+  const ctr = bsc.ctrs[coinInfo.ctrname];
+  const fees = await getfees(coinInfo.ctrname);
+  const nowfee = {};
+  amount = await tokens.parse(ctr.address, amount);
+  if (mode == "deposit") {
+    nowfee.min = await tokens.parse(ctr.address, fees.depositFee);
+    nowfee.rate = fees.depositFeeRate;
+  } else if (mode == "withdraw") {
+    nowfee.min = await tokens.parse(ctr.address, fees.withdrawFee);
+    nowfee.rate = fees.withdrawFeeRate;
+    if (
+      amount.gt(
+        await tokens.parse(ctr.address, store.state.WBalance[coinInfo.index])
+      )
+    ) {
+      return "fund";
     }
-    var fee = amount.mul(nowfee.rate).div(10000)
-    if (fee.lt(nowfee.min)) {
-        fee = nowfee.min
-    }
-    if (amount.lte(fee)) {
-        return false
-    }
-    const f = await tokens.format(ctr.address, amount.sub(fee))
-    return f
+  } else {
+    return "mode";
+  }
+  var fee = amount.mul(nowfee.rate).div(10000);
+  if (fee.lt(nowfee.min)) {
+    fee = nowfee.min;
+  }
+  if (amount.lte(fee)) {
+    return false;
+  }
+  const f = await tokens.format(ctr.address, amount.sub(fee));
+  return f;
 }
 async function getfees(ctrname) {
-    const ctr = bsc.ctrs[ctrname]
-    let fee = {}
-    const depfee = await ctr.depositFee()
-    const wdfee = await ctr.withdrawFee()
-    fee.depositFee = await tokens.format(ctr.address, depfee[1])
-    fee.depositFeeRate = depfee[0]
-    fee.withdrawFee = await tokens.format(ctr.address, wdfee[1])
-    fee.withdrawFeeRate = wdfee[0]
-    return fee
-
+  const ctr = bsc.ctrs[ctrname];
+  let fee = {};
+  const depfee = await ctr.depositFee();
+  const wdfee = await ctr.withdrawFee();
+  fee.depositFee = await tokens.format(ctr.address, depfee[1]);
+  fee.depositFeeRate = depfee[0];
+  fee.withdrawFee = await tokens.format(ctr.address, wdfee[1]);
+  fee.withdrawFeeRate = wdfee[0];
+  return fee;
 }
 async function getLimit(ctrname) {
-    const ctr = bsc.ctrs[ctrname]
-    let amount = await ctr.cWAmount()
-    const amountMax = await tokens.format(ctr.address, amount[1])
-    const amountMin = await tokens.format(ctr.address, amount[0])
-    amount = [amountMin, amountMax]
-    return amount
+  const ctr = bsc.ctrs[ctrname];
+  let amount = await ctr.cWAmount();
+  const amountMax = await tokens.format(ctr.address, amount[1]);
+  const amountMin = await tokens.format(ctr.address, amount[0]);
+  amount = [amountMin, amountMax];
+  return amount;
 }
 
 async function watchToken(ctrname) {
-    const ctr = bsc.ctrs[ctrname]
-    const dec = await tokens.decimals(ctr.address)
-    const symbol = await tokens.symbol(ctr.address)
-    const url = window.location.origin + '/image/' + ctrname + '.png'
-    // console.log("url", url)
-    const options = {
-        address: ctr.address,
-        symbol: symbol,
-        decimals: dec,
-        image: url
-    }
-    try {
-        const added = await bsc.provider.send(
-            'wallet_watchAsset', {
-                type: 'ERC20',
-                options: options
-            }
-        )
-        return added
-    } catch (e) {
-        console.log('add watch err', e)
-    }
+  const ctr = bsc.ctrs[ctrname];
+  const dec = await tokens.decimals(ctr.address);
+  const symbol = await tokens.symbol(ctr.address);
+  const url = window.location.origin + "/image/" + ctrname + ".png";
+  // console.log("url", url)
+  const options = {
+    address: ctr.address,
+    symbol: symbol,
+    decimals: dec,
+    image: url,
+  };
+  try {
+    const added = await bsc.provider.send("wallet_watchAsset", {
+      type: "ERC20",
+      options: options,
+    });
+    return added;
+  } catch (e) {
+    console.log("add watch err", e);
+  }
 }
 async function burnNFT(id) {
-    const pbtId = ethers.BigNumber.from(id)
-    const res = await bsc.ctrs.pbt.burn(pbtId)
-    return res
+  const pbtId = ethers.BigNumber.from(id);
+  const res = await bsc.ctrs.pbt.burn(pbtId);
+  return res;
 }
 async function transferPBT(fromaddr, toaddr, pbtid) {
-    const id = ethers.BigNumber.from(pbtid)
-    try {
-        const res =await bsc.ctrs.pbt.transferFrom(fromaddr, toaddr, id)
-        return res
-    } catch (e) {
-        console.log("transfer error",e)
-    }
+  const id = ethers.BigNumber.from(pbtid);
+  try {
+    const res = await bsc.ctrs.pbt.transferFrom(fromaddr, toaddr, id);
+    return res;
+  } catch (e) {
+    console.log("transfer error", e);
+  }
 }
 export default {
-    connect: connect,
-    checkAllowance: checkAllowance,
-    approveAllow: approveAllow,
-    afterFee: afterFee,
-    burnNFT: burnNFT,
-    watchToken: watchToken,
-    burnWcoin: burnWcoin,
-    mintPBT: mintPBT,
-    getMintAbles: getMintAbles,
-    bindAddr: bindAddr,
-    getDepAddr: getDepAddr,
-    getBindables: getBindables,
-    clearAddr: clearAddr,
-    // reBindFee: reBindFee,
-    waitEventDone: waitEventDone,
-    retreatNFT: retreatNFT,
-    buyNFT: buyNFT,
-    setSellInfo: setSellInfo,
-    sendToMarket: sendToMarket,
-    getLimit: getLimit,
-    getfees: getfees,
-    getmintfee: getmintfee,
-    loadCoinlist: loadCoinlist,
-    // ListenToWCoin: ListenToWCoin,
-    transferPBT: transferPBT,
-    loadBalance:loadBalance,
-}
+  connect: connect,
+  checkAllowance: checkAllowance,
+  approveAllow: approveAllow,
+  afterFee: afterFee,
+  burnNFT: burnNFT,
+  watchToken: watchToken,
+  burnWcoin: burnWcoin,
+  mintPBT: mintPBT,
+  getMintAbles: getMintAbles,
+  bindAddr: bindAddr,
+  getDepAddr: getDepAddr,
+  getBindables: getBindables,
+  clearAddr: clearAddr,
+  // reBindFee: reBindFee,
+  waitEventDone: waitEventDone,
+  retreatNFT: retreatNFT,
+  buyNFT: buyNFT,
+  setSellInfo: setSellInfo,
+  sendToMarket: sendToMarket,
+  getLimit: getLimit,
+  getfees: getfees,
+  getmintfee: getmintfee,
+  loadCoinlist: loadCoinlist,
+  // ListenToWCoin: ListenToWCoin,
+  transferPBT: transferPBT,
+  loadBalance: loadBalance,
+  loadStakedPools: loadStakedPools,
+};
