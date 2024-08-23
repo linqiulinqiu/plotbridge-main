@@ -1,5 +1,30 @@
 <template>
-  <el-col id="Bridge">
+  <el-col v-if="isError">
+    <el-col class="notice" span="10" offset="6">
+      <h2>Important Notice: Temporary Service Disruption</h2>
+      <h2>&nbsp;</h2>
+      <h3>Dear Plot Bridge Users,</h3>
+      <h2>&nbsp;</h2>
+
+      <h3>
+        We regret to inform you that our service is currently experiencing an
+        unexpected issue, and we are unable to serve users at this time. Our
+        team is actively working to resolve the problem as quickly as possible.
+        We understand the inconvenience this may cause and appreciate your
+        patience and understanding as we work to restore full service. We will
+        keep you updated on our progress and notify you as soon as the issue is
+        resolved. Thank you for your continued support.
+      </h3>
+      <h2>&nbsp;</h2>
+
+      <h4>
+        Best regards,<br />
+        <h4>&nbsp;</h4>
+        The Plot Bridge Team
+      </h4>
+    </el-col>
+  </el-col>
+  <el-col id="Bridge" v-else>
     <el-container v-if="baddr">
       <Mynft :myList="myList" :pageSize="3" :curNFT="this.curNFT" />
       <el-main>
@@ -33,7 +58,9 @@ export default {
     SelectCoin,
   },
   data() {
-    return {};
+    return {
+      isError: true,
+    };
   },
   computed: mapState({
     myList: "myList",
@@ -56,5 +83,8 @@ export default {
 <style>
 .fold {
   height: 10px;
+}
+.notice {
+  margin-top: 100px;
 }
 </style>
