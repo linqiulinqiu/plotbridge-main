@@ -1,22 +1,18 @@
 <template>
   <el-col v-if="isError">
     <el-col class="notice" span="10" offset="6">
-      <h2>Important Notice: Temporary Service Disruption</h2>
+      <h2>Important Notice: Bridging Service Temporarily Paused</h2>
       <h2>&nbsp;</h2>
       <h3>Dear Plot Bridge Users,</h3>
       <h2>&nbsp;</h2>
 
       <h3>
-        We regret to inform you that our service is currently experiencing an
-        unexpected issue, and we are unable to serve users at this time. Our
-        team is actively working to resolve the problem as quickly as possible.
-        We understand the inconvenience this may cause and appreciate your
-        patience and understanding as we work to restore full service. We will
-        keep you updated on our progress and notify you as soon as the issue is
-        resolved. Thank you for your continued support.
+        Due to technical difficulties, our cross-chain bridge is temporarily paused. 
+        We are working hard to resolve the issue and restore service as soon as possible. 
+        If you have any questions, please contact our team via Telegram or Discord. Thank you for your understanding and patience.
       </h3>
       <h2>&nbsp;</h2>
-
+      <h3>Additionally, we are working on a new project. Stay tuned! Thank you for your understanding and patience.</h3>
       <h4>
         Best regards,<br />
         <h4>&nbsp;</h4>
