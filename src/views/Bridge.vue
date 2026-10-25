@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      isError: true,
+      isError: false,
     };
   },
   computed: mapState({
