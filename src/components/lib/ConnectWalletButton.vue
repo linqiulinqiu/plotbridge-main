@@ -155,15 +155,49 @@ export default {
       // console.log("PBP amount", amount);
       return amount;
     },
+    discoverProvider: function () {
+      // EIP-6963 multi-wallet discovery: each wallet announces its own
+      // provider, so MetaMask can be selected even when window.ethereum
+      // was taken over by another wallet extension (e.g. Phantom).
+      return new Promise(function (resolve) {
+        const providers = [];
+        const onAnnounce = function (event) {
+          providers.push(event.detail);
+        };
+        window.addEventListener("eip6963:announceProvider", onAnnounce);
+        window.dispatchEvent(new Event("eip6963:requestProvider"));
+        setTimeout(function () {
+          window.removeEventListener("eip6963:announceProvider", onAnnounce);
+          const mm = providers.find(function (d) {
+            return (
+              d.info &&
+              (d.info.rdns === "io.metamask" ||
+                /metamask/i.test(d.info.name || ""))
+            );
+          });
+          if (mm) {
+            console.log("use EIP-6963 provider:", mm.info.name, mm.info.rdns);
+            resolve({ provider: mm.provider, info: mm.info });
+            return;
+          }
+          if (typeof window.ethereum !== "undefined") {
+            console.log("use window.ethereum as provider");
+            resolve({ provider: window.ethereum, info: null });
+            return;
+          }
+          resolve(null);
+        }, 300);
+      });
+    },
     connect_wallet: async function () {
       this.connect_loading = true;
       const commit = this.$store.commit;
       let bsc = {};
-      console.log("window", window.ethereum);
-      if (typeof window.ethereum !== "undefined") {
+      const found = await this.discoverProvider();
+      if (found) {
         try {
-          bsc = await market.connect(commit, false);
-          console.log("connect wallet with metaMask:", bsc);
+          bsc = await market.connect(commit, found.provider, false);
+          console.log("connect wallet with provider:", bsc);
         } catch (error) {
           console.log("connect wallet with metaMask err:", error);
         }
@@ -186,7 +220,7 @@ export default {
             providerOptions,
           });
           const wm_instance = await wmod.connect();
-          bsc = await market.connect(commit, wm_instance);
+          bsc = await market.connect(commit, wm_instance, true);
           console.log("connect wallet", bsc);
         } catch (e) {
           this.connect_loading = false;
@@ -195,7 +229,7 @@ export default {
       }
       if (typeof bsc == "string" || !bsc) {
         if (bsc) {
-          this.$message.error(this.$t("relink-wallet"));
+          this.$message.error(this.$t("relink-wallet") + " (" + bsc + ")");
         } else {
           this.connect_faild = true;
         }

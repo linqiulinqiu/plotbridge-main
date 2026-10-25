@@ -24,10 +24,10 @@ function loadCoinlist() {
   return coinlist;
 }
 
-async function connect(commit, provider) {
+async function connect(commit, provider, mobile) {
   while (true) {
     try {
-      bsc = await pbwallet.connect(provider, true);
+      bsc = await pbwallet.connect(provider, !!mobile);
       break;
     } catch (e) {
       if ("detectedNetwork" in e) {
@@ -41,11 +41,18 @@ async function connect(commit, provider) {
   }
   if (bsc) {
     commit("setBsc", bsc);
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", function (accounts) {
+    // watch on the connected provider instance: window.ethereum may belong
+    // to a different wallet that lost the EIP-6963/injection race
+    const ep = provider || window.ethereum;
+    if (ep && typeof ep.on === "function") {
+      ep.on("accountsChanged", function (accounts) {
         window.location.reload();
       });
-      window.ethereum.on("networkChanged", function (networkId) {
+      ep.on("chainChanged", function (chainId) {
+        window.location.reload();
+      });
+      // legacy event, some wallets still emit it instead of chainChanged
+      ep.on("networkChanged", function (networkId) {
         window.location.reload();
       });
     }
