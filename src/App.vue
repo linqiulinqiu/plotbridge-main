@@ -82,7 +82,7 @@ export default {
   overflow: auto;
 }
 #main-container {
-  height: calc(100vh-180px);
+  height: calc(100vh - 180px);
   min-height: 660px;
 }
 

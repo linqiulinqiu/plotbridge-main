@@ -25,8 +25,7 @@ export const i18n = new VueI18n({
 
 export const setup = function (lang) {
     if (lang === undefined) {
-        // lang = window.localStorage.getItem(LKEY)
-        lang = localLang()
+        lang = window.localStorage.getItem(LKEY) || localLang()
         if (locales[lang] === undefined) {
             lang = DEFAULT_LANG
         }
