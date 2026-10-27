@@ -95,7 +95,7 @@
   "home-news": [
     {
       "ts": "2026-10-27",
-      "msg": "Deposits for HDDcoin / Chives / Flax are now closed, as their underlying chains are long unmaintained and unstable (WXCH bridging is not affected). Holders can bind a withdrawal address and burn the tokens on the Bridge page to request the native coins. The team processes requests manually, usually within 7 working days, provided the underlying chain still runs."
+      "msg": "Deposits for HDDcoin / Chives / Flax are now closed, as their node software is long unmaintained and their networks are unstable (WXCH bridging is not affected). Holders can bind a withdrawal address and burn the tokens on the Bridge page to request the native coins. The team processes requests manually, usually within 7 working days, provided the underlying chain still runs."
     },
     {
       "ts": "2023-01-13",
