@@ -94,6 +94,10 @@
   "home-title": "Welcome to the PlotBridge beta version",
   "home-news": [
     {
+      "ts": "2026-10-27",
+      "msg": "Deposits for HDDcoin / Chives / Flax are now closed, as their underlying chains are long unmaintained and unstable (WXCH bridging is not affected). Holders can bind a withdrawal address and burn the tokens on the Bridge page to request the native coins. The team processes requests manually, usually within 7 working days, provided the underlying chain still runs."
+    },
+    {
       "ts": "2023-01-13",
       "msg": "Happy New Year! We just released the annual revamp of our website and have added support for two new coins: HDDcoin and Flax, looking forward to your participation."
     },
@@ -287,5 +291,14 @@
   "w-rate": "Withdraw rate",
   "w-minFee": "Min withdraw fee",
   "w-limit": "The recommended limit for a single withdraw is",
-  "w-addr": "Withdraw {bcoin} will be send to this address"
+  "w-addr": "Withdraw {bcoin} will be send to this address",
+
+  "withdraw-only": "Withdraw Only",
+  "wo-notice-title": "Deposits closed for this coin, withdrawal only",
+  "wo-notice": [
+    "Deposits are closed for this coin. Withdrawals (burn) are processed manually by the team, usually within 7 working days.",
+    "Manual payout is guaranteed only while the underlying chain still runs — if the chain can no longer run, the payout is not guaranteed.",
+    "Please do not rebind your withdrawal address while a withdrawal is pending; very small burn amounts may not be processed.",
+    "You can also sell the token directly in Swap (or on PancakeSwap)."
+  ]
 }

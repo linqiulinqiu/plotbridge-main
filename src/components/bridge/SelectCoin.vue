@@ -8,9 +8,19 @@
           :key="item.symbol"
           @click="changeCoin(item)"
           class="coinTypes"
-          :class="{ isselect: item.index == addclass }"
+          :class="{
+            isselect: item.index == addclass,
+            wo: item.policy && item.policy.withdrawOnly,
+          }"
         >
-          {{ item.name }}
+          <span>{{ item.name }}</span>
+          <br v-if="item.policy && item.policy.withdrawOnly" />
+          <el-tag
+            v-if="item.policy && item.policy.withdrawOnly"
+            size="mini"
+            type="warning"
+            >{{ $t("withdraw-only") }}</el-tag
+          >
         </li>
       </ul>
     </el-col>
@@ -98,5 +108,10 @@ export default {
   border: #668b66 1px solid;
   margin: 10px auto;
   cursor: pointer;
+}
+.coinTypes.wo {
+  height: auto;
+  padding: 4px 0;
+  line-height: 20px;
 }
 </style>

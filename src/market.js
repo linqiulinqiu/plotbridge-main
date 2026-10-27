@@ -11,12 +11,36 @@ const ptAddrs = {
 };
 var coinlist = {};
 
+// 币种策略：bridge = 完整自动桥；withdrawOnly = 充值关闭、仅保留提现
+// （burn 即申请，团队按 Burn 事件人工兑付，见 doc/optimization-plan-2026-10-26.md §2.4）。
+// 未登记的币种一律不显示；恢复某币种自动桥时把 bridge 改回 true 即可。
+const WCOIN_POLICY = {
+  wxch: { bridge: true },
+  whdd: { bridge: false, withdrawOnly: true },
+  wxcc: { bridge: false, withdrawOnly: true },
+  wxfx: { bridge: false, withdrawOnly: true },
+};
+
+function policyOf(ctrname) {
+  if (ctrname in WCOIN_POLICY) return WCOIN_POLICY[ctrname];
+  return { bridge: false, withdrawOnly: false, disabled: true };
+}
+
+function isEnabled(ctrname) {
+  return !policyOf(ctrname).disabled;
+}
+
+function isWithdrawOnly(ctrname) {
+  return !!policyOf(ctrname).withdrawOnly;
+}
+
 function loadCoinlist() {
   const coinSb = pbwallet.wcoin_list("index");
   const clist = {};
   for (let i in coinSb) {
     const info = pbwallet.wcoin_info(coinSb[i], "index");
-    if (info.ctrname in bsc.ctrs) {
+    if (info.ctrname in bsc.ctrs && isEnabled(info.ctrname)) {
+      info.policy = policyOf(info.ctrname);
       clist[coinSb[i]] = info;
     }
   }
@@ -452,6 +476,8 @@ export default {
   getLimit: getLimit,
   getfees: getfees,
   getmintfee: getmintfee,
+  isEnabled: isEnabled,
+  isWithdrawOnly: isWithdrawOnly,
   loadCoinlist: loadCoinlist,
   // ListenToWCoin: ListenToWCoin,
   transferPBT: transferPBT,

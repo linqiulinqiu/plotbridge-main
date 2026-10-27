@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import { timingSafeEqual } from "crypto";
 import pbw from "pbwallet";
 import { mapState } from "vuex";
 import market from "../../market";
@@ -44,8 +43,10 @@ export default {
       } else {
         const symbols = pbw.wcoin_list("symbol");
         for (let i in symbols) {
-          winfos[i] = pbw.wcoin_info(symbols[i], "symbol");
-          if (!"address" in winfos[i]) winfos[i]["url"] = false;
+          const info = pbw.wcoin_info(symbols[i], "symbol");
+          if (!market.isEnabled(info.ctrname)) continue;
+          winfos[i] = info;
+          if (!info.address) winfos[i]["url"] = false;
         }
       }
       console.log("winfos", winfos);

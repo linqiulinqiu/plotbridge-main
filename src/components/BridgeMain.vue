@@ -42,8 +42,18 @@
           </el-col>
 
           <el-col :lg="{ span: 17 }" :span="24">
+            <el-alert
+              v-if="woCoin"
+              class="wo-notice"
+              type="warning"
+              :closable="false"
+              show-icon
+            >
+              <template slot="title">{{ $t("wo-notice-title") }}</template>
+              <p v-for="line in $t('wo-notice')" :key="line">{{ line }}</p>
+            </el-alert>
             <el-tabs id="tabs" class="min-height">
-              <el-tab-pane :label="$t('deposit')"
+              <el-tab-pane v-if="!woCoin" :label="$t('deposit')"
                 ><Deposit :curNFT="this.curNFT" :coinInfo="coinInfo"
               /></el-tab-pane>
               <el-tab-pane :label="$t('withdraw')">
@@ -104,6 +114,11 @@ export default {
       if (info) return info;
       return "-";
     },
+    woCoin: function () {
+      const info = this.coinInfo;
+      if (!info || !info.ctrname) return false;
+      return market.isWithdrawOnly(info.ctrname);
+    },
     coinMap: function () {
       return market.loadCoinlist();
     },
@@ -147,5 +162,11 @@ export default {
   position: absolute;
   top: 5.25px;
   left: 380px;
+}
+.wo-notice {
+  margin-bottom: 10px;
+}
+.wo-notice p {
+  margin: 2px 0;
 }
 </style>
