@@ -1,0 +1,15 @@
+services:
+  # Render Static Site — hash router needs no rewrite rules, the fallback
+  # below only serves as a safety net (existing files are served first).
+  - type: web
+    name: plotbridge-next
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_WALLETCONNECT_PROJECT_ID
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

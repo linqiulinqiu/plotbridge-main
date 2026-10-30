@@ -1,0 +1,149 @@
+/* Base dark theme carried over from the old site (assets/base.css colors):
+   header/footer #25272e, main #2b2c33, accent green #38f2af, input #373943 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  background: #2b2c33;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', Roboto, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: rgba(147, 206, 150, 0.5);
+}
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(237, 237, 237, 0.04);
+}
+
+.font-accent {
+  color: #38f2af;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  word-break: break-all;
+}
+
+/* ---- bridge layout ---- */
+.bridge-layout {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  align-items: flex-start;
+}
+.bridge-nft-panel {
+  width: 300px;
+  flex-shrink: 0;
+  background: #25272e;
+  border-radius: 8px;
+  padding: 16px 12px;
+  min-height: 560px;
+}
+.bridge-main-panel {
+  flex: 1;
+  min-width: 0;
+  background: #2b2c33;
+}
+.bridge-coin-panel {
+  width: 132px;
+  flex-shrink: 0;
+  background: #25272e;
+  border-radius: 8px;
+  padding: 10px;
+}
+@media (max-width: 900px) {
+  .bridge-layout {
+    flex-direction: column;
+  }
+  .bridge-nft-panel,
+  .bridge-coin-panel {
+    width: 100%;
+    min-height: unset;
+  }
+}
+
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  padding: 4px 0;
+}
+.nft-card {
+  border: 1px solid #668b66;
+  border-radius: 6px;
+  padding: 6px;
+  text-align: center;
+  cursor: pointer;
+}
+.nft-card.selected {
+  border-color: #38f2af;
+  color: #38f2af;
+}
+.nft-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #373943;
+}
+
+.coin-list {
+  list-style: none;
+}
+.coin-item {
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  border-radius: 5px;
+  border: 1px solid #668b66;
+  margin: 10px auto;
+  cursor: pointer;
+  font-weight: 600;
+}
+.coin-item.selected {
+  border-color: #38f2af;
+  color: #38f2af;
+}
+.coin-item.withdraw-only {
+  height: auto;
+  padding: 6px 4px;
+  line-height: 20px;
+}
+
+.bridge-amount-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.bridge-amount-input {
+  width: 200px;
+}
+
+.addr-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #373943;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 8px 0;
+}
