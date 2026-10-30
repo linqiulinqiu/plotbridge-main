@@ -1,11 +1,12 @@
 import { Contract } from 'ethers'
-import { wcoinAbi, pbpuzzlehashAbi, pbtAbi } from './config/abis'
+import { wcoinAbi, pbpuzzlehashAbi, pbtAbi, pbmarketAbi } from './config/abis'
 import { chainById, enabledCoins, type WCoinInfo } from './config/chains'
 import { fetchIpfsJson } from './lib/ipfs'
 import { puzzleToAddress } from './lib/chia'
 import { mapLimit } from './lib/utils'
-import type { WalletCtx } from './lib/tokens'
-import { useAppStore, type PbxsEntry } from './store'
+import { formatToken, tokenSymbol, type WalletCtx } from './lib/tokens'
+import { useAppStore, type MarketSaleInfo, type PbxsEntry, type PbtItem } from './store'
+import { refreshTvl } from './pbp'
 
 // Keeper: loads the user's PBT list (metadata + deposit/withdraw puzzle-hash
 // addresses per coin) and keeps it in sync via contract events.
@@ -22,6 +23,7 @@ export interface BridgeContracts {
   coins: Record<number, CoinContractInfo>
   pbt: Contract
   puzzlehash: Contract
+  market: Contract
 }
 
 const contractsCache = new WeakMap<WalletCtx, BridgeContracts>()
@@ -37,7 +39,8 @@ export function bridgeContracts(ctx: WalletCtx): BridgeContracts {
   }
   const pbt = new Contract(chain.contracts.pbt, pbtAbi, ctx.signer)
   const puzzlehash = new Contract(chain.contracts.pbpuzzlehash, pbpuzzlehashAbi, ctx.signer)
-  const ctrs = { coins, pbt, puzzlehash }
+  const market = new Contract(chain.contracts.pbmarket, pbmarketAbi, ctx.signer)
+  const ctrs = { coins, pbt, puzzlehash, market }
   contractsCache.set(ctx, ctrs)
   return ctrs
 }
@@ -108,10 +111,87 @@ async function reloadPbxsIntoList(ctx: WalletCtx, pbtId: string): Promise<void> 
   store.setPbtItem(pbtId, { pbxs })
 }
 
+// ---- market listings ----
+// signer-based getSaleInfo: the contract marks the seller as '-self' when the
+// caller (the connected wallet) is the seller
+
+export async function loadMarketInfo(ctx: WalletCtx, id: string): Promise<MarketSaleInfo> {
+  const bc = bridgeContracts(ctx)
+  const sinfo = await bc.market.getSaleInfo(await bc.pbt.getAddress(), id)
+  const priceToken: string = sinfo[0]
+  return {
+    priceToken,
+    ptName: await tokenSymbol(ctx, priceToken),
+    price: await formatToken(ctx, priceToken, sinfo[1]),
+    desc: sinfo[2],
+    seller: sinfo[3],
+  }
+}
+
+async function loadMarketItem(ctx: WalletCtx, id: string): Promise<PbtItem> {
+  const bc = bridgeContracts(ctx)
+  try {
+    const uri: string = await bc.pbt.tokenURI(id)
+    let image: string | null = null
+    try {
+      const meta = await fetchIpfsJson(uri)
+      image = (meta.image as string | undefined) ?? null
+    } catch {
+      // image stays null; NftImage renders the placeholder
+    }
+    const market = await loadMarketInfo(ctx, id)
+    return { id, uri, image, loading: false, market }
+  } catch {
+    return { id, loading: false }
+  }
+}
+
+async function addMarketItem(ctx: WalletCtx, id: string): Promise<void> {
+  useAppStore.getState().upsertMarketItem({ id, loading: true })
+  const item = await loadMarketItem(ctx, id)
+  useAppStore.getState().upsertMarketItem(item)
+}
+
+async function refreshMarketItem(ctx: WalletCtx, id: string): Promise<void> {
+  const store = useAppStore.getState()
+  const prev = store.marketList[id] ?? store.mySaleList[id]
+  if (!prev) return
+  try {
+    const market = await loadMarketInfo(ctx, id)
+    store.upsertMarketItem({ ...prev, market, loading: false })
+  } catch {
+    // token may have left the market meanwhile; the Transfer event handles that
+  }
+}
+
+export async function loadMarketList(ctx: WalletCtx): Promise<void> {
+  const bc = bridgeContracts(ctx)
+  try {
+    const marketAddr = String(bc.market.target)
+    const cnt = Number(await bc.pbt.balanceOf(marketAddr))
+    const indexes = Array.from({ length: cnt }, (_, i) => i)
+    const ids = await mapLimit(indexes, 3, async (i) =>
+      String(await bc.pbt.tokenOfOwnerByIndex(marketAddr, i)),
+    )
+    for (const id of ids) {
+      if (!useAppStore.getState().marketList[id] && !useAppStore.getState().mySaleList[id]) {
+        useAppStore.getState().upsertMarketItem({ id, loading: true })
+      }
+    }
+    const items = await mapLimit(ids, 3, (id) => loadMarketItem(ctx, id))
+    for (const item of items) useAppStore.getState().upsertMarketItem(item)
+  } finally {
+    useAppStore.getState().setMarketLoaded(true)
+  }
+}
+
 export function startKeeper(ctx: WalletCtx): void {
   const bc = bridgeContracts(ctx)
   const user = ctx.address
+  const marketAddr = String(bc.market.target)
   void loadPbtList(ctx)
+  void loadMarketList(ctx)
+  void refreshTvl(ctx)
 
   bc.pbt.on(bc.pbt.filters.Transfer(null, user), async (_from, _to, tokenId) => {
     const id = tokenId.toString()
@@ -122,6 +202,15 @@ export function startKeeper(ctx: WalletCtx): void {
   })
   bc.pbt.on(bc.pbt.filters.Transfer(user, null), (_from, _to, tokenId) => {
     useAppStore.getState().removePbtItem(tokenId.toString())
+  })
+  bc.pbt.on(bc.pbt.filters.Transfer(null, marketAddr), (_from, _to, tokenId) => {
+    void addMarketItem(ctx, tokenId.toString())
+  })
+  bc.pbt.on(bc.pbt.filters.Transfer(marketAddr, null), (_from, _to, tokenId) => {
+    useAppStore.getState().removeMarketItem(tokenId.toString())
+  })
+  bc.market.on(bc.market.filters.OnSale(null, null), (_tokenAddr, tokenId) => {
+    void refreshMarketItem(ctx, tokenId.toString())
   })
   bc.puzzlehash.on(bc.puzzlehash.filters.WithdrawPuzzleHashChanged(null, null, null), (pbtId) => {
     void reloadPbxsIntoList(ctx, pbtId.toString())

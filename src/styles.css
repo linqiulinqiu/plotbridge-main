@@ -147,3 +147,157 @@ body {
   padding: 10px;
   margin: 8px 0;
 }
+
+/* ---- market layout ---- */
+.market-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 12px;
+}
+.market-main {
+  flex: 1;
+  min-width: 0;
+  background: rgba(43, 44, 51, 0.6);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.market-section {
+  min-height: 200px;
+  border-radius: 10px;
+  background: #373943;
+  padding: 10px;
+  margin-top: 12px;
+}
+.market-section h4 {
+  padding: 8px 2%;
+}
+.selling-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.selling-card {
+  width: 240px;
+  height: 360px;
+  background: #383940;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.selling-img img {
+  width: 240px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+  background: #2b2c33;
+}
+.selling-img .nft-img-placeholder {
+  width: 240px;
+  height: 200px;
+}
+.selling-info {
+  position: absolute;
+  top: 55%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #272a34;
+  padding: 14px;
+}
+.selling-desc {
+  height: 84px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.selling-desc-text {
+  color: #828282;
+  font-size: 13px;
+}
+.selling-owner {
+  padding-top: 16px;
+  position: relative;
+  height: 60px;
+}
+.selling-self {
+  position: absolute;
+  left: 0;
+  color: #38f2af;
+}
+.price-chip {
+  float: right;
+  font-size: 13px;
+  line-height: 22px;
+  text-align: center;
+  width: 90px;
+  height: 24px;
+  border-radius: 10px;
+  border: 1px solid #38f2af;
+  color: #38f2af;
+}
+.panel-card {
+  background: #373943;
+  border: 1px solid #373943;
+  border-radius: 16px;
+  margin-top: 16px;
+}
+.field-label {
+  display: block;
+  margin: 10px 0 4px;
+}
+.nft-detail-img img {
+  width: 95%;
+  min-width: 128px;
+  border-radius: 15px;
+  background: #373943;
+}
+.btn-cancel {
+  margin-bottom: 12px;
+}
+
+/* ---- swap ---- */
+.swap-shell {
+  max-width: 640px;
+  margin: 30px auto;
+  background: #373943;
+  border-radius: 20px;
+  padding: 50px;
+}
+.swap-input {
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 20px;
+  background: rgba(43, 44, 51, 0.8);
+}
+.slip-btn.active {
+  color: #38f2af !important;
+  background: #373943 !important;
+  border-color: #38f2af;
+}
+
+/* ---- token info ---- */
+.token-info-panel {
+  background: rgba(55, 57, 67, 0.84);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+/* ---- stake ---- */
+.mini-font {
+  font-size: 10px;
+  color: #c0c2c0;
+}
+.stake-btn {
+  width: 80px;
+  margin: 10px 5px;
+}
+.btn-link {
+  background: rgba(43, 44, 51, 0.8);
+  color: #38f2af;
+  border: 1px solid #38f2af;
+}
+.btn-link a {
+  color: #38f2af;
+  text-decoration: none;
+}

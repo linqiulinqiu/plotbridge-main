@@ -8,6 +8,15 @@ export interface PbxsEntry {
   withdrawAddr: string | null
 }
 
+export interface MarketSaleInfo {
+  priceToken: string
+  ptName: string
+  price: string
+  desc: string
+  /** '-self' when the connected wallet is the seller (contract-side marker) */
+  seller: string
+}
+
 export interface PbtItem {
   id: string
   uri?: string
@@ -17,6 +26,8 @@ export interface PbtItem {
   loading: boolean
   /** key: coin index (string) */
   pbxs?: Record<string, PbxsEntry>
+  /** set for tokens held by the market contract */
+  market?: MarketSaleInfo
 }
 
 interface AppState {
@@ -36,6 +47,12 @@ interface AppState {
   /** key: coin index; value: formatted balance */
   wBalance: Record<number, string>
 
+  marketList: Record<string, PbtItem>
+  mySaleList: Record<string, PbtItem>
+  marketLoaded: boolean
+  /** total value locked in USD, as computed by pbp.loadTvl */
+  tvl: number
+
   setWallet: (res: ConnectResult, provider: BrowserProvider, signer: JsonRpcSigner) => void
   clearWallet: () => void
 
@@ -45,6 +62,12 @@ interface AppState {
   setCurrentPbt: (id: string | null) => void
   setCurrentCoin: (index: number | null) => void
   setWBalance: (index: number, value: string) => void
+
+  /** classify a market-held token into mySaleList / marketList (old-site rule) */
+  upsertMarketItem: (item: PbtItem) => void
+  removeMarketItem: (id: string) => void
+  setMarketLoaded: (done: boolean) => void
+  setTvl: (tvl: number) => void
 }
 
 export const LAST_CONNECTOR_KEY = 'plotbridge-last-connector'
@@ -64,6 +87,11 @@ export const useAppStore = create<AppState>((set) => ({
   currentCoin: null,
   wBalance: {},
 
+  marketList: {},
+  mySaleList: {},
+  marketLoaded: false,
+  tvl: 0,
+
   setWallet: (res, provider, signer) =>
     set({
       connector: res.connector,
@@ -78,6 +106,10 @@ export const useAppStore = create<AppState>((set) => ({
       currentPbtId: null,
       currentCoin: null,
       wBalance: {},
+      marketList: {},
+      mySaleList: {},
+      marketLoaded: false,
+      tvl: 0,
     }),
 
   clearWallet: () =>
@@ -94,6 +126,10 @@ export const useAppStore = create<AppState>((set) => ({
       currentPbtId: null,
       currentCoin: null,
       wBalance: {},
+      marketList: {},
+      mySaleList: {},
+      marketLoaded: false,
+      tvl: 0,
     }),
 
   setPbtItem: (id, patch) =>
@@ -117,10 +153,50 @@ export const useAppStore = create<AppState>((set) => ({
   setCurrentCoin: (index) => set({ currentCoin: index }),
   setWBalance: (index, value) =>
     set((state) => ({ wBalance: { ...state.wBalance, [index]: value } })),
+
+  upsertMarketItem: (item) =>
+    set((state) => {
+      const marketList = { ...state.marketList }
+      const mySaleList = { ...state.mySaleList }
+      if (item.market?.seller === '-self') mySaleList[item.id] = item
+      if (item.market && item.market.price !== '0.0') marketList[item.id] = item
+      return { marketList, mySaleList }
+    }),
+
+  removeMarketItem: (id) =>
+    set((state) => {
+      const patch: Partial<AppState> = {}
+      if (id in state.marketList) {
+        const marketList = { ...state.marketList }
+        delete marketList[id]
+        patch.marketList = marketList
+      } else if (id in state.mySaleList) {
+        const mySaleList = { ...state.mySaleList }
+        delete mySaleList[id]
+        patch.mySaleList = mySaleList
+      }
+      if (state.currentPbtId === id) patch.currentPbtId = null
+      return Object.keys(patch).length ? patch : state
+    }),
+
+  setMarketLoaded: (done) => set({ marketLoaded: done }),
+  setTvl: (tvl) => set({ tvl }),
 }))
+
+/** current NFT for the market page: own list first, then my sales, then market */
+export function selectMarketNft(state: AppState): PbtItem | null {
+  if (!state.currentPbtId) return null
+  const id = state.currentPbtId
+  return state.myList[id] ?? state.mySaleList[id] ?? state.marketList[id] ?? null
+}
 
 /** current NFT derived from myList + currentPbtId */
 export function selectCurrentNft(state: AppState): PbtItem | null {
   if (!state.currentPbtId) return null
   return state.myList[state.currentPbtId] ?? null
+}
+
+// dev-only debug handle for the browser console / e2e smoke tests
+if (import.meta.env.DEV) {
+  ;(window as unknown as Record<string, unknown>).__pbstore = useAppStore
 }

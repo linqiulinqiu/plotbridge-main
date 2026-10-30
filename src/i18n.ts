@@ -23,6 +23,10 @@ void i18next.use(initReactI18next).init({
   lng: initialLang(),
   fallbackLng: 'en',
   interpolation: { prefix: '{', suffix: '}', escapeValue: false },
+  // synchronous init: useTranslation must never suspend without a Suspense
+  // boundary, which would leave the whole tree uncommitted (blank page race)
+  initImmediate: false,
+  react: { useSuspense: false },
 })
 
 export function currentLang(): Lang {
