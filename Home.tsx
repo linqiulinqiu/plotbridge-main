@@ -20,7 +20,7 @@ export default function Home({session:s,en,revision}:ModuleProps){
  const steps=[
   {title:t('连接 BSC 钱包','Connect a BSC wallet'),text:t('浏览器扩展钱包即可，移动端暂不支持。','Any browser extension wallet works; mobile wallets are not supported yet.')},
   {title:t('选择 PBT 并绑定提现地址','Select a PBT and bind a withdrawal address'),text:t('PBT 是你的桥接身份，地址与它一一对应。','A PBT is your bridge identity and owns its own addresses.')},
-  {title:t('充值转账，提取烧币','Deposit by transfer, withdraw by burning'),text:t('WXCH 完整桥接，其余币种仅支持人工兑付提现。','WXCH is fully bridged; the other assets support manual redemption withdrawals only.')}];
+  {title:t('充值即转账，提现即烧币','Deposit by transfer, withdraw by burning'),text:t('WXCH 完整桥接，其余币种仅支持人工兑付提现。','WXCH is fully bridged; the other assets support manual redemption withdrawals only.')}];
 
  return <div className="stack stack-6">
   <section className="hero">

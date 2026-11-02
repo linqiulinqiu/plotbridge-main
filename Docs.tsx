@@ -49,9 +49,9 @@ export default function Docs({session:s,en}:ModuleProps){
   </>;
   if(page==='bridge')return <>
    <h1>{l['guide-bridge']}</h1>
-   <h2><a href="https://www.plotbridge.io/guidesub/towxcc/" target="_blank" rel="noreferrer">{l['guide-bridge1']} ?</a></h2>
-   <h2><a href="https://www.plotbridge.io/guidesub/toxcc/" target="_blank" rel="noreferrer">{l['guide-bridge3']} ?</a></h2>
-   <h2><a href="https://www.plotbridge.io/guidesub/upgradecoin/" target="_blank" rel="noreferrer">{l['guide-bridge5']} ?</a></h2>
+   <h2><a href="https://www.plotbridge.io/guidesub/towxcc/" target="_blank" rel="noreferrer">{l['guide-bridge1']}</a></h2>
+   <h2><a href="https://www.plotbridge.io/guidesub/toxcc/" target="_blank" rel="noreferrer">{l['guide-bridge3']}</a></h2>
+   <h2><a href="https://www.plotbridge.io/guidesub/upgradecoin/" target="_blank" rel="noreferrer">{l['guide-bridge5']}</a></h2>
   </>;
   if(page==='market')return <>
    <h1><a href="https://www.plotbridge.io/guidesub/marketguide/" target="_blank" rel="noreferrer">{l['guide-market']}</a></h1>

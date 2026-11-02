@@ -52,12 +52,12 @@ function App(){
  const closed=/presale|redeem/i.test(route+location.pathname);
 
  const NAV=[
-  {id:'bridge',label:'Bridge',hash:'#/bridge',on:lower.startsWith('#/bridge')},
-  {id:'swap',label:'Swap',hash:'#/swap',on:lower.startsWith('#/swap')},
-  {id:'market',label:'Market',hash:'#/market',on:lower.startsWith('#/market')},
-  {id:'stake',label:'Stake',hash:'#/stake',on:lower.startsWith('#/stake')},
   {id:'home',label:t('首页','Home'),hash:'#/home',on:lower.startsWith('#/home')},
-  {id:'token',label:'Token',hash:'#/token',on:lower.startsWith('#/token')||lower.startsWith('#/pbtoken')},
+  {id:'bridge',label:t('跨链桥','Bridge'),hash:'#/bridge',on:lower.startsWith('#/bridge')},
+  {id:'swap',label:t('兑换','Swap'),hash:'#/swap',on:lower.startsWith('#/swap')},
+  {id:'market',label:t('市场','Market'),hash:'#/market',on:lower.startsWith('#/market')},
+  {id:'stake',label:t('质押','Stake'),hash:'#/stake',on:lower.startsWith('#/stake')},
+  {id:'token',label:t('代币','Token'),hash:'#/token',on:lower.startsWith('#/token')||lower.startsWith('#/pbtoken')},
   {id:'doc',label:t('文档','Docs'),hash:'#/doc',on:lower.startsWith('#/doc')}];
 
  const account=s?s.account.slice(0,6)+'…'+s.account.slice(-4):t('连接钱包','Connect wallet');

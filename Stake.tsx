@@ -40,7 +40,7 @@ export default function Stake({session:s,en,run,busy,revision}:ModuleProps){
    {!loading&&pools.map(p=><Card key={p.i} className="pool"
     title={<span className="pool__title">#{p.i} {p.symbol}</span>}
     sub={t('追加质押、提取或领取后，合约会重新计算锁定时间。','Deposits, withdrawals and claims reset the contract lock time.')}
-    actions={<Badge tone="info">{t('锁定时间','Unlock time')}: {new Date(p.staked[1].toNumber()*1000).toLocaleString(en?'en':'zh-CN')}</Badge>}>
+    actions={<Badge tone="info">{t('解锁时间','Unlock time')}: {new Date(p.staked[1].toNumber()*1000).toLocaleString(en?'en':'zh-CN')}</Badge>}>
     <div className="stat-grid">
      <Stat label={t('余额','Balance')} value={<>{ethers.utils.formatUnits(p.balance,p.decimals)} <span className="subtle">{p.symbol}</span></>}/>
      <Stat label={t('已质押','Staked')} value={<>{ethers.utils.formatUnits(p.staked[0],p.decimals)} <span className="subtle">{p.symbol}</span></>}/>

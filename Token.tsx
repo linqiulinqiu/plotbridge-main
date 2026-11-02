@@ -11,6 +11,9 @@ import {Alert,Badge,Card,PageHead,Stat} from './ui';
 const tokenABI=['function symbol() view returns(string)','function decimals() view returns(uint8)','function totalSupply() view returns(uint256)'];
 const burnList=(recBurns as any).burns as any[],buyList=(recBurns as any).buys as any[];
 const stages=(stageInfo as any).stageInfo as any[];
+// Compact display for the supply cards: full precision stays available via title.
+const fmtSupply=(v:string)=>{const n=Number(v);return Number.isFinite(n)?n.toLocaleString('en-US',{maximumFractionDigits:2}):v};
+const shortAddr=(a:string)=>a.length>16?a.slice(0,8)+'…'+a.slice(-6):a;
 
 export default function Token({session:s,en,revision}:ModuleProps){
  const t=(a:string,b:string)=>en?b:a;
@@ -34,9 +37,9 @@ export default function Token({session:s,en,revision}:ModuleProps){
 
    {tokens.length>0&&<div className="token-stats">{tokens.map(token=>
     <div className="stat" key={token.address}>
-     <span className="stat__label">{token.symbol}</span>
-     <span className="stat__value">{token.supply}</span>
-     <a className="token-addr" target="_blank" rel="noreferrer" href={s!.config.chainExplorerUrl+'/token/'+token.address}>{token.address}</a>
+     <span className="stat__label">{token.symbol} · {t('发行总量','Total supply')}</span>
+     <span className="stat__value" title={token.supply}>{fmtSupply(token.supply)}</span>
+     <a className="token-addr" target="_blank" rel="noreferrer" title={token.address} href={s!.config.chainExplorerUrl+'/token/'+token.address}>{shortAddr(token.address)}</a>
     </div>)}</div>}
 
    <Card title="PBP" sub={l['token-role']}>
