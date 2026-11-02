@@ -50,3 +50,40 @@ assert.ok(chain.every(g=>g.base.startsWith('https://')),'gateways must be https'
 const carURLs=ipfs.carURLs('bafycid/meta.json');
 assert.ok(carURLs.every(u=>u.endsWith('/ipfs/bafycid/meta.json')));
 console.log('Gateway chain configuration passed');
+
+/* Bundled cache: complete assets, local-first, miss/failure fallback. */
+(async()=>{
+ const index=require('../shared/ipfs-cache.json');
+ assert.equal(Object.keys(index).length,158);
+ for(const [key,file] of Object.entries(index)){
+  const bytes=fs.readFileSync(require('node:path').join(__dirname,'../public',file));
+  assert.ok(bytes.length>0,key);
+  if(key.endsWith('.json'))JSON.parse(bytes.toString());
+  else assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+ }
+ const originalFetch=global.fetch,originalDocument=global.document;
+ global.document={baseURI:'https://example.com/project/'};
+ const key=Object.keys(index).find(k=>k.endsWith('.json'));
+ const local='https://example.com/project/'+index[key];
+ const bytes=fs.readFileSync(require('node:path').join(__dirname,'../public',index[key]));
+ try{
+  let calls=[];
+  global.fetch=async url=>{calls.push(url);return new Response(bytes,{headers:{'content-type':'application/json'}})};
+  const result=await ipfs.fetchIPFS('ipfs://'+key,new AbortController().signal);
+  assert.deepEqual(calls,[local]);assert.deepEqual(Buffer.from(result.bytes),bytes);
+  for(const mode of ['404','html','miss']){
+   calls=[];
+   global.fetch=async url=>{
+    calls.push(url);
+    if(url===local)return mode==='404'?new Response('',{status:404}):new Response('<html>',{headers:{'content-type':'text/html'}});
+    return new Response(bytes,{headers:{'content-type':'application/json'}});
+   };
+   const uri=mode==='miss'?'ipfs://bafyunknowncachecidvalue/metadata.json':'ipfs://'+key;
+   await ipfs.fetchIPFS(uri,new AbortController().signal);
+   assert.ok(calls.some(u=>u.startsWith('https://gateway.pinata.cloud/')));
+   if(mode==='miss')assert.ok(calls.every(u=>!u.startsWith('https://example.com/')));
+   else assert.equal(calls[0],local);
+  }
+ }finally{global.fetch=originalFetch;global.document=originalDocument}
+ console.log('Bundled IPFS cache assets, local-first reads, and network fallbacks passed');
+})().catch(error=>{console.error(error);process.exitCode=1});

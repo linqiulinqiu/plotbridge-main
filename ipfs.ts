@@ -1,4 +1,5 @@
 import ipfsConfig from './shared/ipfs.json';
+import cacheIndex from './shared/ipfs-cache.json';
 
 /* IPFS access layer.
  *
@@ -174,6 +175,21 @@ export async function fetchIPFS(uri: string, signal: AbortSignal): Promise<IpfsB
     return { bytes: await readBytes(response), contentType: response.headers.get('content-type') || guessType(uri), via: uri };
   }
   const path = ipfsPath(uri);
+  // Only request files listed in the bundled cache; unknown CIDs go straight
+  // to IPFS. A broken deployment must not prevent the network fallback.
+  const cached = (cacheIndex as Record<string, string>)[path.split(/[?#]/)[0]];
+  if (cached) {
+    try {
+      const url = new URL(cached, document.baseURI).href;
+      const response = await fetch(url, { signal: AbortSignal.any([signal, AbortSignal.timeout(GATEWAY_TIMEOUT)]) });
+      if (!response.ok) throw Error('HTTP ' + response.status);
+      const contentType = response.headers.get('content-type') || '';
+      if (/text\/html/i.test(contentType)) throw Error('HTML instead of cached content');
+      return { bytes: await readBytes(response), contentType: contentType || guessType(path), via: url };
+    } catch (error) {
+      if (signal.aborted) throw error;
+    }
+  }
   const targets: { url: string; mode: GatewayMode }[] = [];
   for (const g of gateways()) targets.push({ url: g.base + path, mode: g.mode });
   for (const u of plainURLs(path)) if (!targets.some(t => t.url === u)) targets.push({ url: u, mode: 'plain' });
