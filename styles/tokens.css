@@ -1,0 +1,134 @@
+/* Design tokens. Every colour, space, radius and type size used by the app
+   resolves through these variables, so a theme change is a single-file edit.
+   Light is the base declaration; dark overrides the same names. */
+:root{
+  color-scheme:light;
+
+  /* Brand. Green is the PlotBridge identity colour and is never re-hued. */
+  --brand-100:#E4F7ED;
+  --brand-200:#B6EAD0;
+  --brand-400:#2FBF7C;
+  --brand-500:#1E9E63;
+  --brand-600:#178050;
+  --brand-700:#0F5C39;
+  --brand-glow:rgba(30,158,99,.16);
+
+  /* Surfaces */
+  --bg:#F5F8F6;
+  --bg-elev:#FFFFFF;
+  --bg-elev-2:#F0F5F2;
+  --bg-inset:#E9F0EB;
+
+  /* Lines */
+  --line:#DCE5E0;
+  --line-strong:#C3D2C9;
+  --line-hi:#9DB6A8;
+
+  /* Text */
+  --text:#0F1E18;
+  --text-muted:#55665D;
+  --text-subtle:#78887F;
+  --text-inverse:#FFFFFF;
+
+  /* Semantic state */
+  --danger:#CE3F4B;
+  --danger-bg:#FCECEE;
+  --danger-line:#F3C9CD;
+  --warning:#9A6708;
+  --warning-bg:#FDF4E2;
+  --warning-line:#EFDCB4;
+  --success:#17794A;
+  --success-bg:#E4F5EB;
+  --success-line:#BFE4CE;
+  --info:#1B6CA8;
+  --info-bg:#E8F2FB;
+  --info-line:#C4DDF1;
+
+  /* Effects */
+  --shadow-sm:0 1px 2px rgba(15,30,24,.06);
+  --shadow-md:0 6px 20px rgba(15,30,24,.08);
+  --shadow-lg:0 20px 56px rgba(15,30,24,.14);
+  --ring:0 0 0 3px rgba(30,158,99,.28);
+  --ring-danger:0 0 0 3px rgba(206,63,75,.24);
+
+  /* Radius */
+  --r-xs:6px;
+  --r-sm:9px;
+  --r-md:13px;
+  --r-lg:18px;
+  --r-xl:24px;
+  --r-full:999px;
+
+  /* Spacing scale */
+  --s-1:4px;
+  --s-2:8px;
+  --s-3:12px;
+  --s-4:16px;
+  --s-5:20px;
+  --s-6:24px;
+  --s-8:32px;
+  --s-10:40px;
+  --s-12:48px;
+  --s-16:64px;
+
+  /* Typography */
+  --font-sans:"Inter var","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --t-xs:12px;
+  --t-sm:13px;
+  --t-base:15px;
+  --t-md:17px;
+  --t-lg:21px;
+  --t-xl:27px;
+  --t-2xl:36px;
+  --t-3xl:46px;
+
+  /* Layout */
+  --maxw:1180px;
+  --header-h:62px;
+}
+
+:root[data-theme=dark]{
+  color-scheme:dark;
+
+  --brand-100:#0E2A1D;
+  --brand-200:#173D2A;
+  --brand-400:#4FE39B;
+  --brand-500:#3DD68C;
+  --brand-600:#2FBF7C;
+  --brand-700:#1E9E63;
+  --brand-glow:rgba(61,214,140,.14);
+
+  --bg:#080C0A;
+  --bg-elev:#0E1512;
+  --bg-elev-2:#131D18;
+  --bg-inset:#0A110E;
+
+  --line:#1B2721;
+  --line-strong:#27352E;
+  --line-hi:#3A4C42;
+
+  --text:#E9F2EC;
+  --text-muted:#93A69C;
+  --text-subtle:#6D8076;
+  --text-inverse:#08120D;
+
+  --danger:#F2717C;
+  --danger-bg:#241315;
+  --danger-line:#46242A;
+  --warning:#E0AC4C;
+  --warning-bg:#211A0F;
+  --warning-line:#3E321A;
+  --success:#3DD68C;
+  --success-bg:#0E2419;
+  --success-line:#1D4534;
+  --info:#63AEE8;
+  --info-bg:#0F1E2A;
+  --info-line:#1D3A50;
+
+  --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  --shadow-md:0 8px 24px rgba(0,0,0,.45);
+  --shadow-lg:0 24px 64px rgba(0,0,0,.6);
+  --ring:0 0 0 3px rgba(61,214,140,.3);
+  --ring-danger:0 0 0 3px rgba(242,113,124,.26);
+}
