@@ -1,1 +1,15 @@
-["https://ipfs.filebase.io/ipfs/", "https://gateway.pinata.cloud/ipfs/"]
+{
+  "selfHosted": "",
+  "gateways": [
+    { "base": "https://gateway.pinata.cloud/ipfs/", "mode": "plain" },
+    { "base": "https://api.filebase.io/ipfs/", "mode": "plain" },
+    { "base": "https://ipfs.io/ipfs/", "mode": "plain" },
+    { "base": "https://a-fil-http.aur.lu/ipfs/", "mode": "car" }
+  ],
+  "subdomainHosts": [
+    "inbrowser.link",
+    "ipfs.io",
+    "dweb.link",
+    "w3s.link"
+  ]
+}

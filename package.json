@@ -7,7 +7,7 @@
     "serve": "vite",
     "build": "tsc -p tsconfig.json && vite build",
     "check": "tsc -p tsconfig.json",
-    "test": "node tests/bridge.cjs && node tests/modules.cjs && node tests/market-render.cjs && node tests/docs.cjs"
+    "test": "node tests/bridge.cjs && node tests/modules.cjs && node tests/market-render.cjs && node tests/ipfs.cjs && node tests/docs.cjs"
   },
   "dependencies": {
     "ethers": "^5.7.2",

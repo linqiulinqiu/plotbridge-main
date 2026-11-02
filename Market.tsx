@@ -4,6 +4,7 @@ import {contract,owned,metadata,assertSession} from './bridge';
 import {approveExact,erc20,parseAmount,confirmed} from './transactions';
 import {ModuleProps} from './types';
 import {Alert,Badge,Button,Card,EmptyState,Field,IconBox,IconSparkle,Modal,PageHead,Segmented,Skeleton} from './ui';
+import {Media} from './media';
 
 const pbtABI=['function balanceOf(address) view returns(uint256)','function tokenOfOwnerByIndex(address,uint256) view returns(uint256)','function mintFee() view returns(address,uint256)','function mintables() view returns(uint256)','function mint() payable','function safeTransferFrom(address,address,uint256)','function burn(uint256)'];
 const marketABI=['function getSaleInfo(address,uint256) view returns(address,uint256,string,string)','function buy(address,uint256) payable','function offSale(address,uint256)','function onSale(address,uint256,address,uint256,string)','function setSellerName(string)'];
@@ -96,7 +97,7 @@ export default function Market({session:s,en,run,busy,revision}:ModuleProps){
 
    {!loading&&items.length>0&&<div className="market-grid">{items.map(item=>
     <article className="market-card" key={item.id}>
-     {item.meta&&<img className="market-card__media" src={item.meta.images[0]} alt={item.meta.name} loading="lazy" referrerPolicy="no-referrer"/>}
+     {item.meta&&<Media uris={item.meta.images} alt={item.meta.name} className="market-card__media" placeholder={t('图片暂不可用','Image unavailable')} loading={t('图片加载中…','Loading image…')}/>}
      <div className="market-card__title">PBT #{item.id}</div>
      {item.sale&&<div className="market-card__price">{item.sale.text}{item.sale.desc?' · '+item.sale.desc:''}</div>}
      <div className="market-card__actions">

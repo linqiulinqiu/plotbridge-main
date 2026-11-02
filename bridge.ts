@@ -1,6 +1,6 @@
 import {ethers, BigNumber as BN} from 'ethers';
 import networks from './networks.json';
-import gateways from './shared/ipfs.json';
+import * as ipfs from './ipfs';
 import coins from './shared/coins.json';
 // Coin policy has a single source: shared/coins.json (replaces the Vue WCOIN_POLICY table).
 // symbol is the wrapped token (contract lookup key); native is the underlying coin symbol.
@@ -45,23 +45,22 @@ export async function bindWithdrawal(s:Session,pbt:string,coin:number,hash:strin
  const feeToken=new ethers.Contract(currency,['function allowance(address,address) view returns(uint256)','function approve(address,uint256) returns(bool)'],s.provider.getSigner());const allowance:BN=await feeToken.allowance(s.account,p.address);if(allowance.lt(amount)){if(!allowance.isZero())await approve(feeToken,BN.from(0));await approve(feeToken,amount)}
  }}await assertSession(s);return p.bindWithdrawPuzzleHash(pbt,coin,hash,{value});
 }
-export function mediaURLs(uri:string){
- let path:string|undefined;
- if(uri.startsWith('ipfs://'))path=uri.slice(7).replace(/^ipfs\//,'');
- else {const url=new URL(uri);if(url.protocol!=='https:')throw Error('Unsupported metadata URL');
- const legacy=['cf-ipfs.com','cloudflare-ipfs.com','dweb.link','ipfs.io','nftstorage.link','infura-ipfs.io'];
- if(legacy.includes(url.hostname)&&url.pathname.startsWith('/ipfs/'))path=url.pathname.slice(6)+url.search;
- else return [url.href];}
- if(!path||path.startsWith('/')||path.includes('..'))throw Error('Invalid IPFS path');
- return gateways.map(base=>base+path);
+// IPFS access lives in ./ipfs.ts: the gateway chain is configured in shared/ipfs.json and
+// probed by tools/ipfs-gateway-check.js.
+export function mediaURLs(uri:string):string[]{
+ if(!uri)return [];
+ if(uri.startsWith('data:image/'))return [uri];
+ if(ipfs.isDirectURL(uri))return [uri];
+ try{return ipfs.plainURLs(ipfs.ipfsPath(uri))}
+ catch(e:any){if(/^https:\/\//i.test(uri))return [uri];throw e}
 }
 export async function metadata(s:Session,id:string,signal:AbortSignal){
  const ctr=contract(s,'pbt',['function tokenURI(uint256) view returns(string)']);const uri:string=await ctr.tokenURI(id);
- for(const url of mediaURLs(uri)){
-  if(signal.aborted)throw Error('Aborted');
-  try{const response=await fetch(url,{signal:AbortSignal.any([signal,AbortSignal.timeout(8000)])});if(!response.ok)throw Error('Metadata HTTP '+response.status);const meta=await response.json();return {name:typeof meta.name==='string'?meta.name:'PBT #'+id,images:mediaURLs(String(meta.image))}}catch(e){if(signal.aborted)throw e}
- }
- throw Error('Metadata unavailable');
+ const {bytes}=await ipfs.fetchIPFS(uri,signal);
+ const meta=JSON.parse(new TextDecoder().decode(bytes));
+ const images:string[]=[];
+ if(meta&&typeof meta.image==='string'&&meta.image)images.push(meta.image);
+ return {name:meta&&typeof meta.name==='string'&&meta.name?meta.name:'PBT #'+id,images};
 }
 export function pbtSetup(depositHash:string,withdrawHash:string){
  const deposit=depositHash!==ethers.constants.HashZero,withdraw=withdrawHash!==ethers.constants.HashZero;

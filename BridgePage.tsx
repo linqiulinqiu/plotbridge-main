@@ -6,6 +6,7 @@ import {
  Alert,Badge,Button,Card,CopyField,EmptyState,Field,IconCheck,IconRefresh,IconSparkle,
  Modal,PageHead,Segmented,Skeleton,Stat,Steps
 } from './ui';
+import {Media} from './media';
 
 type Setup={deposit:boolean;withdraw:boolean;state:'ready'|'partial'|'new'};
 
@@ -13,14 +14,14 @@ function PBTCard({session,id,selected,choose,en,disabled,asset,revision}:{sessio
  const t=(zh:string,eng:string)=>en?eng:zh;
  const [setup,setSetup]=useState<Setup>(),[statusError,setStatusError]=useState(false),[statusRetry,setStatusRetry]=useState(0);
  useEffect(()=>{let active=true;setSetup(undefined);setStatusError(false);bridge.pbtStatus(session,id,asset.id).then(value=>{if(active)setSetup(value)}).catch(()=>{if(active)setStatusError(true)});return()=>{active=false}},[session,id,statusRetry,asset.id,revision]);
- const [meta,setMeta]=useState<{name:string;images:string[]}>(),[image,setImage]=useState(0),[failed,setFailed]=useState(false),[retry,setRetry]=useState(0);
- useEffect(()=>{const controller=new AbortController();setMeta(undefined);setImage(0);setFailed(false);bridge.metadata(session,id,controller.signal).then(m=>{if(!controller.signal.aborted)setMeta(m)}).catch(()=>{if(!controller.signal.aborted)setFailed(true)});return()=>controller.abort()},[session,id,retry]);
+ const [meta,setMeta]=useState<{name:string;images:string[]}>(),[failed,setFailed]=useState(false),[retry,setRetry]=useState(0);
+ useEffect(()=>{const controller=new AbortController();setMeta(undefined);setFailed(false);bridge.metadata(session,id,controller.signal).then(m=>{if(!controller.signal.aborted)setMeta(m)}).catch(()=>{if(!controller.signal.aborted)setFailed(true)});return()=>controller.abort()},[session,id,retry]);
  const tone=setup?(setup.state==='ready'?'ready':setup.state==='partial'?'partial':'new'):'unknown';
  return <article className="pbt-card">
   <button type="button" className="pbt-choice" disabled={disabled} aria-pressed={selected} onClick={choose}>
-   {meta&&image<meta.images.length
-    ?<img className="pbt-choice__media" src={meta.images[image]} alt={meta.name} loading="lazy" referrerPolicy="no-referrer" onError={()=>setImage(i=>i+1)}/>
-    :<span className="pbt-placeholder">{failed||meta?(en?'Image unavailable':'图片暂不可用'):(en?'Loading image…':'图片加载中…')}</span>}
+   {meta
+    ?<Media uris={meta.images} alt={meta.name} className="pbt-choice__media" placeholder={en?'Image unavailable':'图片暂不可用'} loading={en?'Loading image…':'图片加载中…'} onExhausted={()=>setFailed(true)}/>
+    :<span className="pbt-placeholder">{failed?(en?'Image unavailable':'图片暂不可用'):(en?'Loading image…':'图片加载中…')}</span>}
    <span className="pbt-choice__title"><span>PBT #{id}</span>{selected&&<IconCheck/>}</span>
    <span className="pbt-choice__meta">
     <Badge tone={tone}>{setup?(setup.state==='ready'?(en?'Ready':'已就绪'):setup.state==='partial'?(en?'Partial':'部分设置'):(en?'Not set up':'尚未设置')):statusError?(en?'Unavailable':'状态读取失败'):(en?'Checking…':'检查中…')}</Badge>
@@ -29,7 +30,7 @@ function PBTCard({session,id,selected,choose,en,disabled,asset,revision}:{sessio
    </span>
   </button>
   {statusError&&<Button size="sm" variant="ghost" icon={<IconRefresh/>} onClick={()=>setStatusRetry(n=>n+1)}>{en?'Retry status':'重试状态'}</Button>}
-  {(failed||(meta&&image>=meta.images.length))&&<Button size="sm" variant="ghost" icon={<IconRefresh/>} onClick={()=>setRetry(n=>n+1)}>{en?'Retry image':'重试图片'}</Button>}
+  {failed&&<Button size="sm" variant="ghost" icon={<IconRefresh/>} onClick={()=>setRetry(n=>n+1)}>{en?'Retry image':'重试图片'}</Button>}
  </article>;
 }
 

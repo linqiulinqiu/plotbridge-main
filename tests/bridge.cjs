@@ -1,4 +1,5 @@
 const fs=require('node:fs'),ts=require('typescript'),assert=require('node:assert/strict'),Module=require('node:module');
+require.extensions['.ts']=(m,file)=>m._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,esModuleInterop:true}}).outputText,file);
 const m=new Module(require('node:path').resolve('bridge.ts'),module);m.filename=require('node:path').resolve('bridge.ts');m.paths=module.paths;m._compile(ts.transpileModule(fs.readFileSync(m.filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,esModuleInterop:true}}).outputText,m.filename);
 const {quote,assertSession}=m.exports,{BigNumber:B,utils}=require('ethers');const u=x=>utils.parseUnits(x,18),fees=[B.from(30),u('0.01')],limits=[u('0.01'),u('1000000')];
 assert.equal(quote('1',18,fees,limits).receive.toString(),u('0.99').toString());assert.equal(quote('100',18,fees,limits).fee.toString(),u('0.3').toString());assert.equal(quote('900719.925474099312345678',18,fees,limits).amount.toString(),'900719925474099312345678');
@@ -13,6 +14,38 @@ for(const input of ['-1','1e3','NaN','0','0.001','1.0000000000000000001'])assert
  w=wallet('0x1',false,true);await assert.rejects(ensureBNBChain(w),{code:4001});assert.equal(w.calls.some(c=>c.method==='wallet_addEthereumChain'),false);
  console.log('BNB network: already connected, automatic switch, add then switch, rejection passed');
 })().catch(e=>{console.error(e);process.exitCode=1});
-const urls=m.exports.mediaURLs('ipfs://ipfs/bafytest/image.png');assert.equal(urls[0],'https://ipfs.filebase.io/ipfs/bafytest/image.png');assert.equal(urls[1],'https://gateway.pinata.cloud/ipfs/bafytest/image.png');assert.deepEqual(m.exports.mediaURLs('https://cf-ipfs.com/ipfs/bafytest/image.png'),urls);assert.throws(()=>m.exports.mediaURLs('javascript:alert(1)'));console.log('IPFS gateway mapping and legacy URL migration passed');
+const urls=m.exports.mediaURLs('ipfs://ipfs/bafytest/image.png');
+assert.ok(urls.length>=2,'gateway chain should offer several candidates');
+assert.ok(urls.every(u=>u.startsWith('https://')),'every candidate must be https');
+assert.equal(urls[0],'https://gateway.pinata.cloud/ipfs/bafytest/image.png');
+assert.ok(urls.includes('https://api.filebase.io/ipfs/bafytest/image.png'));
+assert.ok(urls.includes('https://bafytest.ipfs.ipfs.io/image.png'),'subdomain gateway form missing');
+assert.deepEqual(m.exports.mediaURLs('https://cf-ipfs.com/ipfs/bafytest/image.png'),urls);
+assert.deepEqual(m.exports.mediaURLs('https://nft.storage/ipfs/bafytest/image.png'),urls);
+assert.deepEqual(m.exports.mediaURLs(''),[]);
+assert.deepEqual(m.exports.mediaURLs('data:image/png;base64,AAA'),['data:image/png;base64,AAA']);
+assert.deepEqual(m.exports.mediaURLs('ipfs://ipfs/bafytest/image.png').filter(u=>u.includes('bafytest')),urls.filter(u=>u.includes('bafytest')));
+assert.throws(()=>m.exports.mediaURLs('javascript:alert(1)'));
+assert.throws(()=>m.exports.mediaURLs('ipfs://../etc/passwd'));
+assert.throws(()=>m.exports.mediaURLs('ipfs://ipfs//etc/passwd'));
+console.log('IPFS gateway chain, legacy URL migration and input rejection passed');
 const zero='0x'+'00'.repeat(32),bound='0x'+'01'.repeat(32);assert.equal(m.exports.pbtSetup(zero,zero).state,'new');assert.deepEqual(m.exports.pbtSetup(bound,zero),{deposit:true,withdraw:false,state:'partial'});assert.deepEqual(m.exports.pbtSetup(zero,bound),{deposit:false,withdraw:true,state:'partial'});assert.equal(m.exports.pbtSetup(bound,bound).state,'ready');console.log('PBT address states: new, deposit only, withdrawal only, ready passed');
 const depositBounds=m.exports.depositLimits(12),depositFee=[B.from(30),utils.parseUnits('0.01',12)];for(const amount of ['1','49.999999999999','50'])assert.doesNotThrow(()=>m.exports.quote(amount,12,depositFee,depositBounds));assert.throws(()=>m.exports.quote('50.000000000001',12,depositFee,depositBounds));console.log('XCH deposit cap: below 50 and exactly 50 accepted, above 50 rejected');
+// Gateway fallback: a dead gateway or a non-JSON answer must not stop the chain.
+(async()=>{
+ const original=global.fetch,ctrl=new AbortController(),seen=[];
+ const ipfs=require('../ipfs.ts');
+ global.fetch=async url=>{seen.push(String(url));
+  const u=String(url);
+  if(u.includes('pinata'))throw Error('gateway down');
+  if(u.includes('dweb'))return {ok:true,status:200,headers:{get:()=>'text/html'},arrayBuffer:async()=>new TextEncoder().encode('<html>service worker bootstrap</html>').buffer};
+  return {ok:true,status:200,headers:{get:()=>'application/json'},arrayBuffer:async()=>new TextEncoder().encode('{"name":"Plot PBT","image":"ipfs://bafyimg/image.png"}').buffer};
+ };
+ const r=await ipfs.fetchIPFS('ipfs://bafytest/metadata.json',ctrl.signal);
+ assert.equal(new TextDecoder().decode(r.bytes),'{"name":"Plot PBT","image":"ipfs://bafyimg/image.png"}');
+ assert.ok(seen.length>1,'every candidate should be tried');
+ global.fetch=async()=>{throw Error('all down')};
+ await assert.rejects(ipfs.fetchIPFS('ipfs://bafytest/metadata.json',ctrl.signal),/IPFS fetch failed/);
+ global.fetch=original;
+ console.log('IPFS gateway fallback: dead gateway skipped, HTML bootstrap rejected, healthy gateway used');
+})().catch(e=>{console.error(e);process.exitCode=1});
