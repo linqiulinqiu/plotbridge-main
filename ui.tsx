@@ -77,13 +77,14 @@ export function Field({label,hint,error,children,action}:{label?:React.ReactNode
 export function CopyField({value,placeholder,label,onError}:{value?:string;placeholder?:string;label?:string;onError?:(m:string)=>void}){
  const [copied,setCopied]=useState(false);
  const shown=value||'';
+ const display=shown.length>32?shown.slice(0,14)+'…'+shown.slice(-10):shown;
  async function copy(){
   if(!shown)return;
   try{await navigator.clipboard.writeText(shown);setCopied(true);setTimeout(()=>setCopied(false),1600)}
   catch(e:any){onError?onError(e.message):void 0}
  }
  return <div className="copy-field">
-  <span className={'copy-field__value'+(shown?'':' copy-field__value--empty')} title={shown||placeholder}>{shown||placeholder}</span>
+  <button type="button" className={'copy-field__value'+(shown?'':' copy-field__value--empty')} title={shown||placeholder} disabled={!shown} onClick={copy} aria-label={label||'Copy full address'}>{display||placeholder}</button>
   <Button size="sm" variant="secondary" icon={copied?<IconCheck/>:<IconCopy/>} onClick={copy} disabled={!shown} aria-label={label||'copy'}>{copied?(label?'Copied':'已复制'):(label?'Copy':'复制')}</Button>
  </div>;
 }

@@ -49,3 +49,6 @@ const depositBounds=m.exports.depositLimits(12),depositFee=[B.from(30),utils.par
  global.fetch=original;
  console.log('IPFS gateway fallback: dead gateway skipped, HTML bootstrap rejected, healthy gateway used');
 })().catch(e=>{console.error(e);process.exitCode=1});
+
+assert.throws(()=>quote('100',18,fees,[u('1'),u('10')],u('2')),/Insufficient balance/);
+assert.throws(()=>quote('100',18,fees,[u('1'),u('10')],u('200')),/Outside bridge limits/);

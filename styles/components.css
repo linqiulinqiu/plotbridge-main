@@ -227,3 +227,10 @@
   .modal__foot{flex-direction:column-reverse}
   .modal__foot .btn{width:100%}
 }
+
+/* Long addresses must stay within their grid and alert containers. */
+.copy-field{min-width:0;max-width:100%}
+.copy-field__value{text-align:left}
+.copy-field .btn{flex-shrink:0}
+.alert__body{min-width:0;overflow-wrap:anywhere}
+.alert__body .copy-field{margin-top:var(--s-3)}

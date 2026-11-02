@@ -33,8 +33,8 @@ export default function Swap({session:s,en,run,busy,revision}:ModuleProps){
 
   {!s&&<Card><EmptyState icon={<IconSparkle/>} title={t('请先连接钱包','Connect your wallet')} text={t('连接后可查看余额并发起兑换。','Connect a wallet to see balances and swap.')}/></Card>}
 
-  {s&&<div className="split">
-   <Card title={t('交易参数','Trade parameters')}>
+  {s&&<div className="split swap-layout">
+   <Card className="swap-form" title={t('交易参数','Trade parameters')}>
     <Field label={t('支付资产','Pay asset')}>
      <select className="select" disabled={busy} value={from} onChange={e=>F(e.target.value)}>{names.map(n=><option key={n} value={n}>{n}</option>)}</select>
     </Field>

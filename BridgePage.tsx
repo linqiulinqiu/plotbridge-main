@@ -36,12 +36,13 @@ function PBTCard({session,id,selected,choose,en,disabled,asset,revision}:{sessio
 
 export default function Bridge({session:s,en,run,busy,revision}:ModuleProps){
  const t=(zh:string,eng:string)=>en?eng:zh;
+ const [step,setStep]=useState(0);
  const [ids,setIds]=useState<string[]>([]),[id,setId]=useState(''),[coin,setCoin]=useState(bridge.assets[0]);
  const [mode,setMode]=useState<'deposit'|'withdraw'>('deposit'),[data,setData]=useState<any>(),[amount,setAmount]=useState('');
  const [dest,setDest]=useState(''),[error,setError]=useState(''),[listLoading,setListLoading]=useState(false);
  const [loading,setLoading]=useState(false),[editingAddress,setEditingAddress]=useState(false),[confirming,setConfirming]=useState(false),[tick,setTick]=useState(0);
 
- useEffect(()=>{let active=true;setIds([]);setId('');setError('');if(!s)return;setListLoading(true);
+ useEffect(()=>{let active=true;setIds([]);setId('');setStep(0);setError('');if(!s)return;setListLoading(true);
   bridge.owned(s).then(list=>{if(active)setIds(list)}).catch(e=>{if(active)setError(e.message)}).finally(()=>{if(active)setListLoading(false)});
   return()=>{active=false};
  },[s,revision,tick]);
@@ -62,8 +63,7 @@ export default function Bridge({session:s,en,run,busy,revision}:ModuleProps){
  const fmt=(v:BN)=>ethers.utils.formatUnits(v,data.decimals);
  let q:ReturnType<typeof bridge.quote>|undefined,invalid='';
  if(data&&amount){try{
-  q=bridge.quote(amount,data.decimals,mode==='deposit'?data.depFee:data.withFee,mode==='deposit'?bridge.depositLimits(data.decimals):data.limits);
-  if(mode==='withdraw'&&q.amount.gt(data.balance))throw Error(t('余额不足','Insufficient balance'));
+  q=bridge.quote(amount,data.decimals,mode==='deposit'?data.depFee:data.withFee,mode==='deposit'?bridge.depositLimits(data.decimals):data.limits,mode==='withdraw'?data.balance:undefined);
  }catch(e:any){q=undefined;invalid=e.message}}
 
  const pickCoin=(symbol:string)=>{const next=bridge.policy(symbol);setCoin(next);setMode(next.bridge?'deposit':'withdraw')};
@@ -88,34 +88,37 @@ export default function Bridge({session:s,en,run,busy,revision}:ModuleProps){
 
   {coin.withdrawOnly&&<div style={{marginBottom:'var(--s-5)'}}><Alert tone="warning" title={t('该币种充值已关闭，仅支持提现','Deposits are closed for this asset; withdrawals only')}>{t('销毁是兑付申请，需团队人工处理，链上确认不代表已到账。','Burning is a redemption request handled by the team. On-chain confirmation does not mean the funds have arrived.')}</Alert></div>}
 
-  <Steps active={!id?0:mode==='deposit'?1:2} items={[t('选择 PBT','Select PBT'),t('桥接地址','Bridge address'),t('金额与提交','Amount and submit')]}/>
+  <div className="bridge-tabs" aria-label={t('桥接步骤','Bridge steps')}>
+   {[t('1. 选择 PBT','1. Select PBT'),t('2. 桥接地址','2. Bridge address'),mode==='deposit'?t('3. 费用计算','3. Fee calculator'):t('3. 金额与提交','3. Amount and submit')].map((label,i)=><button key={i} type="button" aria-current={step===i?'step':undefined} disabled={busy||(i>0&&!id)||(i===2&&!data)} onClick={()=>setStep(i)}>{label}{i===0&&id?` (#${id})`:null}</button>)}
+  </div>
 
-  <div className="stack stack-5">
-   <Card title={t('1. 选择 PBT','1. Select a PBT')} sub={t('每个 PBT 拥有独立的充值与提现地址。','Each PBT carries its own deposit and withdrawal addresses.')} actions={<Button size="sm" variant="ghost" icon={<IconRefresh/>} disabled={busy} onClick={()=>setTick(n=>n+1)}>{t('刷新','Refresh')}</Button>}>
+  <div className="bridge-workspace">
+   {step===0&&<Card title={t('1. 选择 PBT','1. Select a PBT')} sub={t('每个 PBT 拥有独立的充值与提现地址。','Each PBT carries its own deposit and withdrawal addresses.')} actions={<Button size="sm" variant="ghost" icon={<IconRefresh/>} disabled={busy} onClick={()=>setTick(n=>n+1)}>{t('刷新','Refresh')}</Button>}>
     {listLoading&&<div className="stack stack-3"><Skeleton variant="card"/><Skeleton variant="card"/></div>}
-    {!listLoading&&ids.length>0&&<div className="pbt-grid">{ids.map(pbt=><PBTCard key={pbt} asset={coin} revision={revision+tick} session={s} id={pbt} selected={id===pbt} disabled={busy} en={en} choose={()=>setId(pbt)}/>)}</div>}
+    {!listLoading&&ids.length>0&&<div className="pbt-grid">{ids.map(pbt=><PBTCard key={pbt} asset={coin} revision={revision+tick} session={s} id={pbt} selected={id===pbt} disabled={busy} en={en} choose={()=>{setId(pbt);setStep(1)}}/>)}</div>}
     {!listLoading&&!ids.length&&<EmptyState title={t('尚无可用 PBT','No PBT available')} text={t('当前钱包没有 PBT。可稍后刷新，或前往市场铸造。','This wallet holds no PBT. Refresh later, or mint one in the market.')} action={<Button variant="secondary" icon={<IconRefresh/>} onClick={()=>setTick(n=>n+1)}>{t('刷新','Refresh')}</Button>}/>}
-   </Card>
+   </Card>}
 
-   {id&&<Card title={t('2. 桥接地址','2. Bridge address')} sub={t('复制地址后到对应钱包发起转账。','Copy the address and transfer from the matching wallet.')}>
+   {id&&step===1&&<div className="bridge-address-panel"><Card title={t('2. 桥接地址','2. Bridge address')} sub={t('已选择 PBT #','Selected PBT #')+id+' · '+t('复制地址后到对应钱包发起转账。','Copy the address and transfer from the matching wallet.')}>
     <Field label={t('资产','Asset')}>
      <div className="row">
-      <select className="select" disabled={busy} value={coin.symbol} onChange={e=>pickCoin(e.target.value)}>{bridge.assets.map(a=><option key={a.id} value={a.symbol}>{a.symbol} · {a.name}</option>)}</select>
+      <select className="select" disabled={busy} value={coin.symbol} onChange={e=>pickCoin(e.target.value)}>{bridge.assets.map(a=><option key={a.id} value={a.symbol}>{a.symbol} · {a.name} · {a.bridge?t('完整桥接','Full bridge'):t('仅提现 · 人工兑付','Withdraw only · Manual redemption')}</option>)}</select>
       <img src={'/image/'+coin.symbol.toLowerCase()+'.png'} alt={coin.symbol} width={28} height={28}/>
      </div>
     </Field>
 
     {loading&&<Skeleton variant="title"/>}
-    {!loading&&data&&mode==='deposit'&&<>
+    <div className="bridge-addresses">
+    {!loading&&data&&coin.bridge&&<section>
      <Field label={t('充值地址','Deposit address')} hint={t('向该地址转账即可充值，无需在网页提交交易。','Send funds to this address to deposit; no web transaction is required.')}>
       <CopyField value={data.deposit} placeholder={t('尚未分配','Not assigned yet')} label={t('复制地址','Copy address')} onError={()=>setError(t('复制失败，请手动复制','Copy failed; copy manually'))}/>
      </Field>
      {!data.deposit&&<Button variant="primary" disabled={busy||data.available.isZero()} onClick={()=>run(()=>bridge.puzzle(s!).bindDepositPuzzleHash(id,coin.id))}>{t('申请充值地址','Request deposit address')}</Button>}
      <div style={{marginTop:'var(--s-4)'}}><Alert tone="info" title={t('单次充值上限 50 XCH','Maximum 50 XCH per deposit')}>{t('超出额度后处理时间会明显增加，请耐心等待。','Larger deposits take much longer to process.')}</Alert></div>
-    </>}
+    </section>}
 
-    {!loading&&data&&mode==='withdraw'&&<>
-     <Field label={t('提现地址','Withdrawal address')} hint={t('提现会发送到该地址，请确认是你的收款地址。','Funds are sent to this address; make sure it is yours.')}>
+    {!loading&&data&&<section>
+     <Field label={t('提现地址','Withdrawal address')} hint={t('当前 PBT 绑定的提现地址。','Withdrawal address bound to this PBT.')}>
       <CopyField value={data.withdraw} placeholder={t('尚未绑定','Not bound yet')} label={t('复制地址','Copy address')} onError={()=>setError(t('复制失败，请手动复制','Copy failed; copy manually'))}/>
      </Field>
      {data.withdraw&&!editingAddress&&<Button size="sm" variant="secondary" onClick={()=>{setDest('');setEditingAddress(true)}}>{t('更换提现地址','Change withdrawal address')}</Button>}
@@ -130,11 +133,19 @@ export default function Bridge({session:s,en,run,busy,revision}:ModuleProps){
       </div>
      </>}
      {data.withdraw&&<p className="subtle" style={{marginTop:'var(--s-3)'}}>{t('改绑会按合约收取动态费用；代币费用仅授权本次所需额度。','Rebinding charges the current contract fee; token approvals cover only the required amount.')}</p>}
-     <div style={{marginTop:'var(--s-4)'}}><Alert tone="warning" title={t('请核对实际提现目标','Verify the actual destination')}>{t('销毁使用合约为当前账户返回的首个绑定地址：','Burning uses the first bound address returned for this account:')} <span className="mono">{data.destination||'—'}</span></Alert></div>
-    </>}
-   </Card>}
+     {data.destination&&data.destination===data.withdraw
+      ?<p className="subtle" style={{marginTop:'var(--s-3)'}}>{t('实际提现目标与上方绑定地址一致。','The actual withdrawal destination matches the bound address above.')}</p>
+      :<div style={{marginTop:'var(--s-4)'}}><Alert tone="warning" title={t('实际提现目标与当前 PBT 绑定地址不同','Actual destination differs from this PBT')}>
+       <p>{t('合约使用当前账户的首个绑定地址，可能属于其他 PBT。请核对实际收款地址后再提交提现。','The contract uses the first bound address for this account, which may belong to another PBT. Verify the actual recipient before withdrawing.')}</p>
+       <CopyField value={data.destination} placeholder={t('暂无实际提现目标，无法提交提现','No destination available; withdrawal unavailable')} label={t('复制实际提现目标','Copy actual destination')} onError={()=>setError(t('复制失败，请手动复制','Copy failed; copy manually'))}/>
+      </Alert></div>}
 
-   {id&&data&&<Card title={t('3. 金额与提交','3. Amount and submit')} sub={t('先绑定提现地址，再销毁包装币申请提现。','Bind a withdrawal address first, then burn the wrapped token to request a withdrawal.')}>
+    </section>}
+    </div>
+   <Button variant="primary" disabled={busy||!data} onClick={()=>setStep(2)}>{mode==='deposit'?t('下一步：费用计算','Next: fee calculator'):t('下一步：金额与提交','Next: amount and submit')}</Button>
+   </Card></div>}
+
+   {id&&data&&step===2&&<Card title={mode==='deposit'?t('3. 费用计算','3. Fee calculator'):t('3. 金额与提交','3. Amount and submit')} sub={mode==='deposit'?t('输入金额估算充值费用，无需在网页提交交易。','Enter an amount to estimate deposit fees; no web transaction is required.'):t('先绑定提现地址，再销毁包装币申请提现。','Bind a withdrawal address first, then burn the wrapped token to request a withdrawal.')}>
     <div className="stat-grid" style={{marginBottom:'var(--s-5)'}}>
      <Stat label={t('余额','Balance')} value={<>{fmt(data.balance)} <span className="subtle">{coin.symbol}</span></>}/>
      {mode==='deposit'
