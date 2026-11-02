@@ -49,7 +49,7 @@ console.log('Documentation routes passed: current and legacy Vue hash paths reso
 const Docs=require('../Docs.tsx').default;
 const session={config:{ctr_addrs:{wxch:'0x'+'11'.repeat(20)}}};
 global.location={hash:'#/doc/overview',pathname:'/'};
-function render(hash){location.hash=hash;return renderToStaticMarkup(React.createElement(Docs,{session,en:true,run:async()=>{},busy:false,revision:1})).replace(/<!-- -->/g,'')}
+function render(hash,sess=session){location.hash=hash;return renderToStaticMarkup(React.createElement(Docs,{session:sess,en:true,run:async()=>{},busy:false,revision:1})).replace(/<!-- -->/g,'')}
 const intro=render('#/doc/introduction');
 assert.ok(intro.includes('PlotBridge is a gateway/bridge'),'introduction body missing');
 assert.ok(intro.includes('Chia (XCH)'),'coin list missing');
@@ -61,6 +61,13 @@ assert.ok(bridge.includes('guidesub/towxcc'),'bridge guide link missing');
 const wallet=render('#/doc/wallet');
 assert.ok(wallet.includes('MetaMask'),'wallet guide missing');
 console.log('Documentation rendering passed: introduction, coin list, contact and guide links');
+
+// Without a connected wallet the pages must still render (no contract addresses available).
+const offline=render('#/doc/introduction',null);
+assert.ok(offline.includes('Chia (XCH)'),'coin list missing without a wallet');
+assert.ok(!offline.includes('bscscan.com/token/'),'no contract link expected without a wallet');
+assert.ok(render('#/doc/contact').includes('discord.com'),'contact page broken without a wallet');
+console.log('Documentation renders without a connected wallet');
 
 // Token page keeps the issuance schedule and the buyback/burn table from the Vue site.
 const Token=require('../Token.tsx').default;
