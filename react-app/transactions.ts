@@ -1,0 +1,6 @@
+import {ethers,BigNumber as BN} from 'ethers';
+import {Session,assertSession} from './bridge';
+export const erc20=['function decimals() view returns(uint8)','function symbol() view returns(string)','function balanceOf(address) view returns(uint256)','function allowance(address,address) view returns(uint256)','function approve(address,uint256) returns(bool)'];
+export async function confirmed(tx:ethers.ContractTransaction){try{const r=await tx.wait();if(!r.status)throw Error('Transaction reverted');return r}catch(e:any){if(e.code==='TRANSACTION_REPLACED'&&!e.cancelled&&e.receipt?.status)return e.receipt;throw e}}
+export async function approveExact(s:Session,address:string,spender:string,amount:BN){if(address===ethers.constants.AddressZero||amount.isZero())return;const ctr=new ethers.Contract(address,erc20,s.provider.getSigner());const allowance:BN=await ctr.allowance(s.account,spender);if(allowance.gte(amount))return;for(const n of allowance.isZero()?[amount]:[BN.from(0),amount]){await assertSession(s);await confirmed(await ctr.approve(spender,n))}await assertSession(s)}
+export function parseAmount(value:string,decimals:number){if(!/^(0|[1-9]\d*)(\.\d+)?$/.test(value))throw Error('Invalid amount / 金额无效');const n=ethers.utils.parseUnits(value,decimals);if(n.isZero())throw Error('Amount must be positive / 金额必须大于零');return n}

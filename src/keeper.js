@@ -27,12 +27,7 @@ function copyObj(src, dest) {
 
 // gid -- gateway id
 function fix_uri(uri, gid) {
-    const gateways = [
-        'https://cf-ipfs.com/ipfs/',
-        'https://dweb.link/ipfs/',
-        'https://nftstorage.link/ipfs/',
-        'https://infura-ipfs.io/ipfs/'
-    ]
+    const gateways = require('../shared/ipfs.json')
     if (uri.startsWith('ipfs:')) {
         while (gid >= gateways.length) gid -= gateways.length
         // console.log("fix_uri",gid,gateways[gid], uri)
@@ -56,22 +51,23 @@ function sleep(ms) {
 async function nftBriefInfo(id) {
     console.log("NFTid = ", id)
     await sleep(1000)
-    const uri = await bsc.ctrs.pbt.tokenURI(parseInt(id))
-    let meta = {}
-    let gid = 0
-    try {
-        const metaData = await fetch(fix_uri(uri, gid))
-        const img = await metaData.json()
-        meta = metaData
-        await sleep(1000)
-        meta.image = await fix_uri(String(img.image),gid)
-        meta.loading = false
-    } catch (e) {
-        gid++
-        meta.loading = true
-        meta.image = false
-
-        console.log("brief-info err", e, meta)
+    let uri = await bsc.ctrs.pbt.tokenURI(id)
+    uri = uri.replace(/^https:\/\/(?:cf-ipfs.com|cloudflare-ipfs.com|dweb.link|ipfs.io|nftstorage.link|infura-ipfs.io)\/ipfs\//, 'ipfs://')
+    let meta = { loading: true, image: false }
+    const gateways = require('../shared/ipfs.json')
+    for (let gid = 0; gid < gateways.length; gid++) {
+        const controller = new AbortController()
+        const timer = setTimeout(() => controller.abort(), 8000)
+        try {
+            const response = await fetch(fix_uri(uri, gid), { signal: controller.signal })
+            if (!response.ok) throw new Error('Metadata HTTP ' + response.status)
+            const data = await response.json()
+            const image = String(data.image).replace(/^https:\/\/(?:cf-ipfs.com|cloudflare-ipfs.com|dweb.link|ipfs.io|nftstorage.link|infura-ipfs.io)\/ipfs\//, 'ipfs://')
+            meta = { image: fix_uri(image, gid), loading: false }
+            break
+        } catch (error) {
+            console.warn('PBT metadata gateway failed', gid)
+        } finally { clearTimeout(timer) }
     }
 
     const info = {

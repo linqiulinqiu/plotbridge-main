@@ -1,0 +1,42 @@
+[
+  {
+    "index": 1,
+    "name": "Chia",
+    "symbol": "XCH",
+    "prefix": "xch",
+    "bsymbol": "WXCH",
+    "ctrname": "wxch",
+    "bridge": true,
+    "withdrawOnly": false
+  },
+  {
+    "index": 2,
+    "name": "HDDcoin",
+    "symbol": "HDD",
+    "prefix": "hdd",
+    "bsymbol": "WHDD",
+    "ctrname": "whdd",
+    "bridge": false,
+    "withdrawOnly": true
+  },
+  {
+    "index": 3,
+    "name": "Chives",
+    "symbol": "XCC",
+    "prefix": "xcc",
+    "bsymbol": "WXCC",
+    "ctrname": "wxcc",
+    "bridge": false,
+    "withdrawOnly": true
+  },
+  {
+    "index": 5,
+    "name": "Flax",
+    "symbol": "XFX",
+    "prefix": "xfx",
+    "bsymbol": "WXFX",
+    "ctrname": "wxfx",
+    "bridge": false,
+    "withdrawOnly": true
+  }
+]

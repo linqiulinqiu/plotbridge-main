@@ -253,7 +253,10 @@
   "remainder": "Remainder",
   "redeem-done": "The tokens upgrade is over. Please contact us if you need anything.",
   "redeem-notice": "No upgradable tokens",
-  "redeem-notice1": "Upgrade function will online soon",
+  "redeem-notice2": "Upgrade function will online soon",
+  "select": "Select",
+  "setting": "Settings",
+  "slippage": "Slippage",
 
   "save": "Save",
   "select-coin": "Select Coin",

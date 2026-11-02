@@ -13,8 +13,8 @@ function localLang() {
 const LKEY = 'localeLang'
 const DEFAULT_LANG = localLang()
 const locales = {
-    en: require('./en.json'),
-    zh: require('./zh.json')
+    en: require('../../shared/locales/en.json'),
+    zh: require('../../shared/locales/zh.json')
 }
 
 export const i18n = new VueI18n({
