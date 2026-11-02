@@ -3,7 +3,7 @@ import {ethers} from 'ethers';
 import {contract} from './bridge';
 import {approveExact,erc20,parseAmount} from './transactions';
 import {ModuleProps} from './types';
-import {Alert,Badge,Button,Card,EmptyState,Field,IconSparkle,PageHead,Skeleton,Stat} from './ui';
+import {Alert,Amount,Badge,Button,Card,EmptyState,Field,IconSparkle,PageHead,Skeleton,Stat} from './ui';
 
 const abi=['function pools() view returns(address[],uint256[],uint256[],uint256[],uint256[])','function staked(uint256,address) view returns(uint256,uint256)','function earned(uint256,address) view returns(uint256)','function deposit(uint256,uint256)','function withdraw(uint256,uint256)','function forceWithdraw(uint256,uint256)'];
 
@@ -42,9 +42,9 @@ export default function Stake({session:s,en,run,busy,revision}:ModuleProps){
     sub={t('追加质押、提取或领取后，合约会重新计算锁定时间。','Deposits, withdrawals and claims reset the contract lock time.')}
     actions={<Badge tone="info">{t('解锁时间','Unlock time')}: {new Date(p.staked[1].toNumber()*1000).toLocaleString(en?'en':'zh-CN')}</Badge>}>
     <div className="stat-grid">
-     <Stat label={t('余额','Balance')} value={<>{ethers.utils.formatUnits(p.balance,p.decimals)} <span className="subtle">{p.symbol}</span></>}/>
-     <Stat label={t('已质押','Staked')} value={<>{ethers.utils.formatUnits(p.staked[0],p.decimals)} <span className="subtle">{p.symbol}</span></>}/>
-     <Stat label={t('待领取','Pending')} value={<>{ethers.utils.formatUnits(p.earned,p.reward)} <span className="subtle">PBP</span></>}/>
+     <Stat label={t('余额','Balance')} value={<><Amount value={ethers.utils.formatUnits(p.balance,p.decimals)}/> <span className="subtle">{p.symbol}</span></>}/>
+     <Stat label={t('已质押','Staked')} value={<><Amount value={ethers.utils.formatUnits(p.staked[0],p.decimals)}/> <span className="subtle">{p.symbol}</span></>}/>
+     <Stat label={t('待领取','Pending')} value={<><Amount value={ethers.utils.formatUnits(p.earned,p.reward)}/> <span className="subtle">PBP</span></>}/>
     </div>
     <Field label={t('数量','Amount')}>
      <input className="input" inputMode="decimal" disabled={busy} value={amount[p.i]||''} placeholder="0.0" onChange={e=>setAmount({...amount,[p.i]:e.target.value})}/>

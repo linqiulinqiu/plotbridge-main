@@ -3,7 +3,7 @@ import {ethers} from 'ethers';
 import {erc20,parseAmount} from './transactions';
 import {router,swapPath,executeSwap,unitPrice} from './swap-service';
 import {ModuleProps} from './types';
-import {Alert,Badge,Button,Card,EmptyState,Field,IconSparkle,PageHead,Skeleton,Stat} from './ui';
+import {Alert,Amount,Badge,Button,Card,EmptyState,Field,IconSparkle,PageHead,Skeleton,Stat} from './ui';
 
 export type {ModuleProps} from './types';
 
@@ -60,11 +60,11 @@ export default function Swap({session:s,en,run,busy,revision}:ModuleProps){
     <Card title={t('报价明细','Quote details')} sub={t('单价为本次报价的平均兑换比例，不含网络手续费。','Average rate for this quote, network fees excluded.')}>
      {loading&&<div className="stack stack-3"><Skeleton variant="title"/><Skeleton variant="text"/><Skeleton variant="text"/></div>}
      {!loading&&q&&<div className="stack stack-3">
-      <Stat label={t('兑换单价（约）','Unit price (approx.)')} value={<>{unitPrice(q.input,q.output,q.di,q.do_)} <span className="subtle">{to}/{from}</span></>}/>
-      <Stat label={t('反向单价（约）','Inverse price (approx.)')} value={<>{unitPrice(q.output,q.input,q.do_,q.di)} <span className="subtle">{from}/{to}</span></>}/>
-      <Stat label={t('本次支付总量','Total payment')} value={<>{ethers.utils.formatUnits(q.input,q.di)} <span className="subtle">{from}</span></>}/>
-      <Stat label={t('本次接收总量','Total received')} value={<>{ethers.utils.formatUnits(q.output,q.do_)} <span className="subtle">{to}</span></>}/>
-      {slipOk&&<Stat label={exact?t('最多支付（含滑点）','Maximum payment (with slippage)'):t('最少接收（含滑点）','Minimum received (with slippage)')} value={<>{exact?ethers.utils.formatUnits(q.input.mul(10000+Math.round(Number(slip)*100)).add(9999).div(10000),q.di)+' '+from:ethers.utils.formatUnits(q.output.mul(10000-Math.round(Number(slip)*100)).div(10000),q.do_)+' '+to}</>}/>}
+      <Stat label={t('兑换单价（约）','Unit price (approx.)')} value={<><Amount value={unitPrice(q.input,q.output,q.di,q.do_)}/> <span className="subtle">{to}/{from}</span></>}/>
+      <Stat label={t('反向单价（约）','Inverse price (approx.)')} value={<><Amount value={unitPrice(q.output,q.input,q.do_,q.di)}/> <span className="subtle">{from}/{to}</span></>}/>
+      <Stat label={t('本次支付总量','Total payment')} value={<><Amount value={ethers.utils.formatUnits(q.input,q.di)}/> <span className="subtle">{from}</span></>}/>
+      <Stat label={t('本次接收总量','Total received')} value={<><Amount value={ethers.utils.formatUnits(q.output,q.do_)}/> <span className="subtle">{to}</span></>}/>
+      {slipOk&&<Stat label={exact?t('最多支付（含滑点）','Maximum payment (with slippage)'):t('最少接收（含滑点）','Minimum received (with slippage)')} value={<>{exact?<><Amount value={ethers.utils.formatUnits(q.input.mul(10000+Math.round(Number(slip)*100)).add(9999).div(10000),q.di)}/> <span className="subtle">{from}</span></>:<><Amount value={ethers.utils.formatUnits(q.output.mul(10000-Math.round(Number(slip)*100)).div(10000),q.do_)}/> <span className="subtle">{to}</span></>}</>}/>}
      </div>}
      {!loading&&!q&&<p className="subtle">{t('选择资产并输入金额后，显示单价与总量。','Choose assets and enter an amount to compare unit price and totals.')}</p>}
      {error&&<div style={{marginTop:'var(--s-4)'}}><Alert tone="danger">{error}</Alert></div>}

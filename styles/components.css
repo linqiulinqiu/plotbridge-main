@@ -81,6 +81,7 @@
 .stat__label{font-size:var(--t-xs);color:var(--text-subtle);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
 .stat__value{font-size:var(--t-lg);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em;overflow-wrap:anywhere}
 .stat__value--sm{font-size:var(--t-md)}
+.num-tail{color:var(--text-subtle);font-size:.78em;font-weight:500}
 .stat__hint{font-size:var(--t-sm);color:var(--text-muted)}
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--s-3)}
 

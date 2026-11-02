@@ -94,6 +94,20 @@ export function Stat({label,value,hint,small}:{label:React.ReactNode;value:React
  return <div className="stat"><span className="stat__label">{label}</span><span className={'stat__value'+(small?' stat__value--sm':'')}>{value}</span>{hint&&<span className="stat__hint">{hint}</span>}</div>;
 }
 
+/* Amount ----------------------------------------------------------------- */
+// Visual hierarchy for long on-chain numbers: significant digits up front,
+// the remainder smaller and fainter. Full precision stays in the title tooltip.
+export function Amount({value,sig=6,tail=6}:{value:string;sig?:number;tail?:number}){
+ const v=String(value);
+ if(!/^\d+\.\d*$|^\d+$/.test(v))return <span title={v}>{v}</span>;
+ const [int,dec='']=v.split('.');
+ const gi=int.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+ const first=dec.search(/[1-9]/);
+ const cut=first===-1?Math.min(1,dec.length):Math.min(Math.max(first+sig,2),dec.length);
+ const rest=dec.slice(cut,cut+tail)+(dec.length>cut+tail?'…':'');
+ return <span title={v}>{gi+(dec?'.'+dec.slice(0,cut):'')}{rest&&<span className="num-tail">{rest}</span>}</span>;
+}
+
 /* Badge ------------------------------------------------------------------ */
 export function Badge({tone='new',children}:{tone?:'ready'|'partial'|'new'|'unknown'|'brand'|'danger'|'info';children:React.ReactNode}){
  return <span className={'badge badge--'+tone}>{children}</span>;

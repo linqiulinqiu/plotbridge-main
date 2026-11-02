@@ -3,7 +3,7 @@ import {ethers,BigNumber as BN} from 'ethers';
 import * as bridge from './bridge';
 import {ModuleProps} from './types';
 import {
- Alert,Badge,Button,Card,CopyField,EmptyState,Field,IconCheck,IconRefresh,IconSparkle,
+ Alert,Amount,Badge,Button,Card,CopyField,EmptyState,Field,IconCheck,IconRefresh,IconSparkle,
  Modal,PageHead,Segmented,Skeleton,Stat,Steps
 } from './ui';
 import {Media} from './media';
@@ -147,10 +147,10 @@ export default function Bridge({session:s,en,run,busy,revision}:ModuleProps){
 
    {id&&data&&step===2&&<Card title={mode==='deposit'?t('3. 费用计算','3. Fee calculator'):t('3. 金额与提交','3. Amount and submit')} sub={mode==='deposit'?t('输入金额估算充值费用，无需在网页提交交易。','Enter an amount to estimate deposit fees; no web transaction is required.'):t('先绑定提现地址，再销毁包装币申请提现。','Bind a withdrawal address first, then burn the wrapped token to request a withdrawal.')}>
     <div className="stat-grid" style={{marginBottom:'var(--s-5)'}}>
-     <Stat label={t('余额','Balance')} value={<>{fmt(data.balance)} <span className="subtle">{coin.symbol}</span></>}/>
+     <Stat label={t('余额','Balance')} value={<><Amount value={fmt(data.balance)}/> <span className="subtle">{coin.symbol}</span></>}/>
      {mode==='deposit'
-      ?<Stat label={t('单次充值上限','Max deposit')} value={<>{fmt(bridge.depositLimits(data.decimals)[1])} <span className="subtle">XCH</span></>}/>
-      :<Stat label={t('单次提现额度','Withdrawal range')} value={<>{fmt(data.limits[0])} – {fmt(data.limits[1])}</>}/>}
+      ?<Stat label={t('单次充值上限','Max deposit')} value={<><Amount value={fmt(bridge.depositLimits(data.decimals)[1])}/> <span className="subtle">XCH</span></>}/>
+      :<Stat label={t('单次提现额度','Withdrawal range')} value={<><Amount value={fmt(data.limits[0])}/> – <Amount value={fmt(data.limits[1])}/></>}/>}
      <Stat label={t('费率','Rate')} value={<>{data[mode==='deposit'?'depFee':'withFee'][0].toString()}<span className="subtle"> / 10000</span></>} small/>
     </div>
 
@@ -160,8 +160,8 @@ export default function Bridge({session:s,en,run,busy,revision}:ModuleProps){
     </Field>
 
     {q&&<div className="stat-grid" style={{marginBottom:'var(--s-5)'}}>
-     <Stat label={t('手续费','Fee')} value={<>{fmt(q.fee)} <span className="subtle">{coin.symbol}</span></>}/>
-     <Stat label={t('预计到账','Estimated receipt')} value={<>{fmt(q.receive)} <span className="subtle">{native}</span></>}/>
+     <Stat label={t('手续费','Fee')} value={<><Amount value={fmt(q.fee)}/> <span className="subtle">{coin.symbol}</span></>}/>
+     <Stat label={t('预计到账','Estimated receipt')} value={<><Amount value={fmt(q.receive)}/> <span className="subtle">{native}</span></>}/>
     </div>}
 
     {mode==='withdraw'
@@ -178,9 +178,9 @@ export default function Bridge({session:s,en,run,busy,revision}:ModuleProps){
    subtitle={t('销毁不可撤销，请核对以下信息。','Burning cannot be reversed. Check the details below.')}
    footer={<><Button variant="ghost" onClick={()=>setConfirming(false)}>{t('取消','Cancel')}</Button><Button variant="danger" disabled={busy||!q} onClick={()=>{setConfirming(false);burn()}}>{t('确认销毁','Confirm burn')}</Button></>}>
    {q&&data&&<div className="stack stack-3">
-    <div className="stat"><span className="stat__label">{t('销毁数量','Amount to burn')}</span><span className="stat__value">{fmt(q.amount)} {coin.symbol}</span></div>
-    <div className="stat"><span className="stat__label">{t('手续费','Fee')}</span><span className="stat__value stat__value--sm">{fmt(q.fee)} {coin.symbol}</span></div>
-    <div className="stat"><span className="stat__label">{t('预计收到','Estimated receipt')}</span><span className="stat__value stat__value--sm">{fmt(q.receive)} {native}</span></div>
+    <div className="stat"><span className="stat__label">{t('销毁数量','Amount to burn')}</span><span className="stat__value"><Amount value={fmt(q.amount)}/> {coin.symbol}</span></div>
+    <div className="stat"><span className="stat__label">{t('手续费','Fee')}</span><span className="stat__value stat__value--sm"><Amount value={fmt(q.fee)}/> {coin.symbol}</span></div>
+    <div className="stat"><span className="stat__label">{t('预计收到','Estimated receipt')}</span><span className="stat__value stat__value--sm"><Amount value={fmt(q.receive)}/> {native}</span></div>
     <div className="stat"><span className="stat__label">{t('提现目标','Destination')}</span><span className="mono" style={{overflowWrap:'anywhere'}}>{data.destination||'—'}</span></div>
     <Alert tone="warning">{t('人工兑付资产需要团队处理，一般 7 个工作日内到账；链上确认不代表已到账。','Manual redemption assets are processed by the team, usually within 7 business days. On-chain confirmation does not mean the funds have arrived.')}</Alert>
    </div>}
