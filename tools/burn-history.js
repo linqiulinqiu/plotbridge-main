@@ -1,8 +1,14 @@
 const ethers = require('ethers')
-const pbw = require('pbwallet')
 const fs = require('fs')
+const networks = require('../networks.json')
 
 const historyBeginBlock = 18134388
+const rpcUrl = 'https://rpc.ankr.com/bsc'
+const pbpAddress = networks[0].ctr_addrs.pbp
+const pbpABI = [
+    'event Transfer(address indexed from, address indexed to, uint256 value)',
+    'function stakeStart() view returns(uint256)'
+]
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -25,7 +31,7 @@ async function load_burns(bsc, ctr, recs){
         //TODO: make sure events are in older-first order
         for(var i in events){
             const evt = events[i]
-            const blk = await bsc.provider.getBlock(evt.blockNumber)
+            const blk = await bsc.getBlock(evt.blockNumber)
             evt.timestamp = blk.timestamp
             const filterBuy = ctr.filters.Transfer(lpAddr, teamAddr)
             const bevents = await ctr.queryFilter(filterBuy, evt.blockNumber-buyBlocks, evt.blockNumber-1)
@@ -34,7 +40,7 @@ async function load_burns(bsc, ctr, recs){
                 if(be.args.value.eq(evt.args.value)){
                     console.log('try load swap tx', be.transactionHash)
                     while(true){
-                        const tx = await bsc.provider.getTransaction(be.transactionHash)
+                        const tx = await bsc.getTransaction(be.transactionHash)
                         if(tx){
                             console.log('\tfound')
                             recs.buys.push(tx)
@@ -53,17 +59,16 @@ async function load_burns(bsc, ctr, recs){
         burnBegin = stepEnd+1
     }catch(e){
         console.log('check failed', e)
-        return recs 
+        return recs
     }
     console.log(burns.length, 'burn records')
-    return recs 
+    return recs
 }
 
 async function main(){
     const burnPath = 'rec-burns.json'
-    const wallet = ethers.Wallet.createRandom()
-    const bsc = await pbw.connect_rpc(false, wallet.privateKey, 'https://rpc.ankr.com/bsc') 
-    const pbp = bsc.ctrs['pbp']
+    const bsc = new ethers.providers.JsonRpcProvider(rpcUrl)
+    const pbp = new ethers.Contract(pbpAddress, pbpABI, bsc)
     var recs = {
         checkedBlockNumber: 18134303,
         burns: [],
@@ -72,7 +77,7 @@ async function main(){
     if(fs.existsSync(burnPath)){
         recs = JSON.parse(fs.readFileSync(burnPath))
     }
-    recs.chainBlockHeight = await bsc.provider.getBlockNumber()
+    recs.chainBlockHeight = await bsc.getBlockNumber()
     console.log('current chain height', recs.chainBlockHeight, recs.checkedBlockNumber)
     while(recs.chainBlockHeight>recs.checkedBlockNumber){
         await load_burns(bsc, pbp, recs)

@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from 'react';
-import zhText from '../shared/locales/zh.json';
-import enText from '../shared/locales/en.json';
+import zhText from './shared/locales/zh.json';
+import enText from './shared/locales/en.json';
 import {totalValueLocked} from './tvl';
 import {ModuleProps} from './Swap';
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import zhText from '../shared/locales/zh.json';
-import enText from '../shared/locales/en.json';
+import zhText from './shared/locales/zh.json';
+import enText from './shared/locales/en.json';
 import {assets} from './bridge';
 import {ModuleProps} from './Swap';
 

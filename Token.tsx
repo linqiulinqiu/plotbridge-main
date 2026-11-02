@@ -1,9 +1,9 @@
 import React,{useEffect,useState} from 'react';
 import {ethers} from 'ethers';
-import zhText from '../shared/locales/zh.json';
-import enText from '../shared/locales/en.json';
-import stageInfo from '../tools/pbp-amount.json';
-import recBurns from '../tools/rec-burns.json';
+import zhText from './shared/locales/zh.json';
+import enText from './shared/locales/en.json';
+import stageInfo from './tools/pbp-amount.json';
+import recBurns from './tools/rec-burns.json';
 import {contract} from './bridge';
 import {ModuleProps} from './Swap';
 

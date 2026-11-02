@@ -1,5 +1,5 @@
 const fs=require('node:fs'),ts=require('typescript'),assert=require('node:assert/strict'),Module=require('node:module');
-const m=new Module(require('node:path').resolve('react-app/bridge.ts'),module);m.filename=require('node:path').resolve('react-app/bridge.ts');m.paths=module.paths;m._compile(ts.transpileModule(fs.readFileSync(m.filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,esModuleInterop:true}}).outputText,m.filename);
+const m=new Module(require('node:path').resolve('bridge.ts'),module);m.filename=require('node:path').resolve('bridge.ts');m.paths=module.paths;m._compile(ts.transpileModule(fs.readFileSync(m.filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,esModuleInterop:true}}).outputText,m.filename);
 const {quote,assertSession}=m.exports,{BigNumber:B,utils}=require('ethers');const u=x=>utils.parseUnits(x,18),fees=[B.from(30),u('0.01')],limits=[u('0.01'),u('1000000')];
 assert.equal(quote('1',18,fees,limits).receive.toString(),u('0.99').toString());assert.equal(quote('100',18,fees,limits).fee.toString(),u('0.3').toString());assert.equal(quote('900719.925474099312345678',18,fees,limits).amount.toString(),'900719925474099312345678');
 for(const input of ['-1','1e3','NaN','0','0.001','1.0000000000000000001'])assert.throws(()=>quote(input,18,fees,limits));

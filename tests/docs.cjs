@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),ts=require('typescript'),assert=require('node:assert/strict'),React=require('react'),{renderToStaticMarkup}=require('react-dom/server');
 for(const ext of ['.ts','.tsx'])require.extensions[ext]=(m,file)=>m._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,esModuleInterop:true,jsx:ts.JsxEmit.React}}).outputText,file);
-const {assets,policy}=require('../react-app/bridge.ts'),{lockedValue}=require('../react-app/tvl.ts'),{docPage}=require('../react-app/Docs.tsx');
+const {assets,policy}=require('../bridge.ts'),{lockedValue}=require('../tvl.ts'),{docPage}=require('../Docs.tsx');
 const coins=require('../shared/coins.json');
 const zhText=require('../shared/locales/zh.json'),enText=require('../shared/locales/en.json');
 
@@ -46,7 +46,7 @@ assert.equal(docPage('#/Doc/RoadMap'),'roadmap');
 console.log('Documentation routes passed: current and legacy Vue hash paths resolve');
 
 // Documentation pages render the locale content of the Vue site.
-const Docs=require('../react-app/Docs.tsx').default;
+const Docs=require('../Docs.tsx').default;
 const session={config:{ctr_addrs:{wxch:'0x'+'11'.repeat(20)}}};
 global.location={hash:'#/doc/overview',pathname:'/'};
 function render(hash){location.hash=hash;return renderToStaticMarkup(React.createElement(Docs,{session,en:true,run:async()=>{},busy:false,revision:1})).replace(/<!-- -->/g,'')}
@@ -63,7 +63,7 @@ assert.ok(wallet.includes('MetaMask'),'wallet guide missing');
 console.log('Documentation rendering passed: introduction, coin list, contact and guide links');
 
 // Token page keeps the issuance schedule and the buyback/burn table from the Vue site.
-const Token=require('../react-app/Token.tsx').default;
+const Token=require('../Token.tsx').default;
 location.hash='#/token';
 const tokenHtml=renderToStaticMarkup(React.createElement(Token,{en:true,run:async()=>{},busy:false,revision:1})).replace(/<!-- -->/g,'');
 assert.ok(tokenHtml.includes('2022-05-06'),'issuance schedule missing');

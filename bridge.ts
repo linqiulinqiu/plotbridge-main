@@ -1,7 +1,7 @@
 import {ethers, BigNumber as BN} from 'ethers';
 import networks from './networks.json';
-import gateways from '../shared/ipfs.json';
-import coins from '../shared/coins.json';
+import gateways from './shared/ipfs.json';
+import coins from './shared/coins.json';
 // Coin policy has a single source: shared/coins.json (replaces the Vue WCOIN_POLICY table).
 // symbol is the wrapped token (contract lookup key); native is the underlying coin symbol.
 export const assets=coins.map(c=>({symbol:c.bsymbol,native:c.symbol,id:c.index,prefix:c.prefix,name:c.name,ctrname:c.ctrname,bridge:c.bridge,withdrawOnly:c.withdrawOnly}));
